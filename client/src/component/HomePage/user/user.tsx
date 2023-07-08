@@ -6,6 +6,7 @@ import {
   Text,
   Menu,
   rem,
+  Box,
 } from "@mantine/core";
 import {
   IconLogout,
@@ -15,9 +16,7 @@ import {
   IconCash,
   IconTrash,
   IconSwitchHorizontal,
-  IconChevronDown,
 } from "@tabler/icons-react";
-import { Image } from "@mantine/core";
 import type { UserInterface } from "../header/header";
 import { useState, useEffect } from "react";
 import { useAppDispatch } from "../../../app/hooks";
@@ -70,7 +69,7 @@ function UserIn({ username, id }: UserInterface) {
       onOpen={() => setUserMenuOpened(true)}
       withinPortal
     >
-      <Group spacing={14} position="left" noWrap>
+      <Group spacing={8} position="left" noWrap>
         <IconCash size="1.25rem" color={theme.colors.green[6]} stroke={1.5} />
         <IconGardenCart
           size="1.25rem"
@@ -81,15 +80,30 @@ function UserIn({ username, id }: UserInterface) {
       </Group>
       <Menu.Target>
         <UnstyledButton
+          p={0}
           className={cx(classes.user, {
             [classes.userActive]: userMenuOpened,
           })}
         >
-          <Group spacing={5}>
+          <Group
+            spacing={5}
+            noWrap
+            style={{
+              overflow: "hidden",
+            }}
+          >
             <Avatar src={imageUrl} alt={username} radius="xl" size={30} />
-            <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
-              {username}
-            </Text>
+            <Box w={50}>
+              <Text
+                weight={500}
+                size="sm"
+                sx={{ lineHeight: 1 }}
+                mr={3}
+                truncate
+              >
+                {username}
+              </Text>
+            </Box>
           </Group>
         </UnstyledButton>
       </Menu.Target>

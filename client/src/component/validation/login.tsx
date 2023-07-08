@@ -20,8 +20,6 @@ import {
   Anchor,
   Stack,
   Center,
-  rem,
-  createStyles,
 } from "@mantine/core";
 function Login() {
   const { classes } = useStyles();
@@ -82,11 +80,11 @@ function Login() {
           }}
         />
 
-        <Group mt="md" position="center">
-          <GoogleIcon radius="md" className={classes.button}>
+        <Group mt="md" position="center" spacing={50}>
+          <GoogleIcon radius="md" className={classes.buttonSocial}>
             Google
           </GoogleIcon>
-          <FacebookIcon radius="md" className={classes.button}>
+          <FacebookIcon radius="md" className={classes.buttonSocial}>
             Facebook
           </FacebookIcon>
         </Group>

@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useObjectError } from "../../hook/useObjectError";
 import { upperFirst } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
 import { Form } from "react-router-dom";
-import { notifications } from "@mantine/notifications";
+
 import { useStyles } from "./styleGlobal";
 import { useNavigation, useNavigate } from "react-router-dom";
 import PasswordRequirement from "./passwordRequirementPop/passwordRequire";
@@ -22,7 +22,6 @@ import {
   Stack,
   Center,
   rem,
-  createStyles,
   Progress,
   Popover,
 } from "@mantine/core";

@@ -2,7 +2,6 @@ import { upperFirst } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
 import { Helmet } from "react-helmet";
 import { Form } from "react-router-dom";
-import { useActionData } from "react-router";
 import { IconX } from "@tabler/icons-react";
 import PasswordRequirement from "./passwordRequirementPop/passwordRequire";
 import { Notification, Popover, Progress } from "@mantine/core";

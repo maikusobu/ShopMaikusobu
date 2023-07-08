@@ -37,4 +37,13 @@ export const useStyles = createStyles((theme) => ({
       background: theme.colors.dark[1],
     },
   },
+  buttonSocial: {
+    background: theme.white,
+    cursor: "pointer",
+
+    padding: "0px",
+    "&:hover": {
+      transform: "scale(1.1)",
+    },
+  },
 }));

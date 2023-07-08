@@ -4,6 +4,7 @@ import { createStyles, Container, Group, Autocomplete } from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { selectAuth } from "../../../api/AuthReducer/AuthReduce";
 import { Login } from "../../../api/AuthReducer/AuthReduce";
+import { Helmet } from "react-helmet";
 import User from "../user/user";
 import Logo from "../logo/logo";
 export type UserInterface = {
@@ -16,14 +17,13 @@ const useStyles = createStyles((theme) => ({
     padding: 0,
     display: "flex",
     justifyContent: "flex-end",
-    gap: "20px",
+    gap: "30px",
   },
   mainSection: {
-    backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.white,
     paddingTop: theme.spacing.sm,
-    paddingBottom: theme.spacing.sm,
+    paddingBottom: 0,
     margin: 0,
+
     minWidth: "100vw",
     width: "100%",
   },

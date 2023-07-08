@@ -9,14 +9,11 @@ import { useStyles } from "./styleGlobal";
 import React from "react";
 import {
   TextInput,
-  Text,
   Container,
   Group,
   Button,
   Title,
   Stack,
-  rem,
-  createStyles,
 } from "@mantine/core";
 
 function RestorePassword() {

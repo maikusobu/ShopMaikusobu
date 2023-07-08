@@ -9,8 +9,8 @@ function FacebookIcon(props: React.ComponentProps<"svg">) {
       role="img"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 512 512"
-      width="1.4rem"
-      height="1.4rem"
+      width="1.87rem"
+      height="1.87rem"
       {...props}
     >
       <path
