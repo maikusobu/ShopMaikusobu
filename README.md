@@ -1,2 +1,2 @@
 # ShopMaikusobu
-## Viết dựa trên typescript
+## Viết bằng typescript
