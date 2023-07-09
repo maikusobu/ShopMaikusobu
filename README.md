@@ -1,2 +1,2 @@
 # ShopMaikusobu
-## Viết bằng typescript
+## React + Express Application
