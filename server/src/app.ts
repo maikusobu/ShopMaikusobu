@@ -7,8 +7,10 @@ import mongoose from "mongoose";
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const MONGO_URL = process.env.MONGO_URL;
+const URL_CLIENT = process.env.URL_CLIENT;
 import authenRouter from "./api/v1/routes/User_management_routes/validation";
 import userRouter from "./api/v1/routes/User_management_routes/user";
+import productRouter from "./api/v1/routes/Product_management_routes/product";
 interface HttpError extends Error {
   statusCode?: number;
 }
@@ -29,6 +31,7 @@ connect();
 async function connect() {
   try {
     await mongoose.connect(MONGO_URL as string);
+    console.log("mongoDB connected");
   } catch (err) {
     console.error(err);
   }
@@ -36,14 +39,18 @@ async function connect() {
 //static files
 app.use(express.static(dirPath));
 // mongo after initiated
+mongoose.connection.on("error", (err) => {
+  console.error("MongoDB connection error:", err);
+});
 mongoose.connection.on("disconnected", () => {
   console.log("mongoDB disconnected");
 });
 // route handling
 app.use("/authen", authenRouter);
 app.use("/user", userRouter);
+app.use("/products", productRouter);
 app.get("/", (req: Request, res: Response) => {
-  res.redirect("http://localhost:5173/");
+  res.redirect(`${URL_CLIENT}`);
 });
 
 // error handling

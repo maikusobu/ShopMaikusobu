@@ -6,6 +6,7 @@ import Login from "./component/validation/login.tsx";
 import ErrorProvider from "./component/ErrorContext/ErrorContext.tsx";
 import Register from "./component/validation/register.tsx";
 import actionLogin from "./component/validation/action/actionLogin.ts";
+
 import actionRegister from "./component/validation/action/actionRegister.ts";
 import RestorePassword from "./component/validation/restorePassword.tsx";
 import actionChangePassword from "./component/validation/action/actionChangePassword.ts";
@@ -15,6 +16,7 @@ import { Notifications } from "@mantine/notifications";
 import Home from "./component/HomePage/Home/Home.tsx";
 import { store } from "./app/store.ts";
 import { Provider } from "react-redux/es/exports";
+
 import "./index.css";
 const router = createBrowserRouter([
   {
@@ -89,7 +91,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
               margin: 0,
             },
             body: {
-              overflow: "hidden",
+              overflowX: "hidden",
               fontFamily: "Lora, serif",
               backgroundColor:
                 theme.colorScheme === "dark"

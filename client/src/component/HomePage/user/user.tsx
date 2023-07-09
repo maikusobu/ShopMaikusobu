@@ -93,7 +93,7 @@ function UserIn({ username, id }: UserInterface) {
             }}
           >
             <Avatar src={imageUrl} alt={username} radius="xl" size={30} />
-            <Box w={50}>
+            <Box w={70}>
               <Text
                 weight={500}
                 size="sm"

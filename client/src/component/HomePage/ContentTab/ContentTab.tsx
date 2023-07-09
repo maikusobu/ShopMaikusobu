@@ -1,4 +1,5 @@
 import { Tabs } from "@mantine/core";
+import ShoppingContent from "../ShoppingContent/ShoppingContent";
 function ContentTab() {
   return (
     <Tabs variant="pills" color="green" defaultValue="commercial">
@@ -11,7 +12,9 @@ function ContentTab() {
         <Tabs.Tab value="commercial">Shopping</Tabs.Tab>
         <Tabs.Tab value="social">Social</Tabs.Tab>
       </Tabs.List>
-      <Tabs.Panel value="commercial">Commerical content</Tabs.Panel>
+      <Tabs.Panel value="commercial">
+        <ShoppingContent />
+      </Tabs.Panel>
       <Tabs.Panel value="social">Social content</Tabs.Panel>
     </Tabs>
   );

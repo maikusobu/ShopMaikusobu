@@ -17,7 +17,8 @@ const useStyles = createStyles((theme) => ({
     padding: 0,
     display: "flex",
     justifyContent: "flex-end",
-    gap: "30px",
+    gap: "45px",
+    transform: "translateX(-40px)",
   },
   mainSection: {
     paddingTop: theme.spacing.sm,
@@ -28,7 +29,8 @@ const useStyles = createStyles((theme) => ({
     width: "100%",
   },
   search: {
-    flexGrow: 0.9,
+    flexGrow: 0.5,
+    borderRadius: "20px !important",
     [theme.fn.smallerThan("xs")]: {
       display: "none",
     },
@@ -63,17 +65,19 @@ function Header() {
       <Group position="apart" align="center" className={classes.group}>
         <Logo />
         <Autocomplete
+          styles={{
+            input: {
+              borderRadius: "20px !important",
+            },
+          }}
           className={classes.search}
-          placeholder="Search"
-          icon={<IconSearch size="1rem" stroke={1.5} />}
+          placeholder="Search "
+          icon={<IconSearch size="1rem" stroke={2} />}
           data={[
-            "React",
-            "Angular",
-            "Vue",
-            "Next.js",
-            "Riot.js",
-            "Svelte",
-            "Blitz.js",
+            { value: "TV", group: "Bạn vừa search" },
+            { value: "Tủ lạnh", group: "Bạn vừa search" },
+            { value: "Beth", group: "Xu hướng" },
+            { value: "Summer", group: "Xu hướng" },
           ]}
         />
         <Container mx={0} className={classes.user}>

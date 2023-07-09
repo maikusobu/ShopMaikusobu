@@ -1,11 +1,11 @@
 import CarouselBanner from "../Banner/Carousel";
-import { createStyles, Group } from "@mantine/core";
+import { createStyles, Group, Stack } from "@mantine/core";
 import GroupButton from "../GroupButton/GroupButton";
 import ContentProp from "../ContentProp/ContentProp";
 const useStyles = createStyles(() => ({
   root: {
     margin: 0,
-    height: "400px",
+    height: "100%",
     padding: 0,
 
     paddingInlineEnd: "2rem",
@@ -17,7 +17,8 @@ const useStyles = createStyles(() => ({
   CarousalContainer: {
     margin: 0,
     padding: 0,
-    height: "350px",
+    paddingTop: "2rem",
+    height: "100%",
     width: "100%",
     zIndex: 1,
     background: "transparent",
@@ -36,17 +37,15 @@ function Content() {
     <>
       <div className={classes.root}>
         <div className="blob"></div>
-        <Group
-          className={classes.CarousalContainer}
-          position="center"
-          spacing={20}
-        >
-          <CarouselBanner />
-          <GroupButton />
-        </Group>
-        <div className={classes.ContentProp}>
-          <ContentProp />
-        </div>
+        <Stack className={classes.CarousalContainer} spacing={20}>
+          <Group position="center">
+            <CarouselBanner />
+            <GroupButton />
+          </Group>
+          <div className={classes.ContentProp}>
+            <ContentProp />
+          </div>
+        </Stack>
       </div>
     </>
   );

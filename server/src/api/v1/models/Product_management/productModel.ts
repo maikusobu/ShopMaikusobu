@@ -1,5 +1,6 @@
-import mongoose, { InferSchemaType, ValidatorProps } from "mongoose";
+import mongoose, { InferSchemaType } from "mongoose";
 import BaseSchema from "./BaseSchema";
+
 const Schema = mongoose.Schema;
 const Product = new Schema({
   name: {
@@ -44,7 +45,13 @@ const Product = new Schema({
   },
   category_id: { type: Schema.Types.ObjectId, ref: "ProductCategory" },
   discount_id: { type: Schema.Types.ObjectId, ref: "ProductDiscount" },
-  inventory_id: { type: Schema.Types.ObjectId, ref: "ProductInventory" },
+  inventory_id: {
+    type: Schema.Types.ObjectId,
+    ref: "ProductInventory",
+    require: true,
+  },
+  image: [{ type: String, default: "" }],
+  amountPurchased: { type: Number, default: 0 },
 });
 
 type ProductType = InferSchemaType<typeof Product>;

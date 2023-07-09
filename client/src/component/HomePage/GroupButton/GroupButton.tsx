@@ -8,6 +8,8 @@ import {
 const useStyles = createStyles((theme) => ({
   icon: {
     cursor: "pointer",
+    transformStyle: "preserve-3d",
+
     transition: "transform 150ms ease, scale 150ms ease",
   },
 }));
