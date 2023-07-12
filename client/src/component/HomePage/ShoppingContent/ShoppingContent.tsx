@@ -16,6 +16,7 @@ const useStyles = createStyles(() => ({
     paddingTop: "3rem",
   },
   BoxRoot: {
+    transition: "transform 0.4s ease-in-out",
     "&:hover": {
       cursor: "pointer",
       scale: "1.1",
@@ -25,7 +26,7 @@ const useStyles = createStyles(() => ({
 }));
 function ShoppingContent() {
   const { classes } = useStyles();
-  const { data, error, isLoading, isFetching } = useGetTrendingProductQuery();
+  const { data, error, isLoading } = useGetTrendingProductQuery();
   if (isLoading) return <p>Loading...</p>;
   if (error)
     if ("status" in error)
@@ -36,7 +37,7 @@ function ShoppingContent() {
       );
   return (
     <div className={classes.root}>
-      <Grid gutter={5} gutterXs="md" gutterMd="xl" gutterXl={50} columns={15}>
+      <Grid gutter={5} gutterXs="md" gutterMd="xl" gutterXl={45} columns={15}>
         {data?.map((product) => (
           <Grid.Col span={3} key={product.id}>
             <Box className={classes.BoxRoot}>
@@ -46,7 +47,7 @@ function ShoppingContent() {
                 }}
               >
                 <Card.Section>
-                  <Image src={product.image[1]} alt={product.name} />
+                  <Image src={product.image[0]} alt={product.name} />
                 </Card.Section>
 
                 <Text

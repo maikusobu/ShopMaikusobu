@@ -1,8 +1,22 @@
 import { Tabs } from "@mantine/core";
 import ShoppingContent from "../ShoppingContent/ShoppingContent";
+import { createStyles } from "@mantine/core";
 function ContentTab() {
   return (
-    <Tabs variant="pills" color="green" defaultValue="commercial">
+    <Tabs
+      variant="pills"
+      defaultValue="commercial"
+      styles={(theme) => ({
+        tab: {
+          fontWeight: 600,
+          fontSize: "1rem",
+          "&[data-active]": {
+            color: theme.colors.dark[9],
+            backgroundImage: `linear-gradient(45deg, ${theme.colors.brandcolorYellow[0]} , ${theme.colors.brandcolorRed[0]})`,
+          },
+        },
+      })}
+    >
       <Tabs.List
         position="left"
         style={{

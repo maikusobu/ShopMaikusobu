@@ -48,7 +48,7 @@ const Product = new Schema({
   inventory_id: {
     type: Schema.Types.ObjectId,
     ref: "ProductInventory",
-    require: true,
+    required: true,
   },
   image: [{ type: String, default: "" }],
   amountPurchased: { type: Number, default: 0 },

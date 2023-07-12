@@ -6,13 +6,13 @@ import Login from "./component/validation/login.tsx";
 import ErrorProvider from "./component/ErrorContext/ErrorContext.tsx";
 import Register from "./component/validation/register.tsx";
 import actionLogin from "./component/validation/action/actionLogin.ts";
-
 import actionRegister from "./component/validation/action/actionRegister.ts";
 import RestorePassword from "./component/validation/restorePassword.tsx";
 import actionChangePassword from "./component/validation/action/actionChangePassword.ts";
 import actionRestorePassword from "./component/validation/action/actionrestorePassword.ts";
 import ChangePassWord from "./component/validation/changePassword.tsx";
 import { Notifications } from "@mantine/notifications";
+import SettingAccount from "./component/SettingAccount/SettingAccount.tsx";
 import Home from "./component/HomePage/Home/Home.tsx";
 import { store } from "./app/store.ts";
 import { Provider } from "react-redux/es/exports";
@@ -47,6 +47,10 @@ const router = createBrowserRouter([
         action: actionChangePassword,
       },
     ],
+  },
+  {
+    path: "settingaccount",
+    element: <SettingAccount />,
   },
 ]);
 

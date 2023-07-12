@@ -86,7 +86,7 @@ function CarouselBanner() {
       }}
     >
       {content.map((item, index) => (
-        <Carousel.Slide>
+        <Carousel.Slide key={index}>
           <CardBanner
             color={item.color}
             key={index}

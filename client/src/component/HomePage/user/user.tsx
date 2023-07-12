@@ -17,12 +17,14 @@ import {
   IconTrash,
   IconSwitchHorizontal,
 } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 import type { UserInterface } from "../header/header";
 import { useState, useEffect } from "react";
 import { useAppDispatch } from "../../../app/hooks";
 import { dataURLToBlob } from "../../../Helper/UrlToObject";
 import { Logout } from "../../../api/AuthReducer/AuthReduce";
-import { useGetUserByIdQuery } from "../../../api/fetchUser/fetchUser";
+import { useGetUserByIdQuery } from "../../../api/UserApi/UserApi";
+import useAvatar from "../../../hook/useAvatar";
 const useStyles = createStyles((theme) => ({
   MenuFlex: {
     justifyContent: "space-between",
@@ -46,20 +48,15 @@ const useStyles = createStyles((theme) => ({
       theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.white,
   },
 }));
-function UserIn({ username, id }: UserInterface) {
+function UserIn({ id }: UserInterface) {
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const { classes, theme, cx } = useStyles();
-  const [imageUrl, setImageUrl] = useState("");
-  const { data } = useGetUserByIdQuery(id as string);
 
+  const { data } = useGetUserByIdQuery(id as string);
+  const imageUrl = useAvatar(data ? data : null);
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  useEffect(() => {
-    if (data) {
-      const blob = dataURLToBlob(data.avatar);
-      const url = URL.createObjectURL(blob);
-      setImageUrl(url);
-    }
-  }, [data]);
+
   return (
     <Menu
       width={240}
@@ -92,7 +89,12 @@ function UserIn({ username, id }: UserInterface) {
               overflow: "hidden",
             }}
           >
-            <Avatar src={imageUrl} alt={username} radius="xl" size={30} />
+            <Avatar
+              src={imageUrl}
+              alt={data ? data.username : ""}
+              radius="xl"
+              size={30}
+            />
             <Box w={70}>
               <Text
                 weight={500}
@@ -101,7 +103,7 @@ function UserIn({ username, id }: UserInterface) {
                 mr={3}
                 truncate
               >
-                {username}
+                {data ? data.username : ""}
               </Text>
             </Box>
           </Group>
@@ -111,7 +113,12 @@ function UserIn({ username, id }: UserInterface) {
         <Menu.Label style={{ fontSize: rem(15), fontWeight: 500 }}>
           Settings
         </Menu.Label>
-        <Menu.Item icon={<IconSettings size="0.9rem" stroke={1.5} />}>
+        <Menu.Item
+          icon={<IconSettings size="0.9rem" stroke={1.5} />}
+          onClick={() => {
+            navigate("settingaccount");
+          }}
+        >
           Account settings
         </Menu.Item>
         <Menu.Item icon={<IconSwitchHorizontal size="0.9rem" stroke={1.5} />}>

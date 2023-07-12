@@ -23,7 +23,6 @@ const action = async ({ request }: { request: Request }) => {
       throw json;
     } else {
       localStorage.setItem("id", json.id);
-      localStorage.setItem("username", json.username);
       localStorage.setItem("expires", json.expires);
       return redirect("/");
     }

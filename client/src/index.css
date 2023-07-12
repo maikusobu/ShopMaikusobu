@@ -70,7 +70,7 @@ body {
 .appear {
   transform: translate3d(100px, 0px, -30px);
   opacity: 0;
-  animation: icon-appearing 1s cubic-bezier(0.515, 0.61, 0.71, 1) forwards;
+  animation: icon-appearing 500ms cubic-bezier(0.515, 0.61, 0.71, 1) forwards;
 }
 .appear:hover {
   scale: 1.2;
@@ -91,14 +91,14 @@ body {
   }
 }
 .icon-1 {
-  animation-delay: 0.4s;
+  animation-delay: 0.3s;
 }
 .icon-2 {
-  animation-delay: 0.8s;
+  animation-delay: 0.5s;
 }
 .icon-3 {
-  animation-delay: 1.2s;
+  animation-delay: 0.7s;
 }
 .icon-4 {
-  animation-delay: 1.4s;
+  animation-delay: 0.9s;
 }

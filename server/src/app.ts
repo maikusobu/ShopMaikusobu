@@ -20,9 +20,10 @@ const corsOptions = {
   origin: "*",
 };
 const app: Express = express();
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors(corsOptions));
+
 app.use(morgan("dev"));
 app.use(cookieParser());
 //mongo running

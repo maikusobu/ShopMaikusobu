@@ -1,13 +1,6 @@
 import { redirect } from "react-router-dom";
 import { generatedAvatar } from "../../../Helper/generatedAvatar";
-const blobToDataURL = (blob: Blob) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (e: ProgressEvent<FileReader>) =>
-      resolve(e.target?.result as string);
-    reader.onerror = (e: ProgressEvent<FileReader>) => reject(e);
-    reader.readAsDataURL(blob);
-  });
+import { blobToDataURL } from "../../../Helper/BlobToDataUrl";
 const action = async ({ request }: { request: Request }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const formData = await request.formData();

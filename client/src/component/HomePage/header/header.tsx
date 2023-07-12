@@ -1,15 +1,22 @@
 import { useEffect } from "react";
 import ButtonAutehn from "../ButtonAuthen/ButtonAuthen";
-import { createStyles, Container, Group, Autocomplete } from "@mantine/core";
+import {
+  createStyles,
+  Container,
+  Group,
+  Autocomplete,
+  Loader,
+} from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { selectAuth } from "../../../api/AuthReducer/AuthReduce";
-import { Login } from "../../../api/AuthReducer/AuthReduce";
 import { Helmet } from "react-helmet";
+
 import User from "../user/user";
 import Logo from "../logo/logo";
+import { checkLogin } from "../../../app/thunkDispatch/thunkLogin";
+
 export type UserInterface = {
   id?: string;
-  username?: string;
 };
 const useStyles = createStyles((theme) => ({
   user: {
@@ -39,29 +46,20 @@ const useStyles = createStyles((theme) => ({
     width: "100%",
   },
 }));
-import { IconSearch } from "@tabler/icons-react";
+
 function Header() {
   const { classes } = useStyles();
   const dispatch = useAppDispatch();
   const auth = useAppSelector(selectAuth);
   useEffect(() => {
-    const username = localStorage.getItem("username");
-    const id = localStorage.getItem("id");
-    const expiresAt = localStorage.getItem("expires");
-    if (username && id && expiresAt && !auth.isLoggedIn) {
-      console.log(username, id, expiresAt, Date.now());
-      dispatch(
-        Login({
-          username,
-          id,
-          expiresAt: Number(expiresAt),
-        })
-      );
-    }
+    dispatch<any>(checkLogin());
   }, [dispatch, auth.isLoggedIn]);
-  console.log(auth);
+
   return (
     <Container className={classes.mainSection}>
+      <Helmet>
+        <title>Home</title>
+      </Helmet>
       <Group position="apart" align="center" className={classes.group}>
         <Logo />
         <Autocomplete
@@ -72,7 +70,8 @@ function Header() {
           }}
           className={classes.search}
           placeholder="Search "
-          icon={<IconSearch size="1rem" stroke={2} />}
+          // icon={<IconSearch size="1rem" stroke={2} />}
+          icon={<Loader size="xs" />}
           data={[
             { value: "TV", group: "Bạn vừa search" },
             { value: "Tủ lạnh", group: "Bạn vừa search" },

@@ -1,9 +1,10 @@
-import { UnknownAsyncThunkAction } from "@reduxjs/toolkit/dist/matchers";
+import type { Action } from "@reduxjs/toolkit";
+
 import { RootState } from "./store";
-import { ThunkAction } from "@reduxjs/toolkit";
+import { ThunkAction } from "redux-thunk";
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,
   RootState,
   unknown,
-  UnknownAsyncThunkAction
+  Action<string>
 >;

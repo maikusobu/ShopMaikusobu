@@ -39,7 +39,9 @@ export const signupMiddeware = asyncHandler(
             const errors = Object.values(err.errors).map(
               (error: any) => error.message
             );
-            res.status(400).json({ errors });
+            res.status(400).json({
+              response: { message: errors, status: 400 },
+            });
           } else {
             res.status(500).json({
               response: { message: "Cannot create user", status: 500 },
