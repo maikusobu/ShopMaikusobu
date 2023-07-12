@@ -87,8 +87,12 @@ export default async function getCroppedImg(
 
   // Return as a blob so we can use object url api
   return new Promise((resolve) => {
-    croppedCanvas.toBlob((file) => {
-      return resolve(file);
-    }, "image/jpeg");
+    croppedCanvas.toBlob(
+      (file) => {
+        return resolve(file);
+      },
+      "image/jpeg",
+      0.2
+    );
   });
 }

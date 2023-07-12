@@ -95,6 +95,7 @@ function GeneralInfo() {
       );
 
       dataUrlRef.current = await blobToDataURL(croppedImage as Blob);
+      console.log(dataUrlRef.current.length, ImageRef.current?.src.length);
       const url = URL.createObjectURL(croppedImage as Blob);
       if (ImageRef.current) {
         ImageRef.current.src = url;
