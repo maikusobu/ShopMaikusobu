@@ -15,6 +15,7 @@ function Payment() {
             { value: "bank", label: "Bank" },
           ]}
         />
+        <input />
       </Stack>
     </form>
   );

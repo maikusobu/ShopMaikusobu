@@ -16,29 +16,31 @@ export const userApi = createApi({
       providesTags: ["User"],
     }),
     updateUser: builder.mutation<UserJson, Partial<UserJson>>({
-      query: (user: Partial<UserJson> & Pick<UserJson, "id">) => ({
-        url: `user/update/${user.id}`,
-        method: "PUT",
-        body: user,
-      }),
+      query: (user: Partial<UserJson> & Pick<UserJson, "id">) => {
+        console.log(user);
+        return {
+          url: `user/update/${user.id}`,
+          method: "PUT",
+          body: user,
+        };
+      },
       invalidatesTags: ["User"],
-      // async onQueryStarted(
-      //   { id, ...patch }: Partial<UserJson> & Pick<UserJson, "id">,
-      //   { dispatch, queryFulfilled }
-      // ) {
-      //   const patchResult = dispatch(
-      //     userApi.util.updateQueryData("getUserById", id, (draft: UserJson) => {
-      //       Object.assign(draft, patch);
-      //     })
-      //   );
-      //   try {
-      //     await queryFulfilled;
-      //   } catch (error) {
-      //     console.log(error);
-
-      //     patchResult.undo();
-      //   }
-      // },
+      async onQueryStarted(
+        { id, ...patch }: Partial<UserJson> & Pick<UserJson, "id">,
+        { dispatch, queryFulfilled }
+      ) {
+        const patchResult = dispatch(
+          userApi.util.updateQueryData("getUserById", id, (draft: UserJson) => {
+            Object.assign(draft, patch);
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch (error) {
+          console.log(error);
+          patchResult.undo();
+        }
+      },
     }),
   }),
 });
