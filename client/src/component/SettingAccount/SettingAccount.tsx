@@ -1,20 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Box,
+  Button,
   Container,
-  TextInput,
+  Group,
   Tabs,
-  Avatar,
   Title,
   createStyles,
 } from "@mantine/core";
 import Layout from "../layout/layout";
 import GeneralInfo from "./GeneralInfo";
-import { useEffect } from "react";
+import { useLocation, useMatches } from "react-router";
+import { useEffect, useContext } from "react";
+import { ErrorContext } from "../ErrorContext/ErrorContext";
 import Payment from "./Payment";
-import Address from "./Address";
+import UserAddressForm from "./Address";
 import { useAppDispatch } from "../../app/hooks";
 import { checkLogin } from "../../app/thunkDispatch/thunkLogin";
+import { IconArrowBack } from "@tabler/icons-react";
+
 const useStyles = createStyles(() => ({
   container: {
     height: "100%",
@@ -29,16 +33,27 @@ const useStyles = createStyles(() => ({
 }));
 function SettingAccount() {
   const { classes } = useStyles();
-
+  const { setError } = useContext(ErrorContext);
+  const matches = useMatches();
+  const location = useLocation();
+  console.log(location, "f");
+  console.log(matches);
   const dispatch = useAppDispatch();
   useEffect(() => {
     console.log("parent");
     dispatch<any>(checkLogin());
+    setError({
+      field: "username",
+      message: "username is required",
+    });
   }, [dispatch]);
   return (
     <Layout>
       <Container mx={0} className={classes.container} id="container">
-        <Title order={1}>Account Setting</Title>
+        <Group>
+          <Button leftIcon={<IconArrowBack />}>Back</Button>
+          <Title order={1}>Account Setting</Title>
+        </Group>
         <Tabs
           orientation="vertical"
           variant="pills"
@@ -88,7 +103,7 @@ function SettingAccount() {
               <GeneralInfo />
             </Tabs.Panel>
             <Tabs.Panel value="address">
-              <Address />
+              <UserAddressForm />
             </Tabs.Panel>
             <Tabs.Panel value="payment">
               <Payment />

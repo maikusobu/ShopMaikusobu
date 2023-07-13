@@ -4,7 +4,6 @@ import asynchandle from "express-async-handler";
 import { saveDataURLToFile } from "../../helpers/savedataurl";
 import * as fs from "fs";
 import { dirPath } from "../../helpers/returnUrl";
-import { blobTofile } from "../../helpers/blobtofile";
 export const userMiddleware = asynchandle(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -36,7 +35,6 @@ export const userUpdateMiddleware = asynchandle(
       if (req.body.avatar) {
         saveDataURLToFile(req.body.avatar, req.body.username);
         console.log(req.body.avatar);
-
         delete req.body.avatar;
       }
       const user = await userModel.findByIdAndUpdate(req.params.id, req.body);

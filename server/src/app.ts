@@ -11,6 +11,7 @@ const URL_CLIENT = process.env.URL_CLIENT;
 import authenRouter from "./api/v1/routes/User_management_routes/validation";
 import userRouter from "./api/v1/routes/User_management_routes/user";
 import productRouter from "./api/v1/routes/Product_management_routes/product";
+import paymentrouter from "./api/v1/routes/User_management_routes/userPayment";
 interface HttpError extends Error {
   statusCode?: number;
 }
@@ -21,7 +22,7 @@ const corsOptions = {
 };
 const app: Express = express();
 app.use(cors(corsOptions));
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "5mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(morgan("dev"));
@@ -50,6 +51,7 @@ mongoose.connection.on("disconnected", () => {
 app.use("/authen", authenRouter);
 app.use("/user", userRouter);
 app.use("/products", productRouter);
+app.use("/payment", paymentrouter);
 app.get("/", (req: Request, res: Response) => {
   res.redirect(`${URL_CLIENT}`);
 });
@@ -60,7 +62,8 @@ app.use(
     switch (err.statusCode) {
       case 400:
         res.status(400).json({
-          message: "Bad Request",
+          message: err.message,
+          statusCode: err.statusCode,
         });
         break;
       case 401:

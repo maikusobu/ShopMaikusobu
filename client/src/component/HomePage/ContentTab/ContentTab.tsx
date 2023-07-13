@@ -1,7 +1,22 @@
 import { Tabs } from "@mantine/core";
 import ShoppingContent from "../ShoppingContent/ShoppingContent";
 import { createStyles } from "@mantine/core";
+import { IconCircleArrowDownFilled } from "@tabler/icons-react";
+const useStyles = createStyles(() => ({
+  overlay: {
+    position: "relative",
+    top: "15px",
+    background: "white",
+    filter: "blur(40px)",
+    borderBottomLeftRadius: "50%",
+    borderBottomRightRadius: "50%",
+    width: "100%",
+    // boxShadow: "0px -10px 100px rgba(255, 255, 255, 1)",
+    height: "30px",
+  },
+}));
 function ContentTab() {
+  const { classes } = useStyles();
   return (
     <Tabs
       variant="pills"
@@ -30,6 +45,8 @@ function ContentTab() {
         <ShoppingContent />
       </Tabs.Panel>
       <Tabs.Panel value="social">Social content</Tabs.Panel>
+      <IconCircleArrowDownFilled className="continue-icon" size={40} />
+      <div className={classes.overlay}></div>
     </Tabs>
   );
 }

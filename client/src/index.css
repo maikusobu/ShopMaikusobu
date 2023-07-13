@@ -102,3 +102,22 @@ body {
 .icon-4 {
   animation-delay: 0.9s;
 }
+.continue-icon {
+  position: relative;
+  left: 50%;
+  top: 50px;
+  transform: translateX(-50%);
+  z-index: 20;
+  animation: updown 2s ease infinite;
+}
+@keyframes updown {
+  0% {
+    transform: translateY(-50%);
+  }
+  50% {
+    transform: translateY(50%);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}

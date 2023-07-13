@@ -11,6 +11,7 @@ import {
   ActionIcon,
 } from "@mantine/core";
 import { IconShoppingCartPlus } from "@tabler/icons-react";
+import { lazy } from "react";
 const useStyles = createStyles(() => ({
   root: {
     paddingTop: "3rem",
@@ -39,7 +40,7 @@ function ShoppingContent() {
     <div className={classes.root}>
       <Grid gutter={5} gutterXs="md" gutterMd="xl" gutterXl={45} columns={15}>
         {data?.map((product) => (
-          <Grid.Col span={3} key={product.id}>
+          <Grid.Col span={3} key={product.id} id={product.id}>
             <Box className={classes.BoxRoot}>
               <Card
                 style={{

@@ -16,7 +16,8 @@ import SettingAccount from "./component/SettingAccount/SettingAccount.tsx";
 import Home from "./component/HomePage/Home/Home.tsx";
 import { store } from "./app/store.ts";
 import { Provider } from "react-redux/es/exports";
-
+import "dayjs/locale/vi";
+import { DatesProvider } from "@mantine/dates";
 import "./index.css";
 const router = createBrowserRouter([
   {
@@ -49,7 +50,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "settingaccount",
+    path: "/settingaccount",
     element: <SettingAccount />,
   },
 ]);
@@ -112,8 +113,15 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         withNormalizeCSS
       >
         <ErrorProvider>
-          <Notifications />
-          <RouterProvider router={router}></RouterProvider>
+          <DatesProvider
+            settings={{
+              locale: "vi",
+              firstDayOfWeek: 0,
+            }}
+          >
+            <Notifications />
+            <RouterProvider router={router}></RouterProvider>
+          </DatesProvider>
         </ErrorProvider>
       </MantineProvider>
     </Provider>

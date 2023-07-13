@@ -122,29 +122,29 @@ interface FooterLinksProps {
   }[];
 }
 
-function FooterLinks({ data }: FooterLinksProps) {
+function Footer() {
   const { classes } = useStyles();
 
-  const groups = data.map((group) => {
-    const links = group.links.map((link, index) => (
-      <Text<"a">
-        key={index}
-        className={classes.link}
-        component="a"
-        href={link.link}
-        onClick={(event) => event.preventDefault()}
-      >
-        {link.label}
-      </Text>
-    ));
+  // const groups = data.map((group) => {
+  //   const links = group.links.map((link, index) => (
+  //     <Text<"a">
+  //       key={index}
+  //       className={classes.link}
+  //       component="a"
+  //       href={link.link}
+  //       onClick={(event) => event.preventDefault()}
+  //     >
+  //       {link.label}
+  //     </Text>
+  //   ));
 
-    return (
-      <div className={classes.wrapper} key={group.title}>
-        <Text className={classes.title}>{group.title}</Text>
-        {links}
-      </div>
-    );
-  });
+  //   return (
+  //     <div className={classes.wrapper} key={group.title}>
+  //       <Text className={classes.title}>{group.title}</Text>
+  //       {links}
+  //     </div>
+  //   );
+  // });
 
   return (
     <footer className={classes.footer}>
@@ -152,7 +152,7 @@ function FooterLinks({ data }: FooterLinksProps) {
         <div className={classes.logo}>
           <Logo />
         </div>
-        <div className={classes.groups}>{groups}</div>
+        {/* <div className={classes.groups}>{groups}</div> */}
       </Container>
       <Container className={classes.afterFooter}>
         <Text color="dimmed" size="sm">
@@ -174,3 +174,4 @@ function FooterLinks({ data }: FooterLinksProps) {
     </footer>
   );
 }
+export default Footer;

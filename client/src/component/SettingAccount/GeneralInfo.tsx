@@ -10,6 +10,7 @@ import {
   Slider,
   Portal,
   TextInput,
+  LoadingOverlay,
 } from "@mantine/core";
 import { useGetUserByIdQuery } from "../../api/UserApi/UserApi";
 import type { PixelCropType } from "../../Helper/getCroppedImage";
@@ -20,8 +21,10 @@ import { selectAuth } from "../../api/AuthReducer/AuthReduce";
 import { useUpdateUserMutation } from "../../api/UserApi/UserApi";
 import useAvatar from "../../hook/useAvatar";
 import Cropper from "react-easy-crop";
-import { useState, useRef, useCallback, useEffect } from "react";
+import { ErrorContext } from "../ErrorContext/ErrorContext";
+import { useState, useRef, useCallback, useEffect, useContext } from "react";
 import { IconFileUpload, IconDeviceFloppy } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
 const useStyles = createStyles(() => ({
   cropImageContainer: {
     position: "absolute",
@@ -44,6 +47,7 @@ const useStyles = createStyles(() => ({
     cursor: "pointer",
   },
   formContainer: {
+    position: "relative",
     "& > *": {
       marginTop: "1.5rem",
     },
@@ -57,7 +61,7 @@ function GeneralInfo() {
   const auth = useAppSelector(selectAuth);
 
   const { data } = useGetUserByIdQuery(auth.id, { skip: !auth.isLoggedIn });
-
+  const { error: err } = useContext(ErrorContext);
   const { classes } = useStyles();
   const imageUrl = useAvatar(data ? data : null);
   const [image, setImage] = useState<string | null>(null);
@@ -67,18 +71,20 @@ function GeneralInfo() {
 
   useEffect(() => {
     console.log("children");
+    console.log(err);
     if (data) {
       setFirstname(data.first_name);
       setLastname(data.last_name);
     }
-  }, [data]);
+  }, [data, err]);
   const [lastname, setLastname] = useState<string>(data?.last_name as string);
   const [rotation, setRotation] = useState(0);
   const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState<number>(1);
   const ImageRef = useRef<HTMLImageElement>(null);
   const dataUrlRef = useRef<string | null>(null);
-  const [updateUser, { error }] = useUpdateUserMutation();
+  const [updateUser, { isLoading }] = useUpdateUserMutation();
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<{
     x?: number;
@@ -93,7 +99,6 @@ function GeneralInfo() {
         croppedAreaPixels as PixelCropType,
         rotation
       );
-
       dataUrlRef.current = await blobToDataURL(croppedImage as Blob);
       console.log(dataUrlRef.current.length, ImageRef.current?.src.length);
       const url = URL.createObjectURL(croppedImage as Blob);
@@ -142,11 +147,25 @@ function GeneralInfo() {
     console.log(dataUrlRef.current);
 
     const dataObject = Object.fromEntries(formData);
-    console.log(dataObject);
+
     updateUser(dataObject)
       .unwrap()
-      .then((res) => {
-        console.log(res.avatar === dataUrlRef.current);
+      .then(() => {
+        notifications.show({
+          id: "hello-there",
+          withCloseButton: true,
+          onClose: () => console.log("unmounted"),
+          onOpen: () => console.log("mounted"),
+          autoClose: 2000,
+          title: "Succes",
+          message: "Save info succesfully",
+          color: "green",
+
+          className: "my-notification-class",
+          style: { backgroundColor: "green" },
+          sx: { backgroundColor: "green" },
+          loading: false,
+        });
       })
       .catch((err) => console.log(err, "fdd"));
   };
@@ -154,7 +173,14 @@ function GeneralInfo() {
   return (
     <>
       <form className={classes.formContainer} onSubmit={handleSubmit}>
+        <LoadingOverlay
+          loaderProps={{ size: "sm", color: "pink", variant: "bars" }}
+          overlayOpacity={0.8}
+          overlayColor="#c5c5c5"
+          visible={isLoading}
+        />
         <Title order={4}>Your General Information</Title>
+
         <Group>
           <Avatar
             src={imageUrl}

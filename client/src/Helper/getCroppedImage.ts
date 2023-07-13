@@ -92,7 +92,7 @@ export default async function getCroppedImg(
         return resolve(file);
       },
       "image/jpeg",
-      0.2
+      1
     );
   });
 }

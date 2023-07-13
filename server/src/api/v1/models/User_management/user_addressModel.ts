@@ -6,17 +6,6 @@ const UserAddress = new Schema({
   address_line1: { type: String, required: true },
   address_line2: { type: String },
   city: { type: String, required: true },
-  postal_code: {
-    type: String,
-    required: true,
-    validate: {
-      validator: function (v: string) {
-        return /^\d{5}(-\d{4})?$/.test(v);
-      },
-      message: (props: ValidatorProps) =>
-        `${props.value} is not a valid US ZIP code.`,
-    },
-  },
   country: { type: String, default: "VN" },
 });
 

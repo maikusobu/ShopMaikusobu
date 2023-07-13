@@ -2,6 +2,7 @@ import Layout from "../../layout/layout";
 import Header from "../header/header";
 import Content from "../Content/Content";
 import { Helmet } from "react-helmet";
+import Footer from "../Footer/Footer";
 function Home() {
   return (
     <Layout>
@@ -10,6 +11,7 @@ function Home() {
       </Helmet>
       <Header />
       <Content />
+      <Footer />
     </Layout>
   );
 }
