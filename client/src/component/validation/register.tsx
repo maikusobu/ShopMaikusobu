@@ -49,14 +49,14 @@ function Register() {
   const navigation = useNavigation();
   const navigate = useNavigate();
   const [popoverOpened, setPopoverOpened] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-debugger
   const form = useForm({
     initialValues: {
-      username: objectError?.data.username || "",
-      email: objectError?.data.email || "",
-      first_name: objectError?.data.first_name || "",
-      last_name: objectError?.data.last_name || "",
-      password: objectError?.data.password || "",
+      username: objectError?.data?.username || "",
+      email: objectError?.data?.email || "",
+      first_name: objectError?.data?.first_name || "",
+      last_name: objectError?.data?.last_name || "",
+      password: objectError?.data?.password || "",
       passwordConfirm: "",
     },
     validate: {

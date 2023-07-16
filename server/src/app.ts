@@ -12,6 +12,8 @@ import authenRouter from "./api/v1/routes/User_management_routes/validation";
 import userRouter from "./api/v1/routes/User_management_routes/user";
 import productRouter from "./api/v1/routes/Product_management_routes/product";
 import paymentrouter from "./api/v1/routes/User_management_routes/userPayment";
+import ShoppingRouter from "./api/v1/routes/Shopping_process_routes/shopping_sesssion";
+import CartItemRouter from "./api/v1/routes/Shopping_process_routes/cart_item";
 interface HttpError extends Error {
   statusCode?: number;
 }
@@ -52,10 +54,13 @@ app.use("/authen", authenRouter);
 app.use("/user", userRouter);
 app.use("/products", productRouter);
 app.use("/payment", paymentrouter);
+app.use("/shopping", ShoppingRouter);
+app.use("/cart-item", CartItemRouter);
 app.get("/", (req: Request, res: Response) => {
+  console.log(URL_CLIENT);
   res.redirect(`${URL_CLIENT}`);
 });
-
+console.log("fff");
 // error handling
 app.use(
   (err: HttpError, req: Request, res: Response, next: NextFunction): void => {

@@ -59,9 +59,7 @@ const useStyles = createStyles(() => ({
 function GeneralInfo() {
   const [, setFile] = useState<File | null>(null);
   const auth = useAppSelector(selectAuth);
-
   const { data } = useGetUserByIdQuery(auth.id, { skip: !auth.isLoggedIn });
-  const { error: err } = useContext(ErrorContext);
   const { classes } = useStyles();
   const imageUrl = useAvatar(data ? data : null);
   const [image, setImage] = useState<string | null>(null);
@@ -71,12 +69,11 @@ function GeneralInfo() {
 
   useEffect(() => {
     console.log("children");
-    console.log(err);
     if (data) {
       setFirstname(data.first_name);
       setLastname(data.last_name);
     }
-  }, [data, err]);
+  }, [data]);
   const [lastname, setLastname] = useState<string>(data?.last_name as string);
   const [rotation, setRotation] = useState(0);
   const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });

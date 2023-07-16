@@ -14,6 +14,7 @@ import ChangePassWord from "./component/validation/changePassword.tsx";
 import { Notifications } from "@mantine/notifications";
 import SettingAccount from "./component/SettingAccount/SettingAccount.tsx";
 import Home from "./component/HomePage/Home/Home.tsx";
+import { ModalProVider } from "./component/ModalContext/ModalContext.tsx";
 import { store } from "./app/store.ts";
 import { Provider } from "react-redux/es/exports";
 import "dayjs/locale/vi";
@@ -113,15 +114,17 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         withNormalizeCSS
       >
         <ErrorProvider>
-          <DatesProvider
-            settings={{
-              locale: "vi",
-              firstDayOfWeek: 0,
-            }}
-          >
-            <Notifications />
-            <RouterProvider router={router}></RouterProvider>
-          </DatesProvider>
+          <ModalProVider>
+            <DatesProvider
+              settings={{
+                locale: "vi",
+                firstDayOfWeek: 0,
+              }}
+            >
+              <Notifications />
+              <RouterProvider router={router}></RouterProvider>
+            </DatesProvider>
+          </ModalProVider>
         </ErrorProvider>
       </MantineProvider>
     </Provider>

@@ -21,11 +21,21 @@ import { useNavigate } from "react-router-dom";
 import type { UserInterface } from "../header/header";
 import { useState, useEffect } from "react";
 import { useAppDispatch } from "../../../app/hooks";
-import { dataURLToBlob } from "../../../Helper/UrlToObject";
+import CartHover from "../CartHover/CartHover";
 import { Logout } from "../../../api/AuthReducer/AuthReduce";
 import { useGetUserByIdQuery } from "../../../api/UserApi/UserApi";
 import useAvatar from "../../../hook/useAvatar";
 const useStyles = createStyles((theme) => ({
+  IconContainer: {
+    width: rem(60),
+    height: rem(40),
+    display: "flex",
+    justifyContent: "center",
+    padding: "2px 4px",
+    alignItems: "center",
+    cursor: "pointer",
+    border: "5px solid whtie !important",
+  },
   MenuFlex: {
     justifyContent: "space-between",
   },
@@ -51,12 +61,18 @@ const useStyles = createStyles((theme) => ({
 function UserIn({ id }: UserInterface) {
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const { classes, theme, cx } = useStyles();
-
+  // const { isHovered, ref, handleMouseEnter, handleMouseLeave } = useHoverRef();
+  const [isHovered, setIsHovered] = useState(false);
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
   const { data } = useGetUserByIdQuery(id as string);
   const imageUrl = useAvatar(data ? data : null);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-
   return (
     <Menu
       width={240}
@@ -66,15 +82,23 @@ function UserIn({ id }: UserInterface) {
       onOpen={() => setUserMenuOpened(true)}
       withinPortal
     >
-      <Group spacing={8} position="left" noWrap>
-        <IconCash size="1.25rem" color={theme.colors.green[6]} stroke={1.5} />
-        <IconGardenCart
-          size="1.25rem"
-          color={theme.colors.red[6]}
-          stroke={1.5}
-        />
+      <Group spacing={20} position="left" noWrap>
+        <div
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          className={classes.IconContainer}
+        >
+          <IconGardenCart size="2rem" stroke={1.5} />
+        </div>
         <IconMessage size="1.25rem" color={theme.colors.blue[6]} stroke={1.5} />
       </Group>
+      {
+        <CartHover
+          isHovered={isHovered}
+          handleMouseEnter={handleMouseEnter}
+          handleMouseLeave={handleMouseLeave}
+        />
+      }
       <Menu.Target>
         <UnstyledButton
           p={0}

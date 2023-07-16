@@ -42,16 +42,19 @@ function SettingAccount() {
   useEffect(() => {
     console.log("parent");
     dispatch<any>(checkLogin());
-    setError({
-      field: "username",
-      message: "username is required",
-    });
   }, [dispatch]);
   return (
     <Layout>
       <Container mx={0} className={classes.container} id="container">
         <Group>
-          <Button leftIcon={<IconArrowBack />}>Back</Button>
+          <Button
+            leftIcon={<IconArrowBack />}
+            onClick={() => {
+              history.back();
+            }}
+          >
+            Back
+          </Button>
           <Title order={1}>Account Setting</Title>
         </Group>
         <Tabs

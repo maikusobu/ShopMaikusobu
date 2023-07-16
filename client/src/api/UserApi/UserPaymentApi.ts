@@ -24,7 +24,7 @@ export const paymentUserApi = createApi({
       ) => {
         return {
           url: `payment/${payment.user_id}`,
-          method: "PUT",
+          method: "PATCH",
           body: payment,
         };
       },

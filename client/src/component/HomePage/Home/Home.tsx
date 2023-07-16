@@ -6,9 +6,9 @@ import Footer from "../Footer/Footer";
 function Home() {
   return (
     <Layout>
-      <Helmet>
+      {/* <Helmet>
         <title>ShopMaikusobu</title>
-      </Helmet>
+      </Helmet> */}
       <Header />
       <Content />
       <Footer />

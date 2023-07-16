@@ -20,7 +20,7 @@ export const userApi = createApi({
         console.log(user);
         return {
           url: `user/update/${user.id}`,
-          method: "PUT",
+          method: "PATCH",
           body: user,
         };
       },

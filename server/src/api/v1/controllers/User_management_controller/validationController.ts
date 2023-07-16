@@ -4,7 +4,9 @@ import { saveDataURLToFile } from "../../helpers/savedataurl";
 import { generateToken } from "../../validations/generateToken";
 import asyncHandler from "express-async-handler";
 import userModel from "../../models/User_management/userModel";
+import shopping_session from "../../models/Shopping_process/shopping_session";
 import checkUser from "../../validations/checkPassWord";
+
 export const signupMiddeware = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -29,7 +31,13 @@ export const signupMiddeware = asyncHandler(
           req.body.password = hash;
           saveDataURLToFile(req.body.avatar, req.body.username);
           delete req.body.avatar;
-          await userModel.create(req.body);
+
+          const userMade = new userModel(req.body);
+          await userMade.save();
+          await shopping_session.create({
+            user_id: userMade._id,
+            cart_items: [],
+          });
           res.status(201).json({
             response: { message: "User created successfully", status: 201 },
           });
@@ -50,7 +58,7 @@ export const signupMiddeware = asyncHandler(
         }
       }
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 );

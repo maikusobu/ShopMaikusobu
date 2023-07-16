@@ -1,15 +1,14 @@
 import { createContext, useState } from "react";
-import type { User } from "../../Types/User";
+
 export type ErrorContextType = {
   message: string;
-  field: string;
 };
 
 type ErrorContextValue = {
-  data: User | null;
+  data: string | null;
   error: ErrorContextType | null;
   setError: (error: ErrorContextType | null) => void;
-  setData: (data: User | null) => void;
+  setData: (data: string | null) => void;
 };
 
 export const ErrorContext = createContext<ErrorContextValue>({
@@ -23,7 +22,7 @@ export const ErrorContext = createContext<ErrorContextValue>({
 
 const ErrorProvider = ({ children }: { children: React.ReactNode }) => {
   // eslint-disable-next-line prefer-const
-  const [data, setData] = useState<User | null>(null);
+  const [data, setData] = useState<string | null>(null);
   const [error, setError] = useState<ErrorContextType | null>(null);
 
   return (

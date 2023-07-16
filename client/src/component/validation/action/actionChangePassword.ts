@@ -1,5 +1,5 @@
 import { actionGenerator } from "./actionGenerator";
 const urlRequest = "authen/changepassword";
 const urlRedirect = "authen/login";
-const action = actionGenerator(urlRequest, urlRedirect, "PUT");
+const action = actionGenerator(urlRequest, urlRedirect, "PATCH");
 export default action;

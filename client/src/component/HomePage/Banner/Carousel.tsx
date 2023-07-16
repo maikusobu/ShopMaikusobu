@@ -89,7 +89,6 @@ function CarouselBanner() {
         <Carousel.Slide key={index}>
           <CardBanner
             color={item.color}
-            key={index}
             title={item.title}
             image={item.image}
             content={item.content}

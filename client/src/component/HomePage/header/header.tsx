@@ -28,6 +28,8 @@ const useStyles = createStyles((theme) => ({
     transform: "translateX(-40px)",
   },
   mainSection: {
+    position: "relative",
+    zIndex: 9999,
     paddingTop: theme.spacing.sm,
     paddingBottom: 0,
     margin: 0,
@@ -57,9 +59,9 @@ function Header() {
 
   return (
     <Container className={classes.mainSection}>
-      <Helmet>
+      {/* <Helmet>
         <title>Home</title>
-      </Helmet>
+      </Helmet> */}
       <Group position="apart" align="center" className={classes.group}>
         <Logo />
         <Autocomplete

@@ -4,6 +4,7 @@ import asynchandle from "express-async-handler";
 import { saveDataURLToFile } from "../../helpers/savedataurl";
 import * as fs from "fs";
 import { dirPath } from "../../helpers/returnUrl";
+
 export const userMiddleware = asynchandle(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -37,7 +38,9 @@ export const userUpdateMiddleware = asynchandle(
         console.log(req.body.avatar);
         delete req.body.avatar;
       }
-      const user = await userModel.findByIdAndUpdate(req.params.id, req.body);
+      const user = await userModel.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+      });
       if (!user) {
         throw new Error("User not found");
       }

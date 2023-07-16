@@ -5,6 +5,6 @@ import {
 } from "../../controllers/User_management_controller/user_paymentControll";
 const Router = express.Router();
 Router.get("/:id", getUserPayment);
-Router.put("/:id", upsertUserPayment);
+Router.patch("/:id", upsertUserPayment);
 
 export default Router;

@@ -10,5 +10,5 @@ const router = express.Router();
 router.post("/login", signinMiddeware);
 router.post("/signup", signupMiddeware);
 router.post("/forgotpassword", forgotPasswordMiddeware);
-router.put("/changepassword", changePasswordMiddeware);
+router.patch("/changepassword", changePasswordMiddeware);
 export default router;

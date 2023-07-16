@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
-type ProductType = {
-  id: string;
+export type ProductType = {
+  _id: string;
   image: string[];
   amountPurchased: number;
   name?: string;

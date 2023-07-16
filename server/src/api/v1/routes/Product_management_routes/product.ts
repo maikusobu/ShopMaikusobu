@@ -3,7 +3,7 @@ import {
   productGetAllMiddleware,
   productGetByIdMiddleware,
   productGetTrendingMiddleware,
-} from "../../controllers/Product_manage_controller/productController";
+} from "../../controllers/Product_management_controller/productController";
 const router = express.Router();
 router.get("/all", productGetAllMiddleware);
 router.get("/trending", productGetTrendingMiddleware);
