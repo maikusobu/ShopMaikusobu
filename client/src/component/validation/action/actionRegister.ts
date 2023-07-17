@@ -31,12 +31,11 @@ const action = async ({ request }: { request: Request }) => {
       throw json;
     } else {
       notifications.show({
-        id: "hello-there",
-        withCloseButton: true,
+        id: "register",
+        withCloseButton: false,
         onClose: () => console.log("unmounted"),
         onOpen: () => console.log("mounted"),
         autoClose: 2000,
-        title: "Login success",
         message: "You have successfully registered",
         color: "white",
         style: { backgroundColor: "green" },

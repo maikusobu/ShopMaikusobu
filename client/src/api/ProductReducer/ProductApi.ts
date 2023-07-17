@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
+import { baseApi } from "../BaseApi/baseApi";
 export type ProductType = {
   _id: string;
   image: string[];
@@ -6,15 +6,16 @@ export type ProductType = {
   name?: string;
   desc?: string;
   SKU?: string;
-  price?: number;
-  category_id?: string;
-  discount_id?: string;
+  price: number;
+  category_id: string;
+  discount_id?: discountType;
   inventory_id?: string;
 };
-export const productApi = createApi({
-  reducerPath: "productApi",
-  baseQuery: fetchBaseQuery({ baseUrl: `${import.meta.env.VITE_SERVER}` }),
-  tagTypes: ["Product"],
+type discountType = {
+  active: boolean;
+  discount_percent: number;
+};
+export const productApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllProduct: builder.query<ProductType[], void>({
       query: () => `/products/all`,

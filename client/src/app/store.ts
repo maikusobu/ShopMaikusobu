@@ -3,29 +3,17 @@ import AuthReducer from "../api/AuthReducer/AuthReduce";
 import { AuthMiddleware } from "../middleware/AuthMiddleware";
 import { combineReducers } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
-import { userApi } from "../api/UserApi/UserApi";
-import { productApi } from "../api/ProductReducer/ProductApi";
-import { paymentUserApi } from "../api/UserApi/UserPaymentApi";
-import { cartApi } from "../api/CartReducer/CartApi";
-import { shoppingApi } from "../api/ShoppingSessionApi/ShoppingSessionApi";
+import { baseApi } from "../api/BaseApi/baseApi";
 import { ErrorLogger } from "../middleware/ErrorLogger";
 const rootReducer = combineReducers({
   auth: AuthReducer,
-  [userApi.reducerPath]: userApi.reducer,
-  [productApi.reducerPath]: productApi.reducer,
-  [paymentUserApi.reducerPath]: paymentUserApi.reducer,
-  [shoppingApi.reducerPath]: shoppingApi.reducer,
-  [cartApi.reducerPath]: cartApi.reducer,
+  [baseApi.reducerPath]: baseApi.reducer,
 });
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) => [
     ...getDefaultMiddleware(),
-    userApi.middleware,
-    productApi.middleware,
-    paymentUserApi.middleware,
-    cartApi.middleware,
-    shoppingApi.middleware,
+    baseApi.middleware,
     AuthMiddleware,
     ErrorLogger,
   ],

@@ -13,7 +13,7 @@ import imageFace from "../../../assets/1553857671.svg";
 import { useGetShoppingSessionQuery } from "../../../api/ShoppingSessionApi/ShoppingSessionApi";
 import { selectAuth } from "../../../api/AuthReducer/AuthReduce";
 import { useAppSelector } from "../../../app/hooks";
-import { IconX, IconTrash } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 const usestyles = createStyles((theme) => ({
   root: {
     boxSizing: "border-box",
@@ -128,10 +128,11 @@ function CartHover({
 }: CartHoverProps) {
   const { classes } = usestyles();
   const auth = useAppSelector(selectAuth);
-  const { data } = useGetShoppingSessionQuery(auth.id, {
+  const navigate = useNavigate();
+  const { data, isLoading, isFetching } = useGetShoppingSessionQuery(auth.id, {
     skip: !auth.isLoggedIn,
   });
-  console.log(data);
+  console.log(isFetching, isLoading);
   return (
     <Paper
       className={classes.root}
@@ -204,7 +205,13 @@ function CartHover({
                 </li>
               ))}
             </ul>
-            <Button color="gray" mt="lg">
+            <Button
+              color="gray"
+              mt="lg"
+              onClick={() => {
+                navigate("/cart");
+              }}
+            >
               View my cart
             </Button>
           </>

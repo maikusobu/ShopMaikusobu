@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { baseApi } from "../BaseApi/baseApi";
 export type UserJson = {
   avatar: string;
   first_name: string;
@@ -6,10 +6,7 @@ export type UserJson = {
   username: string;
   id: string;
 };
-export const userApi = createApi({
-  reducerPath: "userApi",
-  baseQuery: fetchBaseQuery({ baseUrl: `${import.meta.env.VITE_SERVER}` }),
-  tagTypes: ["User"],
+export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getUserById: builder.query<UserJson, string>({
       query: (id: string) => `user/${id}`,

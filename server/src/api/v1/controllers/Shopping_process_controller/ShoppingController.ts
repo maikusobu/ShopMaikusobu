@@ -12,6 +12,9 @@ export const getShoppingSession = expressAsyncHandler(
           path: "cart_items",
           populate: {
             path: "product_id",
+            populate: {
+              path: "discount_id",
+            },
           },
         });
       shopping_session_data?.cart_items;
@@ -63,7 +66,7 @@ export const updateShoppingSession = expressAsyncHandler(
         }
       );
     } catch (error: any) {
-      next(error);
+      return next(error);
     }
   }
 );
@@ -72,7 +75,7 @@ export const updateCartItem = expressAsyncHandler(
     try {
       const { CartItemId } = req.body;
       const shopping_session_data = await shopping_session.findOneAndUpdate(
-        { user_id: req.params.id},
+        { user_id: req.params.id },
         {
           $addToSet: {
             cart_items: {
@@ -86,7 +89,8 @@ export const updateCartItem = expressAsyncHandler(
         data: shopping_session_data,
       });
     } catch (error: any) {
-      next(error);
+      console.log(error);
+      return next(error);
     }
   }
 );

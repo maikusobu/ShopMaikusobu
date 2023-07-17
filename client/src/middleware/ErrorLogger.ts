@@ -15,7 +15,7 @@ export const ErrorLogger: Middleware =
         onOpen: () => console.log("mounted"),
         autoClose: 5000,
         title: "Fetching async bị lỗi",
-        message: action.error.data.message,
+        message: action.error.message,
         color: "red",
       });
     }

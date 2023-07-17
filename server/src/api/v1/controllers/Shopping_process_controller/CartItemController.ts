@@ -50,7 +50,7 @@ export const updateCartItem = expressAsyncHandler(
       const cartItem = await cart_itemModel.findOneAndUpdate(
         { product_id },
         { quantity },
-        { new: true }
+        { new: true, runValidators: true }
       );
       if (!cartItem) {
         throw new Error("Cart item not found");
@@ -60,7 +60,8 @@ export const updateCartItem = expressAsyncHandler(
         data: cartItem,
       });
     } catch (error) {
-      next(error);
+      console.log(error);
+      return next(error);
     }
   }
 );

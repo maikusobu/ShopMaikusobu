@@ -8,12 +8,13 @@ import {
   Group,
   Text,
   Stack,
-  ActionIcon,
+  Indicator,
   Button,
 } from "@mantine/core";
 import { useContext } from "react";
 import { ModalContext } from "../../ModalContext/ModalContext";
 import { useAppSelector } from "../../../app/hooks";
+import { MathFunction } from "../../../Helper/MathFunction";
 import { selectAuth } from "../../../api/AuthReducer/AuthReduce";
 import { IconShoppingCartPlus } from "@tabler/icons-react";
 import { ErrorContext } from "../../ErrorContext/ErrorContext";
@@ -43,7 +44,7 @@ function ShoppingContent() {
   const [updateCartItem] = useUpdateCartItemMutation();
   const [createCart] = useCreateCartMutation();
   const auth = useAppSelector(selectAuth);
-
+  console.log(data);
   const handleAddCartItem = (productId: string) => {
     createCart({ product_id: productId, quantity: 1 })
       .unwrap()
@@ -77,55 +78,88 @@ function ShoppingContent() {
       <Grid gutter={5} gutterXs="md" gutterMd="xl" gutterXl={45} columns={15}>
         {data?.map((product) => (
           <Grid.Col span={3} key={product._id} id={product._id}>
-            <Box id={product._id}>
-              <Card
-                style={{
-                  padding: "9px",
-                }}
-              >
-                <Card.Section
+            <Indicator
+              size={16}
+              offset={12}
+              position="top-end"
+              styles={(theme) => ({
+                indicator: {
+                  top: "6px !important",
+                  backgroundColor: theme.colors.brandcolorRed[0],
+                },
+              })}
+              disabled={product.discount_id?.active ? false : true}
+              label="Sale off"
+            >
+              <Box id={product._id}>
+                <Card
                   style={{
-                    overflow: "hidden",
+                    padding: "9px",
                   }}
                 >
-                  <Image
-                    src={product.image[0]}
-                    alt={product.name}
-                    className={classes.BoxRoot}
-                  />
-                </Card.Section>
-
-                <Text
-                  weight={300}
-                  fz={14}
-                  sx={{
-                    marginTop: "1rem",
-                    height: "2rem",
-                    marginBottom: "0.2rem",
-                  }}
-                >
-                  {product.name}
-                </Text>
-                <Text size={15} weight={400}>
-                  ${product.price}
-                </Text>
-                <div>
-                  <Stack spacing={4} mt="xs">
-                    <Text underline>Số lượng đã bán:</Text>
-                    {product.amountPurchased}
-                  </Stack>
-                </div>
-                <Group position="center" grow spacing={50} mt="xl">
-                  <Button
-                    variant="light"
-                    leftIcon={<IconShoppingCartPlus />}
-                    onClick={() => handleAddCartItem(product._id)}
+                  <Card.Section
+                    style={{
+                      overflow: "hidden",
+                    }}
                   >
-                    Add Card
-                  </Button>
-                </Group>
-              </Card>
-            </Box>
+                    <Image
+                      src={product.image[0]}
+                      alt={product.name}
+                      className={classes.BoxRoot}
+                    />
+                  </Card.Section>
+
+                  <Text
+                    weight={300}
+                    fz={13}
+                    sx={{
+                      marginTop: "1rem",
+                      height: "2rem",
+                      marginBottom: "0.2rem",
+                    }}
+                  >
+                    {product.name}
+                  </Text>
+                  <Group>
+                    <Text
+                      size={15}
+                      weight={400}
+                      strikethrough={product.discount_id?.active ? true : false}
+                    >
+                      ${product.price}
+                    </Text>
+                    {product.discount_id?.active && (
+                      <Text size={15} weight={400}>
+                        {" "}
+                        $
+                        {
+                          MathFunction(
+                            product.price as number,
+                            product.discount_id?.discount_percent ?? 1
+                          ) as number
+                        }
+                      </Text>
+                    )}
+                  </Group>
+
+                  <div>
+                    <Stack spacing={4}>
+                      <Text underline>Số lượng đã bán:</Text>
+                      {product.amountPurchased}
+                    </Stack>
+                  </div>
+                  <Group position="center" grow spacing={50} mt="10px">
+                    <Button
+                      variant="light"
+                      leftIcon={<IconShoppingCartPlus />}
+                      onClick={() => handleAddCartItem(product._id)}
+                    >
+                      Add Card
+                    </Button>
+                  </Group>
+                </Card>
+              </Box>
+            </Indicator>
           </Grid.Col>
         ))}
       </Grid>

@@ -11,7 +11,7 @@ import {
   IconBrandYoutube,
   IconBrandInstagram,
 } from "@tabler/icons-react";
-import Logo from "../logo/logo";
+import Logo from "../../logo/logo";
 
 const useStyles = createStyles((theme) => ({
   footer: {

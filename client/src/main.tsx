@@ -13,6 +13,7 @@ import actionRestorePassword from "./component/validation/action/actionrestorePa
 import ChangePassWord from "./component/validation/changePassword.tsx";
 import { Notifications } from "@mantine/notifications";
 import SettingAccount from "./component/SettingAccount/SettingAccount.tsx";
+import CartPage from "./component/CartComponent/CartPage/CartPage.tsx";
 import Home from "./component/HomePage/Home/Home.tsx";
 import { ModalProVider } from "./component/ModalContext/ModalContext.tsx";
 import { store } from "./app/store.ts";
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
         action: actionChangePassword,
       },
     ],
+  },
+  {
+    path: "/cart",
+    element: <CartPage />,
   },
   {
     path: "/settingaccount",

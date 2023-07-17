@@ -8,15 +8,14 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const MONGO_URL = process.env.MONGO_URL;
 const URL_CLIENT = process.env.URL_CLIENT;
+import { ErrorFunction } from "./api/v1/middlewares/errorHandling";
 import authenRouter from "./api/v1/routes/User_management_routes/validation";
 import userRouter from "./api/v1/routes/User_management_routes/user";
 import productRouter from "./api/v1/routes/Product_management_routes/product";
 import paymentrouter from "./api/v1/routes/User_management_routes/userPayment";
 import ShoppingRouter from "./api/v1/routes/Shopping_process_routes/shopping_sesssion";
 import CartItemRouter from "./api/v1/routes/Shopping_process_routes/cart_item";
-interface HttpError extends Error {
-  statusCode?: number;
-}
+
 //config express
 require("dotenv").config();
 const corsOptions = {
@@ -62,37 +61,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 console.log("fff");
 // error handling
-app.use(
-  (err: HttpError, req: Request, res: Response, next: NextFunction): void => {
-    switch (err.statusCode) {
-      case 400:
-        res.status(400).json({
-          message: err.message,
-          statusCode: err.statusCode,
-        });
-        break;
-      case 401:
-        res.status(401).json({
-          message: "Unauthorized",
-        });
-        break;
-      case 403:
-        res.status(403).json({
-          message: "Forbidden",
-        });
-        break;
-      case 404:
-        res.status(404).json({
-          message: "Not Found",
-        });
-        break;
-      default:
-        res.status(500).json({
-          message: "Internal Server Error",
-        });
-    }
-  }
-);
+app.use(ErrorFunction);
 
 const port = process.env.PORT || 3001;
 app.listen(port, () => {

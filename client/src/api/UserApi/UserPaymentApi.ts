@@ -1,14 +1,11 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { baseApi } from "../BaseApi/baseApi";
 type UserPaymentModel = {
   user_id: string;
   payment_type: "credit" | "debit" | "paypal" | "bank";
   card_number: number;
   expire: string;
 };
-export const paymentUserApi = createApi({
-  reducerPath: "paymentUserApi",
-  baseQuery: fetchBaseQuery({ baseUrl: `${import.meta.env.VITE_SERVER}` }),
-  tagTypes: ["Payment"],
+export const paymentUserApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getUserPaymentById: builder.query<UserPaymentModel, string>({
       query: (id: string) => `payment/${id}`,
