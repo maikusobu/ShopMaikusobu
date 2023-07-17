@@ -17,7 +17,8 @@ export const getShoppingSession = expressAsyncHandler(
             },
           },
         });
-      shopping_session_data?.cart_items;
+
+      console.log(shopping_session_data);
       if (!shopping_session_data) {
         throw new Error("Shopping session not found");
       }
@@ -30,46 +31,33 @@ export const getShoppingSession = expressAsyncHandler(
     }
   }
 );
-export const updateShoppingSession = expressAsyncHandler(
+export const updateDelete = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { CartItemId } = req.body;
-
     try {
-      shopping_session.findOne(
+      const { CartItemId } = req.body;
+      console.log(req.body, req.params);
+      const shopping_session_data = await shopping_session.findOneAndUpdate(
         { user_id: req.params.id },
-        (err: any, data: any) => {
-          if (err) {
-            throw new Error(err.message);
-          }
-          if (data) {
-            shopping_session.updateOne(
-              {
-                $pull: {
-                  cart_items: {
-                    _id: CartItemId,
-                  },
-                },
-              },
-              function (error: any, result: any) {
-                if (error) {
-                  throw new Error(error.message);
-                }
-                if (result) {
-                  res.status(200).json({
-                    message: "Item removed from cart",
-                    data: result,
-                  });
-                }
-              }
-            );
-          }
+        {
+          $pull: {
+            cart_items: CartItemId,
+          },
+        },
+        {
+          new: true,
         }
       );
+      res.status(200).json({
+        message: "Item removed from cart",
+        data: shopping_session_data,
+      });
     } catch (error: any) {
+      console.log(error);
       return next(error);
     }
   }
 );
+
 export const updateCartItem = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -82,6 +70,9 @@ export const updateCartItem = expressAsyncHandler(
               _id: CartItemId,
             },
           },
+        },
+        {
+          new: true,
         }
       );
       res.status(200).json({

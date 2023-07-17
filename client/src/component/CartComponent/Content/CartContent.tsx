@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import { IconTrash } from "@tabler/icons-react";
 import { useGetShoppingSessionQuery } from "../../../api/ShoppingSessionApi/ShoppingSessionApi";
+import { useUpdateDeleteCartItemMutation } from "../../../api/ShoppingSessionApi/ShoppingSessionApi";
 import { useAppSelector } from "../../../app/hooks";
 import { selectAuth } from "../../../api/AuthReducer/AuthReduce";
 import InputQuantity from "../InputQuantity/InputQuantity";
@@ -53,6 +54,7 @@ function CartContent() {
   const auth = useAppSelector(selectAuth);
   const [idFetching, setIdFetching] = useState<string>("");
   const [deleteCart] = useDeleteCartMutation();
+  const [updateDeleteCartItem] = useUpdateDeleteCartItemMutation();
   const { data, isLoading, isFetching, refetch } = useGetShoppingSessionQuery(
     auth.id,
     {
@@ -125,7 +127,13 @@ function CartContent() {
                   </Group>
                   <ActionIcon
                     onClick={() => {
-                      deleteCart({ product_id: cart_item.product_id._id });
+                      updateDeleteCartItem({
+                        CartItemId: cart_item._id,
+                        id: auth.id,
+                      })
+                        .unwrap()
+                        .then((res) => console.log(res))
+                        .catch((err) => console.log(err));
                     }}
                   >
                     <IconTrash color="black" />

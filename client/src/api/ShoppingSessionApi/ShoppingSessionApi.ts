@@ -1,6 +1,7 @@
 import { baseApi } from "../BaseApi/baseApi";
 import type { ProductType } from "../ProductReducer/ProductApi";
 type CartItemType = {
+  _id?: string;
   product_id?: string;
   quantity?: number;
 };
@@ -12,6 +13,7 @@ type CartResponse = {
   data: CartType;
 };
 type cart_item = {
+  _id: string;
   product_id: ProductType;
   quantity: number;
 };
@@ -31,7 +33,7 @@ export const shoppingApi = baseApi.injectEndpoints({
     }),
     updateCartItem: builder.mutation<ShoppingSessionType, shoppingType>({
       query: ({ id, CartItemId }: shoppingType) => ({
-        url: `shopping/update-cart-item/${id}`,
+        url: `/shopping/update-cart-item/${id}`,
         method: "PATCH",
         body: { CartItemId },
       }),
@@ -39,27 +41,11 @@ export const shoppingApi = baseApi.injectEndpoints({
     }),
     updateDeleteCartItem: builder.mutation<ShoppingSessionType, shoppingType>({
       query: ({ id, CartItemId }: shoppingType) => ({
-        url: `shopping/update-delete/${id}`,
+        url: `/shopping/update-delete/${id}`,
         method: "PATCH",
         body: { CartItemId },
-        invalidatesTags: ["Shopping"],
       }),
-    }),
-    updateCart: builder.mutation<CartResponse, CartItemType>({
-      query: (data: CartItemType) => ({
-        url: "/cart-item/update",
-        method: "PATCH",
-        body: data,
-        invalidatesTags: ["Shopping"],
-      }),
-    }),
-    deleteCart: builder.mutation<CartResponse, Omit<CartItemType, "quantity">>({
-      query: (data: CartItemType) => ({
-        url: "/cart-item/delete",
-        method: "DELETE",
-        body: data,
-        invalidatesTags: ["Shopping"],
-      }),
+      invalidatesTags: ["Shopping"],
     }),
   }),
 });
@@ -67,6 +53,4 @@ export const {
   useGetShoppingSessionQuery,
   useUpdateCartItemMutation,
   useUpdateDeleteCartItemMutation,
-  useDeleteCartMutation,
-  useUpdateCartMutation,
 } = shoppingApi;

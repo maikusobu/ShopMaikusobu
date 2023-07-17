@@ -16,8 +16,11 @@ const useStyle = createStyles(() => ({
     padding: 0,
   },
 }));
-import { useDeleteCartMutation } from "../../../api/CartReducer/CartApi";
-import { useUpdateCartMutation } from "../../../api/ShoppingSessionApi/ShoppingSessionApi";
+import {
+  useDeleteCartMutation,
+  useUpdateCartMutation,
+} from "../../../api/CartReducer/CartApi";
+import {} from "../../../api/CartReducer/CartApi";
 import { MathFunction } from "../../../Helper/MathFunction";
 
 function isNumberKey(event: React.KeyboardEvent<HTMLInputElement>) {
