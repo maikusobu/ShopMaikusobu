@@ -49,14 +49,14 @@ function ShoppingContent() {
     createCart({ product_id: productId, quantity: 1 })
       .unwrap()
       .then((res) => {
+        open();
+        setTimeout(() => {
+          close();
+        }, 2000);
         updateCartItem({ CartItemId: res.data._id, id: auth.id })
           .unwrap()
           .then(() => {
             setData("Successful");
-            open();
-            setTimeout(() => {
-              close();
-            }, 2000);
           });
       })
       .catch((err) =>

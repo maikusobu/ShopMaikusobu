@@ -68,7 +68,6 @@ function GeneralInfo() {
   );
 
   useEffect(() => {
-    console.log("children");
     if (data) {
       setFirstname(data.first_name);
       setLastname(data.last_name);
@@ -97,7 +96,7 @@ function GeneralInfo() {
         rotation
       );
       dataUrlRef.current = await blobToDataURL(croppedImage as Blob);
-      console.log(dataUrlRef.current.length, ImageRef.current?.src.length);
+
       const url = URL.createObjectURL(croppedImage as Blob);
       if (ImageRef.current) {
         ImageRef.current.src = url;
@@ -141,7 +140,6 @@ function GeneralInfo() {
     if (dataUrlRef.current) {
       formData.append("avatar", dataUrlRef.current as string);
     }
-    console.log(dataUrlRef.current);
 
     const dataObject = Object.fromEntries(formData);
 

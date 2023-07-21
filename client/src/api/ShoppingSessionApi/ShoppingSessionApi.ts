@@ -25,7 +25,7 @@ type shoppingType = {
   id: string;
   CartItemId: string;
 };
-export const shoppingApi = baseApi.injectEndpoints({
+const shoppingApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getShoppingSession: builder.query<ShoppingSessionType, string>({
       query: (id: string) => `shopping/${id}`,

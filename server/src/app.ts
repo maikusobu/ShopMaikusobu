@@ -1,4 +1,4 @@
-import express, { Express, Request, Response, NextFunction } from "express";
+import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 require("dotenv").config();
@@ -12,10 +12,12 @@ import { ErrorFunction } from "./api/v1/middlewares/errorHandling";
 import authenRouter from "./api/v1/routes/User_management_routes/validation";
 import userRouter from "./api/v1/routes/User_management_routes/user";
 import productRouter from "./api/v1/routes/Product_management_routes/product";
-import paymentrouter from "./api/v1/routes/User_management_routes/userPayment";
+import paymenManagerRouter from "./api/v1/routes/User_management_routes/userPaymentManager";
+import addressManagerRouter from "./api/v1/routes/User_management_routes/userAddressManager";
 import ShoppingRouter from "./api/v1/routes/Shopping_process_routes/shopping_sesssion";
 import CartItemRouter from "./api/v1/routes/Shopping_process_routes/cart_item";
-
+import paymentRouter from "./api/v1/routes/User_management_routes/userPayment";
+import addressRouter from "./api/v1/routes/User_management_routes/userAddress";
 //config express
 require("dotenv").config();
 const corsOptions = {
@@ -52,7 +54,10 @@ mongoose.connection.on("disconnected", () => {
 app.use("/authen", authenRouter);
 app.use("/user", userRouter);
 app.use("/products", productRouter);
-app.use("/payment", paymentrouter);
+app.use("/paymentmanager", paymenManagerRouter);
+app.use("/addressmanager", addressManagerRouter);
+app.use("/address", addressRouter);
+app.use("/payment", paymentRouter);
 app.use("/shopping", ShoppingRouter);
 app.use("/cart-item", CartItemRouter);
 app.get("/", (req: Request, res: Response) => {

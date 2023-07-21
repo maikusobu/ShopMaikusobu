@@ -1,48 +1,76 @@
 import expressAsyncHandler from "express-async-handler";
 import { Request, NextFunction, Response } from "express";
 import user_paymentModel from "../../models/User_management/user_paymentModel";
-export const getUserPayment = expressAsyncHandler(
+export const createUserPayment = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const userPayment = await user_paymentModel.find({
-        user_id: req.params.id,
+      const { user_id, payment_type, card_number, expire } = req.body;
+      const expireDate = new Date(expire);
+      const userPayment = new user_paymentModel({
+        user_id: user_id,
+        payment_type: payment_type,
+        card_number: card_number,
+        expire: expireDate,
       });
-      if (userPayment.length < 1) {
-        throw new Error("User Payment not found");
-      }
-      console.log(userPayment);
-      res.status(200).json(userPayment);
-    } catch (error: any) {
-      res.status(404).json({ message: error.message, status: 404 });
+      await userPayment.save();
+      res.status(200).json({
+        message: "User payment created successfully",
+        data: userPayment,
+      });
+    } catch (error) {
+      console.log(error);
+      next(error);
     }
   }
 );
-export const upsertUserPayment = expressAsyncHandler(
+
+export const updateUserPayment = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const existingPayment = await user_paymentModel.findOne({
-        userId: req.body.userId,
+      const { payment_id } = req.params;
+      const { user_id, payment_type, card_number, expire } = req.body;
+      const expireDate = new Date(expire);
+      const userPayment = await user_paymentModel.findByIdAndUpdate(
+        payment_id,
+        {
+          user_id: user_id,
+          payment_type: payment_type,
+          card_number: card_number,
+          expire: expireDate,
+        },
+        { new: true }
+      );
+
+      if (!userPayment) {
+        throw new Error("User payment not found");
+      }
+
+      res.status(200).json({
+        message: "User payment updated successfully",
+        data: userPayment,
       });
-      if (existingPayment) {
-        req.body.expire = new Date(req.body.expire);
-        const updatedPayment = await user_paymentModel.findByIdAndUpdate(
-          existingPayment._id,
-          req.body,
-          { new: true }
-        );
-        res.status(200).json(updatedPayment);
-      } else {
-        // Create new payment
-        const newPayment = await user_paymentModel.create(req.body);
-        res.status(200).json(newPayment);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+export const deleteUserPayment = expressAsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { payment_id } = req.params;
+      const userPayment = await user_paymentModel.findByIdAndDelete(payment_id);
+
+      if (!userPayment) {
+        throw new Error("User payment not found");
       }
-    } catch (error: any) {
-      if (error.name === "ValidationError") {
-        res
-          .status(400)
-          .json({ message: error.message, status: 400, type: "validation" });
-      }
-      res.status(500).json({ message: error.message, status: 500 });
+
+      res.status(200).json({
+        message: "User payment deleted successfully",
+        data: userPayment,
+      });
+    } catch (error) {
+      next(error);
     }
   }
 );

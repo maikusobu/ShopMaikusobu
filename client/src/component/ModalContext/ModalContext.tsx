@@ -2,7 +2,7 @@ import { Modal, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import React from "react";
 import { createContext } from "react";
-type ModalContextType = {
+export type ModalContextType = {
   open: () => void;
   close: () => void;
 };

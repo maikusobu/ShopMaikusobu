@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent } from "react";
+import React, { useContext } from "react";
 import {
   TextInput,
   Select,
@@ -6,75 +6,63 @@ import {
   Group,
   createStyles,
   Stack,
+  Text,
+  Box,
 } from "@mantine/core";
-
+import { useGetProvincesQuery } from "../../api/VnProvincesApi/VnProvincesApi";
+import { useGetUserAddressesQuery } from "../../api/UserApi/UserAddressMangaerApi";
+import { useAppSelector } from "../../app/hooks";
+import { selectAuth } from "../../api/AuthReducer/AuthReduce";
+import { AddressContext } from "../ModalAddAddress/ModalAddAddress";
 interface Address {
   address_line1: string;
   address_line2?: string;
   city: string;
   country: string;
 }
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles(() => ({
   form: {
     width: "50%",
   },
 }));
 const UserAddressForm = () => {
-  const [address, setAddress] = React.useState<Address>({
-    address_line1: "",
-    address_line2: "",
-    city: "",
-
-    country: "VN",
+  const auth = useAppSelector(selectAuth);
+  const { data: AdressUser } = useGetUserAddressesQuery(auth.id, {
+    skip: !auth.isLoggedIn,
   });
-  const { classes } = useStyles();
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setAddress((prevState) => ({ ...prevState, [name]: value }));
-  };
+  const { data: provinces } = useGetProvincesQuery();
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // submit the address data
-  };
-
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  console.log(AdressUser);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const { open, close } = useContext(AddressContext)!;
   return (
-    <form onSubmit={handleSubmit} className={classes.form}>
+    <Box>
+      <Group>
+        <Text>Địa chỉ của bạn</Text>
+        <Button
+          onClick={() => {
+            open();
+          }}
+        >
+          Thêm địa chỉ mới
+        </Button>
+      </Group>
+      {AdressUser?.address_list?.length === 0 && (
+        <Stack>
+          <Text>Bạn chưa nhập địa chỉ</Text>
+        </Stack>
+      )}
       <Stack>
-        <TextInput
-          label="Address Line 1"
-          name="address_line1"
-          value={address.address_line1}
-          onChange={handleInputChange}
-          required
-        />
-        <TextInput
-          label="Address Line 2"
-          name="address_line2"
-          value={address.address_line2}
-          onChange={handleInputChange}
-        />
-
-        <Group grow>
-          <TextInput
-            label="City"
-            name="city"
-            value={address.city}
-            onChange={handleInputChange}
-            required
-          />
-          <Select
-            label="Country"
-            name="country"
-            value={address.country}
-            data={[{ value: "VN", label: "Vietnam" }]}
-          />
-        </Group>
+        {AdressUser?.address_list.map((item) => (
+          <Group>
+            <Text>{item.province_code}</Text>
+            <Text>{item.district_code}</Text>
+            <Text>{item.ward_code}</Text>
+          </Group>
+        ))}
       </Stack>
-      <Button type="submit" variant="light">
-        Submit
-      </Button>
-    </form>
+    </Box>
   );
 };
 export default UserAddressForm;

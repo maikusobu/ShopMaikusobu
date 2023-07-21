@@ -1,5 +1,5 @@
-import mongoose, { ValidatorProps } from "mongoose";
-import type { UserModel } from "../../../../types/modelTypes/User_management_types/UserModelTypes";
+import { ObjectId } from "bson";
+import mongoose, { ValidatorProps, InferSchemaType } from "mongoose";
 
 const Schema = mongoose.Schema;
 
@@ -65,9 +65,20 @@ const userSchema = new Schema(
         },
       ],
     },
+    idDefaultAddress: {
+      type: Schema.Types.ObjectId,
+      default: new mongoose.Types.ObjectId("507f191e810c19729de860ea"),
+      ref: "UserAddress",
+    },
+    idDefaultPayment: {
+      type: Schema.Types.ObjectId,
+      default: new mongoose.Types.ObjectId("507f191e810c19729de860ea"),
+      refL: "UserPayment",
+    },
   },
   { timestamps: true }
 );
+type UserModel = InferSchemaType<typeof userSchema>;
 userSchema.virtual("fullname").get(function (this: UserModel) {
   return this.first_name + " " + this.last_name;
 });

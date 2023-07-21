@@ -1,10 +1,12 @@
 import express from "express";
-import {
-  getUserPayment,
-  upsertUserPayment,
-} from "../../controllers/User_management_controller/user_paymentControll";
 const Router = express.Router();
-Router.get("/:id", getUserPayment);
-Router.patch("/:id", upsertUserPayment);
+import {
+  createUserPayment,
+  updateUserPayment,
+  deleteUserPayment,
+} from "../../controllers/User_management_controller/user_paymentControll";
+Router.post("/create", createUserPayment);
+Router.patch("/delete/:payment_id", deleteUserPayment);
+Router.patch("/update/:payment_id", updateUserPayment);
 
 export default Router;

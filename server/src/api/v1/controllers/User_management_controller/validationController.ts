@@ -6,7 +6,8 @@ import asyncHandler from "express-async-handler";
 import userModel from "../../models/User_management/userModel";
 import shopping_session from "../../models/Shopping_process/shopping_session";
 import checkUser from "../../validations/checkPassWord";
-
+import user_addressManagerModel from "../../models/User_management/user_addressManagerModel";
+import user_manager_paymentModel from "../../models/User_management/user_manager_paymentModel";
 export const signupMiddeware = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -37,6 +38,14 @@ export const signupMiddeware = asyncHandler(
           await shopping_session.create({
             user_id: userMade._id,
             cart_items: [],
+          });
+          await user_addressManagerModel.create({
+            user_id: userMade._id,
+            address_list: [],
+          });
+          await user_manager_paymentModel.create({
+            user_id: userMade._id,
+            payment_list: [],
           });
           res.status(201).json({
             response: { message: "User created successfully", status: 201 },

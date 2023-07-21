@@ -13,6 +13,7 @@ import {
   IconSettings,
   IconTrash,
   IconSwitchHorizontal,
+  IconList,
 } from "@tabler/icons-react";
 import { selectAuth } from "../../api/AuthReducer/AuthReduce";
 import { useAppSelector } from "../../app/hooks";
@@ -97,20 +98,25 @@ function UserIn() {
           </Group>
         </UnstyledButton>
       </Menu.Target>
-      <Menu.Dropdown>
+      <Menu.Dropdown
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <Menu.Label style={{ fontSize: rem(15), fontWeight: 500 }}>
           Settings
         </Menu.Label>
         <Menu.Item
           icon={<IconSettings size="0.9rem" stroke={1.5} />}
           onClick={() => {
-            navigate("settingaccount");
+            navigate("/settingaccount");
           }}
         >
           Account settings
         </Menu.Item>
-        <Menu.Item icon={<IconSwitchHorizontal size="0.9rem" stroke={1.5} />}>
-          Change account
+        <Menu.Item icon={<IconList size="1.2rem" stroke={1.5} />}>
+          List Orders
         </Menu.Item>
         <Menu.Item
           icon={<IconLogout size="0.9rem" stroke={1.5} />}

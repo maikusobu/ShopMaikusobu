@@ -9,9 +9,7 @@ export const AuthMiddleware: Middleware =
     if (storeApi.getState().auth.expiresAt > 0) {
       if (storeApi.getState().auth.expiresAt < Date.now()) {
         storeApi.dispatch(Logout());
-        return;
       }
-      next(action);
     }
 
     next(action);

@@ -13,6 +13,8 @@ import actionRestorePassword from "./component/validation/action/actionrestorePa
 import ChangePassWord from "./component/validation/changePassword.tsx";
 import { Notifications } from "@mantine/notifications";
 import SettingAccount from "./component/SettingAccount/SettingAccount.tsx";
+import PaymentProvider from "./component/ModalAddPayment/ModalAddPayment.tsx";
+import AddressProvider from "./component/ModalAddAddress/ModalAddAddress.tsx";
 import CartPage from "./component/CartComponent/CartPage/CartPage.tsx";
 import Home from "./component/HomePage/Home/Home.tsx";
 import { ModalProVider } from "./component/ModalContext/ModalContext.tsx";
@@ -58,6 +60,10 @@ const router = createBrowserRouter([
   {
     path: "/settingaccount",
     element: <SettingAccount />,
+  },
+  {
+    path: "/noauthorized",
+    element: <div>Bạn không có quyền truy cập</div>,
   },
 ]);
 
@@ -120,15 +126,19 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       >
         <ErrorProvider>
           <ModalProVider>
-            <DatesProvider
-              settings={{
-                locale: "vi",
-                firstDayOfWeek: 0,
-              }}
-            >
-              <Notifications />
-              <RouterProvider router={router}></RouterProvider>
-            </DatesProvider>
+            <AddressProvider>
+              <PaymentProvider>
+                <DatesProvider
+                  settings={{
+                    locale: "vi",
+                    firstDayOfWeek: 0,
+                  }}
+                >
+                  <Notifications />
+                  <RouterProvider router={router}></RouterProvider>
+                </DatesProvider>
+              </PaymentProvider>
+            </AddressProvider>
           </ModalProVider>
         </ErrorProvider>
       </MantineProvider>

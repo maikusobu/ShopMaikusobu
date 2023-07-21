@@ -12,7 +12,8 @@ export const ErrorFunction: (
   next: NextFunction
 ) => {
   const { statusCode, message } = err;
-  res.status(statusCode).json({
+  const status = statusCode || 500;
+  res.status(status).json({
     message,
     statusCode,
   });

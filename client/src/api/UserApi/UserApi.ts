@@ -4,9 +4,11 @@ export type UserJson = {
   first_name: string;
   last_name: string;
   username: string;
+  idDefaultAddress: string;
+  idDefaultPayment: string;
   id: string;
 };
-export const userApi = baseApi.injectEndpoints({
+const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getUserById: builder.query<UserJson, string>({
       query: (id: string) => `user/${id}`,
@@ -14,7 +16,6 @@ export const userApi = baseApi.injectEndpoints({
     }),
     updateUser: builder.mutation<UserJson, Partial<UserJson>>({
       query: (user: Partial<UserJson> & Pick<UserJson, "id">) => {
-        console.log(user);
         return {
           url: `user/update/${user.id}`,
           method: "PATCH",

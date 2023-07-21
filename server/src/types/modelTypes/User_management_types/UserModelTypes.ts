@@ -6,4 +6,5 @@ export type UserModel = {
   password: string;
   first_name?: string;
   last_name?: string;
+  idDefaultPayment?: ObjectId;
 };

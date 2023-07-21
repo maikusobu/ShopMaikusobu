@@ -15,7 +15,7 @@ type discountType = {
   active: boolean;
   discount_percent: number;
 };
-export const productApi = baseApi.injectEndpoints({
+const productApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllProduct: builder.query<ProductType[], void>({
       query: () => `/products/all`,

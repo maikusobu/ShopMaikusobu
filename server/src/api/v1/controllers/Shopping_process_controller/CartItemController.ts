@@ -18,7 +18,6 @@ export const getCartItemByProductId = expressAsyncHandler(
     }
   }
 );
-
 export const createCartItem = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {

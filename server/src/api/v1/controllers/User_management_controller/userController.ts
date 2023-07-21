@@ -15,6 +15,8 @@ export const userMiddleware = asynchandle(
       const imageData = fs.readFileSync(`${dirPath}/${user.username}.png`);
       const dataURL = "data:image/png;base64," + imageData.toString("base64");
       const userForfrondent = {
+        idDefaultPayment: user.idDefaultPayment,
+        idDefaultAddress: user.idDefaultAddress,
         username: user.username,
         first_name: user.first_name,
         last_name: user.last_name,
@@ -50,6 +52,8 @@ export const userUpdateMiddleware = asynchandle(
         username: user.username,
         first_name: user.first_name,
         last_name: user.last_name,
+        idDefaultPayment: user.idDefaultPayment,
+        idDefaultAddress: user.idDefaultAddress,
         id: user._id,
         avatar: `${dataURL}`,
       });

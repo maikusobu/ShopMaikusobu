@@ -1,56 +1,45 @@
 import { baseApi } from "../BaseApi/baseApi";
-type UserPaymentModel = {
-  user_id: string;
-  payment_type: "credit" | "debit" | "paypal" | "bank";
-  card_number: number;
-  expire: string;
+import { UserPaymentModel } from "./UserPaymentManagerApi";
+type paymentResponse = {
+  message: string;
+  data: UserPaymentModel;
 };
-export const paymentUserApi = baseApi.injectEndpoints({
+const PaymentUserApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getUserPaymentById: builder.query<UserPaymentModel, string>({
-      query: (id: string) => `payment/${id}`,
-      transformResponse: (response: UserPaymentModel[]) => response[0],
-      providesTags: ["Payment"],
-    }),
-    upsertUserPayment: builder.mutation<
-      UserPaymentModel,
-      Partial<UserPaymentModel>
+    createUserPayment: builder.mutation<
+      paymentResponse,
+      Omit<UserPaymentModel, "_id">
     >({
-      query: (
-        payment: Partial<UserPaymentModel> & Pick<UserPaymentModel, "user_id">
-      ) => {
-        return {
-          url: `payment/${payment.user_id}`,
-          method: "PATCH",
-          body: payment,
-        };
-      },
-      invalidatesTags: ["Payment"],
-      async onQueryStarted(
-        {
-          user_id,
-          ...patch
-        }: Partial<UserPaymentModel> & Pick<UserPaymentModel, "user_id">,
-        { dispatch, queryFulfilled }
-      ) {
-        const patchResult = dispatch(
-          paymentUserApi.util.updateQueryData(
-            "getUserPaymentById",
-            user_id,
-            (draft: UserPaymentModel) => {
-              Object.assign(draft, patch);
-            }
-          )
-        );
-        try {
-          await queryFulfilled;
-        } catch (error) {
-          console.log(error);
-          patchResult.undo();
-        }
-      },
+      query: (payment: UserPaymentModel) => ({
+        url: "/payment/create",
+        body: payment,
+        method: "POST",
+      }),
+    }),
+    updateUserPayment: builder.mutation<
+      paymentResponse,
+      Omit<UserPaymentModel, "_id">
+    >({
+      query: (payment: UserPaymentModel) => ({
+        url: `/payment/update/${payment._id}`,
+        method: "PATCH",
+        body: payment,
+      }),
+    }),
+    deleteUserPayment: builder.mutation<
+      paymentResponse,
+      Omit<UserPaymentModel, "_id">
+    >({
+      query: (payment: UserPaymentModel) => ({
+        url: `/Payment/delete/${payment._id}`,
+        method: "PATCH",
+        body: payment,
+      }),
     }),
   }),
 });
-export const { useGetUserPaymentByIdQuery, useUpsertUserPaymentMutation } =
-  paymentUserApi;
+export const {
+  useCreateUserPaymentMutation,
+  useUpdateUserPaymentMutation,
+  useDeleteUserPaymentMutation,
+} = PaymentUserApi;

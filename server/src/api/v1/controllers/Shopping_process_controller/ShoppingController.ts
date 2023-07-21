@@ -35,7 +35,7 @@ export const updateDelete = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { CartItemId } = req.body;
-      console.log(req.body, req.params);
+
       const shopping_session_data = await shopping_session.findOneAndUpdate(
         { user_id: req.params.id },
         {
@@ -66,9 +66,7 @@ export const updateCartItem = expressAsyncHandler(
         { user_id: req.params.id },
         {
           $addToSet: {
-            cart_items: {
-              _id: CartItemId,
-            },
+            cart_items: CartItemId,
           },
         },
         {

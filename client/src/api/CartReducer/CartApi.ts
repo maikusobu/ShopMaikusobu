@@ -11,7 +11,7 @@ type CartResponse = {
   data: CartType;
 };
 
-export const cartApi = baseApi.injectEndpoints({
+const cartApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getCartByProDuctId: builder.query<CartResponse, string>({
       query: (id: string) => `cart-item/${id}`,
@@ -29,16 +29,16 @@ export const cartApi = baseApi.injectEndpoints({
         url: "/cart-item/update",
         method: "PATCH",
         body: data,
-        invalidatesTags: ["Shopping"],
       }),
+      invalidatesTags: ["Shopping"],
     }),
     deleteCart: builder.mutation<CartResponse, Omit<CartItemType, "quantity">>({
       query: (data: CartItemType) => ({
         url: "/cart-item/delete",
         method: "DELETE",
         body: data,
-        invalidatesTags: ["Shopping"],
       }),
+      invalidatesTags: ["Shopping"],
     }),
   }),
 });
