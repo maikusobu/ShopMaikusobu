@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import ButtonAutehn from "../ButtonAuthen/ButtonAuthen";
 import { createStyles, Container, Group } from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
@@ -6,7 +5,6 @@ import { selectAuth } from "../../../api/AuthReducer/AuthReduce";
 import Search from "../../Search/Search";
 import UserContainerHome from "../UserContainerHome/UserContainerHome";
 import Logo from "../../logo/logo";
-import { checkLogin } from "../../../app/thunkDispatch/thunkLogin";
 
 export type UserInterface = {
   id?: string;
@@ -31,7 +29,7 @@ const useStyles = createStyles((theme) => ({
     width: "100%",
   },
   search: {
-    flexGrow: 0.5,
+    width: "600PX",
     borderRadius: "20px !important",
     [theme.fn.smallerThan("xs")]: {
       display: "none",
@@ -46,12 +44,9 @@ const useStyles = createStyles((theme) => ({
 
 function Header() {
   const { classes } = useStyles();
-  const dispatch = useAppDispatch();
-  const auth = useAppSelector(selectAuth);
-  useEffect(() => {
-    dispatch<any>(checkLogin());
-  }, [dispatch, auth.isLoggedIn]);
 
+  const auth = useAppSelector(selectAuth);
+  console.log(auth);
   return (
     <Container className={classes.mainSection}>
       {/* <Helmet>

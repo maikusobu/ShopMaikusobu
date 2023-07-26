@@ -3,7 +3,6 @@ import BaseSchema from "../Product_management/BaseSchema";
 const Schema = mongoose.Schema;
 
 const OrderItem = new Schema({
-  order_id: { type: Schema.Types.ObjectId, ref: "OrderDetails" },
   product_id: { type: Schema.Types.ObjectId, ref: "Product" },
   quantity: {
     type: Number,

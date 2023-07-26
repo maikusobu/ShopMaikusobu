@@ -1,28 +1,21 @@
-import { useGetTrendingProductQuery } from "../../../api/ProductReducer/ProductApi";
 import {
-  createStyles,
-  Grid,
   Box,
   Card,
-  Image,
-  Group,
-  Text,
-  Stack,
+  Grid,
   Indicator,
-  Button,
+  Image,
+  Text,
+  Group,
+  Stack,
+  createStyles,
 } from "@mantine/core";
-import { useContext } from "react";
-import { ModalContext } from "../../ModalContext/ModalContext";
-import { useAppSelector } from "../../../app/hooks";
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useGetAllProductQuery } from "../../../api/ProductReducer/ProductApi";
 import { MathFunction } from "../../../Helper/MathFunction";
-import { selectAuth } from "../../../api/AuthReducer/AuthReduce";
-import { IconShoppingCartPlus } from "@tabler/icons-react";
-import { ErrorContext } from "../../ErrorContext/ErrorContext";
-import { useCreateCartMutation } from "../../../api/CartReducer/CartApi";
-import { useUpdateCartItemMutation } from "../../../api/ShoppingSessionApi/ShoppingSessionApi";
 const useStyles = createStyles(() => ({
   root: {
-    paddingTop: "3rem",
+    width: "80%",
   },
   BoxRoot: {
     transition: "transform 2s ease-in-out",
@@ -32,50 +25,20 @@ const useStyles = createStyles(() => ({
       transform: "translateY(-5px)",
     },
   },
+  BoxRoot2: {
+    height: "200px",
+  },
 }));
 
 function ShoppingContent() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const { classes } = useStyles();
-  const { data, error, isLoading } = useGetTrendingProductQuery();
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const { open, close } = useContext(ModalContext)!;
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const { setData, setError } = useContext(ErrorContext)!;
-  const [updateCartItem] = useUpdateCartItemMutation();
-  const [createCart] = useCreateCartMutation();
-  const auth = useAppSelector(selectAuth);
-  const handleAddCartItem = (productId: string) => {
-    createCart({ product_id: productId, quantity: 1 })
-      .unwrap()
-      .then((res) => {
-        open();
-        setTimeout(() => {
-          close();
-        }, 2000);
-        updateCartItem({ CartItemId: res.data._id, id: auth.id })
-          .unwrap()
-          .then(() => {
-            setData("Successful");
-          });
-      })
-      .catch((err) =>
-        setError({
-          message: err.message,
-        })
-      );
-  };
-  if (isLoading) return <p>Loading...</p>;
-  if (error)
-    if ("status" in error)
-      return (
-        <p>
-          Error: {error.status} {JSON.stringify(error.data)}{" "}
-        </p>
-      );
 
+  const { data, isLoading } = useGetAllProductQuery(searchParams.get("page"));
+  console.log(data);
   return (
-    <div className={classes.root}>
-      <Grid gutter={5} gutterXs="md" gutterMd="xl" gutterXl={45} columns={15}>
+    <Box className={classes.root}>
+      <Grid gutter={5} gutterXs="md" gutterMd="xl" gutterXl={35} columns={15}>
         {data?.map((product) => (
           <Grid.Col span={3} key={product._id} id={product._id}>
             <Indicator
@@ -100,6 +63,7 @@ function ShoppingContent() {
                   <Card.Section
                     style={{
                       overflow: "hidden",
+                      height: "130px",
                     }}
                   >
                     <Image
@@ -115,21 +79,21 @@ function ShoppingContent() {
                     sx={{
                       marginTop: "1rem",
                       height: "2rem",
-                      marginBottom: "0.2rem",
+                      marginBottom: "0.3rem",
                     }}
                   >
                     {product.name}
                   </Text>
                   <Group>
                     <Text
-                      size={15}
-                      weight={400}
+                      size={13}
+                      weight={500}
                       strikethrough={product.discount_id?.active ? true : false}
                     >
                       ${product.price}
                     </Text>
                     {product.discount_id?.active && (
-                      <Text size={15} weight={400}>
+                      <Text size={13} weight={400}>
                         {" "}
                         $
                         {
@@ -144,26 +108,21 @@ function ShoppingContent() {
 
                   <div>
                     <Stack spacing={4}>
-                      <Text underline>Số lượng đã bán:</Text>
-                      {product.amountPurchased}
+                      <Text underline size={13}>
+                        Số lượng đã bán:
+                      </Text>
+                      <Text size={13} weight={500}>
+                        {product.amountPurchased}
+                      </Text>
                     </Stack>
                   </div>
-                  <Group position="center" grow spacing={50} mt="10px">
-                    <Button
-                      variant="light"
-                      leftIcon={<IconShoppingCartPlus />}
-                      onClick={() => handleAddCartItem(product._id)}
-                    >
-                      Add Card
-                    </Button>
-                  </Group>
                 </Card>
               </Box>
             </Indicator>
           </Grid.Col>
         ))}
       </Grid>
-    </div>
+    </Box>
   );
 }
 

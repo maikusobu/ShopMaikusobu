@@ -11,7 +11,7 @@ const OrderDetails = new Schema({
   OrderItems: [
     {
       type: Schema.Types.ObjectId,
-      ref: "CartItem",
+      ref: "OrderItem",
     },
   ],
   payment_id: { type: Schema.Types.ObjectId, ref: "UserPayment" },

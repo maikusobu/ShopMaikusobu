@@ -1,21 +1,81 @@
 import { useGetUserByIdQuery } from "../../../api/UserApi/UserApi";
 import { useAppSelector } from "../../../app/hooks";
 import { selectAuth } from "../../../api/AuthReducer/AuthReduce";
-import { Button, Container, Group, Stack, Text } from "@mantine/core";
+import {
+  Button,
+  Container,
+  Group,
+  Stack,
+  Text,
+  LoadingOverlay,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { useGetShoppingSessionQuery } from "../../../api/ShoppingSessionApi/ShoppingSessionApi";
 import { MathFunction } from "../../../Helper/MathFunction";
 import { selectOrder } from "../../../api/OrderReducer/OrderReducer";
+import { useCreateOrderMutation } from "../../../api/OrderApi/OrderApi";
+import { OrderItem } from "../../../api/OrderApi/OrderApi";
+import { notifications } from "@mantine/notifications";
+import { useUpdateDeleteAllCartItemMutation } from "../../../api/ShoppingSessionApi/ShoppingSessionApi";
+import { useNavigate } from "react-router-dom";
 function CheckOutContent() {
   const auth = useAppSelector(selectAuth);
   const order = useAppSelector(selectOrder);
+  const [visible, { toggle }] = useDisclosure(false);
   const { data: user } = useGetUserByIdQuery(auth.id, {
     skip: !auth.isLoggedIn,
   });
   const { data, isLoading, refetch } = useGetShoppingSessionQuery(auth.id, {
     skip: !auth.isLoggedIn,
   });
+  const navigate = useNavigate();
+  const [updateDeleteAllCartItem] = useUpdateDeleteAllCartItemMutation();
+  const [createOrder, { isLoading: orderLoading }] = useCreateOrderMutation();
+  const handlerSend = () => {
+    const orderItems = data?.cart_items.map((item) => ({
+      product_id: item.product_id._id,
+      quantity: item.quantity,
+    }));
+    const OrderDetails = {
+      user_id: user?.id ? user?.id : "",
+      totalPrice: order?.totalPrice,
+      totalQuantity: order.totalQuantity,
+      address_id: user?.idDefaultAddress as string,
+      OrderItems: orderItems as OrderItem[],
+      payment_id: user?.idDefaultPayment as string,
+    };
+    // eslint-disable-next-line no-debugger
+
+    createOrder(OrderDetails)
+      .unwrap()
+      .then(() => {
+        updateDeleteAllCartItem(auth.id);
+
+        notifications.show({
+          id: "success",
+          title: "Đặt hàng thành công",
+          message:
+            "Cảm ơn bạn đã đặt bạn giờ đây bạn sẽ được điều hướng về trang chủ",
+          autoClose: 1000,
+          loading: true,
+        });
+        setTimeout(() => {
+          navigate("/");
+        }, 1000);
+      })
+      .catch((e) => {
+        notifications.show({
+          id: "errror",
+          title: "Đặt hàng không thành công",
+          message: "vui lòng thử lại",
+          autoClose: 5000,
+          loading: true,
+        });
+      });
+  };
   return (
     <Container>
+      <LoadingOverlay visible={orderLoading} />
       <Group>
         {user?.idDefaultAddress === import.meta.env.VITE_DEFAULT && (
           <Text>Bạn chưa chọn địa chỉ mặc định</Text>
@@ -65,14 +125,15 @@ function CheckOutContent() {
       </Group>
       <Button
         onClick={() => {
+          console.log("dd");
           if (auth.isLoggedIn) {
             if (
               user?.idDefaultAddress === import.meta.env.VITE_DEFAULT ||
-              user?.idDefaultPayment !== import.meta.env.VITE_DEFAULT
+              user?.idDefaultPayment === import.meta.env.VITE_DEFAULT
             ) {
               alert("Bị lỗi, bỏ qua ġn hàng");
               return;
-            }
+            } else handlerSend();
           }
         }}
       >

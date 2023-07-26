@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 require("dotenv").config();
@@ -18,6 +18,7 @@ import ShoppingRouter from "./api/v1/routes/Shopping_process_routes/shopping_ses
 import CartItemRouter from "./api/v1/routes/Shopping_process_routes/cart_item";
 import paymentRouter from "./api/v1/routes/User_management_routes/userPayment";
 import addressRouter from "./api/v1/routes/User_management_routes/userAddress";
+import OrderRouter from "./api/v1/routes/Shopping_process_routes/order_item";
 //config express
 require("dotenv").config();
 const corsOptions = {
@@ -27,9 +28,17 @@ const app: Express = express();
 app.use(cors(corsOptions));
 app.use(bodyParser.json({ limit: "5mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use(morgan("dev"));
 app.use(cookieParser());
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
+  next();
+});
 //mongo running
 mongoose.set("strictQuery", false);
 connect();
@@ -60,6 +69,7 @@ app.use("/address", addressRouter);
 app.use("/payment", paymentRouter);
 app.use("/shopping", ShoppingRouter);
 app.use("/cart-item", CartItemRouter);
+app.use("/order", OrderRouter);
 app.get("/", (req: Request, res: Response) => {
   console.log(URL_CLIENT);
   res.redirect(`${URL_CLIENT}`);

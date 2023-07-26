@@ -17,6 +17,9 @@ import PaymentProvider from "./component/ModalAddPayment/ModalAddPayment.tsx";
 import AddressProvider from "./component/ModalAddAddress/ModalAddAddress.tsx";
 import CartPage from "./component/CartComponent/CartPage/CartPage.tsx";
 import Home from "./component/HomePage/Home/Home.tsx";
+import CheckOut from "./component/CheckOutComponent/CheckOutPage.tsx";
+import ShoppingHome from "./component/ShoppingHome/shoppinghome.tsx";
+import { loader as searchLoader } from "./component/Search/searchAction.ts";
 import { ModalProVider } from "./component/ModalContext/ModalContext.tsx";
 import { store } from "./app/store.ts";
 import { Provider } from "react-redux/es/exports";
@@ -27,6 +30,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
+    loader: searchLoader,
   },
   {
     path: "/authen",
@@ -56,10 +60,20 @@ const router = createBrowserRouter([
   {
     path: "/cart",
     element: <CartPage />,
+    loader: searchLoader,
   },
   {
     path: "/settingaccount",
     element: <SettingAccount />,
+  },
+  {
+    path: "/checkout",
+    element: <CheckOut />,
+  },
+  {
+    path: "/products",
+    element: <ShoppingHome />,
+    loader: searchLoader,
   },
   {
     path: "/noauthorized",

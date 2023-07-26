@@ -47,10 +47,19 @@ const shoppingApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Shopping"],
     }),
+    updateDeleteAllCartItem: builder.mutation<ShoppingSessionType, string>({
+      query: (id: string) => ({
+        url: `/shopping/update-delete-all-cart-items/${id}`,
+        body: {},
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Shopping"],
+    }),
   }),
 });
 export const {
   useGetShoppingSessionQuery,
   useUpdateCartItemMutation,
   useUpdateDeleteCartItemMutation,
+  useUpdateDeleteAllCartItemMutation,
 } = shoppingApi;

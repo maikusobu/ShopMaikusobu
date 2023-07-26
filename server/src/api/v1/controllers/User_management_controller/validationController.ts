@@ -35,6 +35,7 @@ export const signupMiddeware = asyncHandler(
 
           const userMade = new userModel(req.body);
           await userMade.save();
+          console.log(userMade, "dad");
           await shopping_session.create({
             user_id: userMade._id,
             cart_items: [],

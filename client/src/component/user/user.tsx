@@ -12,6 +12,7 @@ import {
   IconLogout,
   IconSettings,
   IconTrash,
+  IconHistory,
   IconSwitchHorizontal,
   IconList,
 } from "@tabler/icons-react";
@@ -115,7 +116,7 @@ function UserIn() {
         >
           Account settings
         </Menu.Item>
-        <Menu.Item icon={<IconList size="1.2rem" stroke={1.5} />}>
+        <Menu.Item icon={<IconHistory size="0.9rem" stroke={1.5} />}>
           List Orders
         </Menu.Item>
         <Menu.Item

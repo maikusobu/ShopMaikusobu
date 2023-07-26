@@ -3,9 +3,7 @@ import { Request, Response, NextFunction } from "express";
 import productModel from "../../models/Product_management/productModel";
 import product_inventoryModel from "../../models/Product_management/product_inventoryModel";
 import product_discountModel from "../../models/Product_management/product_discountModel";
-type ProductInventoryType = {
-  quantity?: number;
-};
+import product_categoryModel from "../../models/Product_management/product_categoryModel";
 export const productGetAllMiddleware = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -22,8 +20,12 @@ export const productGetAllMiddleware = expressAsyncHandler(
           path: "discount_id",
           model: product_discountModel,
         })
-        .skip(10 * (parseInt(req.query.page as string) - 1))
-        .limit(10)
+        .populate({
+          path: "category_id",
+          model: product_categoryModel,
+        })
+        .skip(20 * (parseInt(req.query.page as string) - 1))
+        .limit(20)
         .exec();
       res.status(200).json(products);
     } catch (err) {
@@ -60,7 +62,26 @@ export const productGetTrendingMiddleware = expressAsyncHandler(
         .sort({ amountPurchases: -1 })
         .limit(10)
         .exec();
+      console.log(products);
       res.status(200).json(products);
+    } catch (err) {
+      console.log(err);
+      return next(err);
+    }
+  }
+);
+export const productSearch = expressAsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const products = await productModel
+        .find({ name: { $regex: `^${req.params.name}`, $options: "i" } })
+        .select(["_id", "name"])
+        .exec();
+      const transformedProducts = products.map((product) => ({
+        label: product.name,
+        id: product._id,
+      }));
+      res.status(200).json(transformedProducts);
     } catch (err) {
       console.log(err);
       return next(err);

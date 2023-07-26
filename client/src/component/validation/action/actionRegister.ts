@@ -22,6 +22,7 @@ const action = async ({ request }: { request: Request }) => {
       body: JSON.stringify(data),
     });
     const json = await res.json();
+    // eslint-disable-next-line no-debugger
 
     if (
       json.response.status === 400 ||

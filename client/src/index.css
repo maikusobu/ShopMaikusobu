@@ -110,6 +110,7 @@ body {
   top: 50px;
   transform: translateX(-50%);
   z-index: 20;
+  cursor: pointer;
   animation: updown 2s ease infinite;
 }
 @keyframes updown {
@@ -130,5 +131,5 @@ input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   transition: background-color
     9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999s
-    ease-in-out 0s;
+    ease-in-out 0s; /*DO NOT DELETE THIS LINES OF ODE, IT WILL BREAK ENTIRE WEBPAGE*/
 }

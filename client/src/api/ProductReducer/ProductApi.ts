@@ -17,8 +17,8 @@ type discountType = {
 };
 const productApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAllProduct: builder.query<ProductType[], void>({
-      query: () => `/products/all`,
+    getAllProduct: builder.query<ProductType[], number>({
+      query: (page = 1) => `/products?page=${page}`,
       providesTags: ["Product"],
     }),
     getProductById: builder.query<ProductType, string>({
@@ -28,10 +28,14 @@ const productApi = baseApi.injectEndpoints({
       query: () => `/products/trending`,
       providesTags: ["Product"],
     }),
+    getSearchProduct: builder.query<ProductType[], string>({
+      query: (name) => `/products/search/${name}`,
+    }),
   }),
 });
 export const {
   useGetAllProductQuery,
   useGetProductByIdQuery,
   useGetTrendingProductQuery,
+  useGetSearchProductQuery,
 } = productApi;

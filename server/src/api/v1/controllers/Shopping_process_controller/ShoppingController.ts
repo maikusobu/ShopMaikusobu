@@ -1,6 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import { Request, Response, NextFunction } from "express";
 import shopping_session from "../../models/Shopping_process/shopping_session";
+import cart_itemModel from "../../models/Shopping_process/cart_itemModel";
 export const getShoppingSession = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -80,6 +81,35 @@ export const updateCartItem = expressAsyncHandler(
     } catch (error: any) {
       console.log(error);
       return next(error);
+    }
+  }
+);
+export const deleteALlCartItem = expressAsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const shopping_session_data = await shopping_session.findOne({
+        user_id: req.params.id,
+      });
+      const arrayHandleDelete = shopping_session_data?.cart_items.map(
+        async (item) => await cart_itemModel.findByIdAndDelete(item)
+      );
+      await Promise.all(arrayHandleDelete as any);
+
+      const shopping_session_data2 = await shopping_session.findOneAndUpdate(
+        { user_id: req.params.id },
+        {
+          $set: {
+            cart_items: [],
+          },
+        },
+        { new: true }
+      );
+      res.status(200).json({
+        message: "All Item removed from cart",
+        data: shopping_session_data2,
+      });
+    } catch (err) {
+      next(err);
     }
   }
 );

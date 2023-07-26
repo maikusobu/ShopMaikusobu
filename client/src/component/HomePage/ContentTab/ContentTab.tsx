@@ -2,6 +2,7 @@ import { Tabs } from "@mantine/core";
 import ShoppingContent from "../ShoppingContent/ShoppingContent";
 import { createStyles } from "@mantine/core";
 import { IconCircleArrowDownFilled } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 const useStyles = createStyles(() => ({
   overlay: {
     position: "relative",
@@ -17,6 +18,7 @@ const useStyles = createStyles(() => ({
 }));
 function ContentTab() {
   const { classes } = useStyles();
+  const navigate = useNavigate();
   return (
     <Tabs
       variant="pills"
@@ -45,7 +47,11 @@ function ContentTab() {
         <ShoppingContent />
       </Tabs.Panel>
       <Tabs.Panel value="social">Social content</Tabs.Panel>
-      <IconCircleArrowDownFilled className="continue-icon" size={40} />
+      <IconCircleArrowDownFilled
+        className="continue-icon"
+        size={40}
+        onClick={() => navigate("/products?page=1")}
+      />
       <div className={classes.overlay}></div>
     </Tabs>
   );

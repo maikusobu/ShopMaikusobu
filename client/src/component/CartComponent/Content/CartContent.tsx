@@ -20,11 +20,12 @@ import { useDeleteCartMutation } from "../../../api/CartReducer/CartApi";
 import { useAppSelector, useAppDispatch } from "../../../app/hooks";
 import { selectAuth } from "../../../api/AuthReducer/AuthReduce";
 import { InsertOrder } from "../../../api/OrderReducer/OrderReducer";
-
+import { useUpdateDeleteAllCartItemMutation } from "../../../api/ShoppingSessionApi/ShoppingSessionApi";
 import InputQuantity from "../InputQuantity/InputQuantity";
 import { useState, useMemo, useEffect } from "react";
-
+import { useNavigate } from "react-router-dom";
 import { MathFunction } from "../../../Helper/MathFunction";
+import { notifications } from "@mantine/notifications";
 const useStyle = createStyles(() => ({
   backgroundUL: {
     color: "black",
@@ -82,12 +83,14 @@ function CartContent() {
   const dispatch = useAppDispatch();
   const auth = useAppSelector(selectAuth);
   const [idFetching, setIdFetching] = useState<string>("");
-
+  const navigate = useNavigate();
   const [updateDeleteCartItem] = useUpdateDeleteCartItemMutation();
   const [deleteCart] = useDeleteCartMutation();
   const { data, isLoading, refetch } = useGetShoppingSessionQuery(auth.id, {
     skip: !auth.isLoggedIn,
   });
+
+  const [updateDeleteAllCartItem] = useUpdateDeleteAllCartItemMutation();
   const initialValues = useMemo(
     () =>
       data?.cart_items.map((cart_item) => ({
@@ -105,9 +108,12 @@ function CartContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [isLoading]
   );
+
   const [values, handlers] = useListState(initialValues);
   const allChecked = values?.every((value) => value.checked);
   const indeterminate = values?.some((value) => value.checked) && !allChecked;
+  const isSomeChecked = values?.some((value) => value.checked);
+  console.log(values);
   useEffect(() => {
     handlers.setState(initialValues as orderItem[]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -292,25 +298,56 @@ function CartContent() {
               </Text>
             </Group>
             <Group>
-              <Button>Xóa tất cả</Button>
               <Button
                 onClick={() => {
+                  if (data?.cart_items.length === 0) {
+                    alert("Giỏ hàng trở thành rỗng");
+                    return;
+                  } else {
+                    updateDeleteAllCartItem(auth.id)
+                      .unwrap()
+                      .then(() => handlers.setState([]))
+                      .catch(() => window.location.reload());
+                  }
+                }}
+              >
+                Xóa tất cả
+              </Button>
+              <Button
+                onClick={() => {
+                  if (!isSomeChecked) {
+                    notifications.show({
+                      id: "NotChecked",
+                      withCloseButton: true,
+                      autoClose: 1000,
+
+                      message: "Bạn vẫn chưa chọn sản phẩm",
+                      color: "white",
+
+                      style: { backgroundColor: "red", color: "white" },
+                      sx: { backgroundColor: "red", color: "white" },
+                      loading: false,
+                    });
+                    return;
+                  }
+                  if (data?.cart_items.length === 0) {
+                    alert("Giỏ hàng trở thành rỗng");
+                    return;
+                  }
                   dispatch(
                     InsertOrder({
-                      totalPrice: parseInt(
-                        values
-                          .reduce((acc, curr) => {
-                            if (curr.checked) return acc + curr.price;
-                            else return acc;
-                          }, 0)
-                          .toFixed(2) as string
-                      ),
+                      totalPrice: values.reduce((acc, curr) => {
+                        if (curr.checked) return acc + curr.price;
+                        else return acc;
+                      }, 0),
+
                       totalQuantity: values.reduce((acc, curr) => {
                         if (curr.checked) return acc + curr.quantity;
                         else return acc;
                       }, 0),
                     })
                   );
+                  navigate("/checkout");
                 }}
               >
                 Đặt hàng

@@ -22,7 +22,7 @@ app.get(
   expressAsyncHandler(async (req: Request, res: Response) => {
     try {
       const products = [];
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 40; i++) {
         console.log("add database at", i);
         const name = faker.commerce.productName();
         const desc = faker.lorem.sentence();

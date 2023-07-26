@@ -26,7 +26,6 @@ function Login() {
   const navigate = useNavigate();
   const navigation = useNavigation();
   const { errorAppear, handleSetErrorAppear, objectError } = useObjectError();
-  console.log(objectError);
   const form = useForm({
     initialValues: {
       username: "",

@@ -33,16 +33,7 @@ const useStyles = createStyles(() => ({
 }));
 function SettingAccount() {
   const { classes } = useStyles();
-  const { setError } = useContext(ErrorContext);
-  const matches = useMatches();
-  const location = useLocation();
-  console.log(location, "f");
-  console.log(matches);
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    console.log("parent");
-    dispatch<any>(checkLogin());
-  }, [dispatch]);
+
   return (
     <Layout>
       <Container mx={0} className={classes.container} id="container">
