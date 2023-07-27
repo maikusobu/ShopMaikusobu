@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React from 'react';
 import {
 	TextInput,
@@ -61,52 +60,6 @@ function UserPaymentForm() {
 		const sortedArr = [...arr];
 		const defaultIndex = sortedArr.findIndex((item) => item._id === userData.idDefaultPayment);
 		sortedArr.unshift(...sortedArr.splice(defaultIndex, 1));
-=======
-import {
-  Button,
-  Title,
-  createStyles,
-  Text,
-  Group,
-  Stack,
-  Box,
-} from "@mantine/core";
-import type { UserPaymentModel } from "../../api/UserApi/UserPaymentManagerApi";
-import { useGetUserPaymentByIdQuery } from "../../api/UserApi/UserPaymentManagerApi";
-import { useContext } from "react";
-import { ModalAddPaymentContext } from "../ModalAddPayment/ModalAddPayment";
-import { useAppSelector } from "../../app/hooks";
-import { selectAuth } from "../../api/AuthReducer/AuthReduce";
-const useStyles = createStyles(() => ({
-  formContainer: {
-    "& > *": {
-      marginTop: "1.2rem",
-    },
-    "& > *:first-child": {
-      marginTop: 0,
-    },
-  },
-  bgDiv: {
-    backgroundColor: "#fff",
-    color: "black",
-    padding: "0.5rem",
-    height: "4rem",
-    display: "flex",
-  },
-}));
-
-function UserPaymentForm() {
-  const { classes } = useStyles();
-  const auth = useAppSelector(selectAuth);
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const { open } = useContext(ModalAddPaymentContext)!;
-  const { data } = useGetUserPaymentByIdQuery(auth.id, {
-    skip: !auth.isLoggedIn,
-  });
-  const sortArray = (arr: UserPaymentModel[]) => {
-    return arr;
-  };
->>>>>>> 9fd2106726f943538936a917c6686edc67bd68de
 
 		return sortedArr;
 	};
