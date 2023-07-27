@@ -7,6 +7,7 @@ type layoutProp = {
 function Layout({ children }: layoutProp) {
   const dispatch = useAppDispatch();
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dispatch<any>(checkLogin());
   }, [dispatch]);
   return <div className="layout">{children}</div>;

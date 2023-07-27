@@ -5,6 +5,5 @@ export function dataURLToBlob(dataURL: string): Blob {
     array.push(binary.charCodeAt(i));
   }
   const blob = new Blob([new Uint8Array(array)], { type: "image/png" });
-
   return blob;
 }

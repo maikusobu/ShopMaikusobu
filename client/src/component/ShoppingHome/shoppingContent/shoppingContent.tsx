@@ -32,16 +32,31 @@ const useStyles = createStyles(() => ({
   },
 }));
 
-function ShoppingContent() {
+function ShoppingContent({
+  sort,
+  categories,
+}: {
+  sort: "relevant" | "lowestprice" | "highestprice" | "popular" | "newest";
+  categories: string[];
+}) {
   const [searchParams, setSearchParams] = useSearchParams();
   const { classes } = useStyles();
   const [page, setPage] = useState(1);
-  const { data } = useGetAllProductQuery(searchParams.get("page"));
-  console.log(data);
+  const { currentData } = useGetAllProductQuery(
+    {
+      page: searchParams.get("page") ? searchParams.get("page") : 1,
+      sort: sort,
+      categories: categories,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
+  console.log(currentData);
   return (
     <Box className={classes.root}>
       <Grid gutter={5} gutterXs="md" gutterMd="xl" gutterXl={35} columns={18}>
-        {data?.products.map((product) => (
+        {currentData?.products.map((product) => (
           <Grid.Col span={3} key={product._id} id={product._id}>
             <Indicator
               size={16}
@@ -125,9 +140,23 @@ function ShoppingContent() {
         ))}
       </Grid>
       <Pagination
-        total={data ? data.total / 36 : 10}
+        total={currentData?.total ? currentData.total / 36 : 10}
         mt="md"
         value={page}
+        boundaries={0}
+        siblings={2}
+        styles={(theme) => ({
+          control: {
+            "&[data-active]": {
+              backgroundImage: theme.fn.gradient({
+                from: `${theme.colors.brandcolorRed[0]}`,
+                to: `${theme.colors.brandcolorYellow[0]}`,
+              }),
+              border: 0,
+              color: theme.colors.dark,
+            },
+          },
+        })}
         onChange={(value) => {
           window.scrollTo(0, 0);
           setPage(value);

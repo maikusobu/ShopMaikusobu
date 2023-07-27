@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "server",
   "main": "index.js",
- 
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
@@ -27,6 +26,7 @@
     "jsonwebtoken": "^9.0.0",
     "mongo-morgan": "^2.0.3",
     "mongoose": "^7.3.1",
+    "node-cache": "^5.1.2",
     "path": "^0.12.7",
     "save": "^2.9.0"
   },

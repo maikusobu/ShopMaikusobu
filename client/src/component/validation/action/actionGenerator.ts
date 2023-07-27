@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { redirect } from "react-router-dom";
 export function actionGenerator(
   urlRequest: string,

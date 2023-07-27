@@ -4,33 +4,60 @@ import productModel from "../../models/Product_management/productModel";
 import product_inventoryModel from "../../models/Product_management/product_inventoryModel";
 import product_discountModel from "../../models/Product_management/product_discountModel";
 import product_categoryModel from "../../models/Product_management/product_categoryModel";
+import NodeCache from "node-cache";
 export const productGetAllMiddleware = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      req.query.page = req.query.page ? req.query.page : "1";
-      const productCount = await productModel.countDocuments();
-      const products = await productModel
-        .find({})
-        .populate({
-          path: "inventory_id",
-          model: product_inventoryModel,
-          match: { quantity: { $gt: 0 } },
-        })
-        .populate({
-          path: "discount_id",
-          model: product_discountModel,
-        })
-        .populate({
-          path: "category_id",
-          model: product_categoryModel,
-        })
-        .skip(36 * (parseInt(req.query.page as string) - 1))
-        .limit(36)
-        .exec();
+      const myCache = new NodeCache();
+      const cacheKey = JSON.stringify({
+        categories: req.query.categories,
+        sort: req.query.sort,
+      });
+      console.log(req.query.sort);
+      let products = myCache.get(cacheKey) as any[] | unknown;
+      if (!products) {
+        req.query.page = req.query.page ? req.query.page : "1";
+        const arrayCategories = req.query.categories
+          ? (req.query.categories as string).split(",")
+          : [];
+        const productsPromiseBase = productModel
+          .find({})
+          .sort({
+            ...(req.query.sort === "relevant" && { name: -1 }),
+            ...(req.query.sort === "newest" && { createdAt: -1 }),
+            ...(req.query.sort === "popular" && { amountPurchases: -1 }),
+            ...(req.query.sort === "lowestprice" && { price: 1 }),
+            ...(req.query.sort === "highestprice" && { price: -1 }),
+          })
+          .populate({
+            path: "inventory_id",
+            model: product_inventoryModel,
+            match: { quantity: { $gt: 0 } },
+          })
+          .populate({
+            path: "discount_id",
+            model: product_discountModel,
+          })
+          .populate({
+            path: "category_id",
+            model: product_categoryModel,
+          });
+        products = await productsPromiseBase.exec();
+
+        products = (products as any[]).filter((product) => {
+          if (arrayCategories.length === 0) return true;
+          return product.category_id.name.includes(...arrayCategories);
+        });
+
+        myCache.set(cacheKey, products);
+      }
       res.status(200).json({
-        total: productCount,
+        total: (products as any[]).length,
         page: req.query.page,
-        products: products,
+        products: (products as any[]).slice(
+          36 * (parseInt(req.query.page as string) - 1),
+          36 * parseInt(req.query.page as string)
+        ),
       });
     } catch (err) {
       console.log(err);
@@ -66,7 +93,6 @@ export const productGetTrendingMiddleware = expressAsyncHandler(
         .sort({ amountPurchases: -1 })
         .limit(10)
         .exec();
-
       res.status(200).json(products);
     } catch (err) {
       console.log(err);

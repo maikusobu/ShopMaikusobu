@@ -11,6 +11,7 @@ export type ProductType = {
   discount_id?: discountType;
   inventory_id?: string;
 };
+import { constructUrlString } from "../../Helper/constructParamString";
 type discountType = {
   active: boolean;
   discount_percent: number;
@@ -20,10 +21,16 @@ type AllProduct = {
   products: ProductType[];
   page: number;
 };
+export interface ProductParameter {
+  page: number;
+  sort: "relevant" | "lowestprice" | "highestprice" | "popular" | "newest";
+  categories?: string[];
+}
 const productApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAllProduct: builder.query<AllProduct, number>({
-      query: (page = 1) => `/products?page=${page}`,
+    getAllProduct: builder.query<AllProduct, ProductParameter>({
+      query: ({ page = 1, sort = "relevant", categories }: ProductParameter) =>
+        `/products?${constructUrlString({ page, sort, categories })}`,
       providesTags: ["Product"],
     }),
     getProductById: builder.query<ProductType, string>({

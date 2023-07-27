@@ -49,11 +49,11 @@ const filters = [
 const selection = [
   {
     label: "Giá cao tới thấp",
-    value: "highest",
+    value: "highestprice",
   },
   {
     label: "Giá thấp tới cao",
-    value: "lowest",
+    value: "lowestprice",
   },
 ];
 const useStyles = createStyles(() => ({
@@ -61,15 +61,26 @@ const useStyles = createStyles(() => ({
     // padding: "25px",
   },
 }));
-function BoxTool() {
+type BoxToolProps = {
+  sort: "relevant" | "lowestprice" | "highestprice" | "popular" | "newest";
+  setSort: (
+    value: "relevant" | "lowestprice" | "highestprice" | "popular" | "newest"
+  ) => void;
+  categories: string[];
+  setCategories: (value: string[]) => void;
+};
+function BoxTool({ sort, setSort, categories, setCategories }: BoxToolProps) {
   const { classes } = useStyles();
-  const [segmentedValue, setSegmentedValue] = useState("relevant");
+  const [priceSort, setPriceSort] = useState<string>("");
+  const [segmentedSort, setSegmentedSort] = useState<string>("relevant");
   return (
     <Box className={classes.boxRoot} px={"20px"}>
       <Stack spacing={"25px"}>
         <MultiSelect
           data={departments}
           searchable
+          value={categories}
+          onChange={setCategories}
           placeholder="Lọc loại sản phẩm"
           nothingFound="Bạn hãy thử 1 từ khóa khác đi"
           radius={"20px"}
@@ -79,11 +90,43 @@ function BoxTool() {
         <Group>
           <SegmentedControl
             data={filters}
-            value={segmentedValue}
-            onChange={setSegmentedValue}
+            value={segmentedSort}
+            onChange={(value) => {
+              setPriceSort("");
+              setSegmentedSort(value ? value : "");
+              setSort(
+                value
+                  ? (value as
+                      | "relevant"
+                      | "lowestprice"
+                      | "highestprice"
+                      | "popular"
+                      | "newest")
+                  : "relevant"
+              );
+            }}
           />
 
-          <Select data={selection} placeholder="Giá" clearable />
+          <Select
+            data={selection}
+            placeholder="Giá"
+            clearable
+            value={priceSort}
+            onChange={(value) => {
+              setPriceSort(value ? value : "");
+              setSegmentedSort("");
+              setSort(
+                value
+                  ? (value as
+                      | "relevant"
+                      | "lowestprice"
+                      | "highestprice"
+                      | "popular"
+                      | "newest")
+                  : "relevant"
+              );
+            }}
+          />
         </Group>
       </Stack>
     </Box>

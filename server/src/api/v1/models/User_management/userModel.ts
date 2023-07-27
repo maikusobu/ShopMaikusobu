@@ -73,7 +73,7 @@ const userSchema = new Schema(
     idDefaultPayment: {
       type: Schema.Types.ObjectId,
       default: new mongoose.Types.ObjectId("507f191e810c19729de860ea"),
-      refL: "UserPayment",
+      ref: "UserPayment",
     },
   },
   { timestamps: true }
