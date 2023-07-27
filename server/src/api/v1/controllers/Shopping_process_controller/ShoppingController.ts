@@ -19,7 +19,6 @@ export const getShoppingSession = expressAsyncHandler(
           },
         });
 
-      console.log(shopping_session_data);
       if (!shopping_session_data) {
         throw new Error("Shopping session not found");
       }
@@ -53,7 +52,6 @@ export const updateDelete = expressAsyncHandler(
         data: shopping_session_data,
       });
     } catch (error: any) {
-      console.log(error);
       return next(error);
     }
   }

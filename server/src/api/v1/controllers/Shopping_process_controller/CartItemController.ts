@@ -59,7 +59,6 @@ export const updateCartItem = expressAsyncHandler(
         data: cartItem,
       });
     } catch (error) {
-      console.log(error);
       return next(error);
     }
   }

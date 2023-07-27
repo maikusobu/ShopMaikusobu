@@ -14,7 +14,7 @@ import {
   Button,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import React, { useRef, memo, useState, useEffect } from "react";
+import React, { useRef, memo, useState } from "react";
 const useStyle = createStyles(() => ({
   numberInput: {
     background: "white",
@@ -44,7 +44,6 @@ const InputQuantity = memo(function InputQuantity({
   index,
   discount,
   userId,
-  refetch,
   setIdFetching,
   handlersChange,
   cartId,

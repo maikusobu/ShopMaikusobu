@@ -9,7 +9,6 @@ import {
   Text,
   LoadingOverlay,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { useGetShoppingSessionQuery } from "../../../api/ShoppingSessionApi/ShoppingSessionApi";
 import { MathFunction } from "../../../Helper/MathFunction";
 import { selectOrder } from "../../../api/OrderReducer/OrderReducer";
@@ -21,11 +20,10 @@ import { useNavigate } from "react-router-dom";
 function CheckOutContent() {
   const auth = useAppSelector(selectAuth);
   const order = useAppSelector(selectOrder);
-  const [visible, { toggle }] = useDisclosure(false);
   const { data: user } = useGetUserByIdQuery(auth.id, {
     skip: !auth.isLoggedIn,
   });
-  const { data, isLoading, refetch } = useGetShoppingSessionQuery(auth.id, {
+  const { data } = useGetShoppingSessionQuery(auth.id, {
     skip: !auth.isLoggedIn,
   });
   const navigate = useNavigate();
@@ -63,7 +61,7 @@ function CheckOutContent() {
           navigate("/");
         }, 1000);
       })
-      .catch((e) => {
+      .catch(() => {
         notifications.show({
           id: "errror",
           title: "Đặt hàng không thành công",
@@ -125,13 +123,12 @@ function CheckOutContent() {
       </Group>
       <Button
         onClick={() => {
-          console.log("dd");
           if (auth.isLoggedIn) {
             if (
               user?.idDefaultAddress === import.meta.env.VITE_DEFAULT ||
               user?.idDefaultPayment === import.meta.env.VITE_DEFAULT
             ) {
-              alert("Bị lỗi, bỏ qua ġn hàng");
+              alert("Bị lỗi, đơn hàng rổng");
               return;
             } else handlerSend();
           }

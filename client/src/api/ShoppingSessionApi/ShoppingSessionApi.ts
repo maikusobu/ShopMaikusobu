@@ -1,17 +1,5 @@
 import { baseApi } from "../BaseApi/baseApi";
 import type { ProductType } from "../ProductReducer/ProductApi";
-type CartItemType = {
-  _id?: string;
-  product_id?: string;
-  quantity?: number;
-};
-type CartType = {
-  _id: string;
-} & CartItemType;
-type CartResponse = {
-  message: string;
-  data: CartType;
-};
 type cart_item = {
   _id: string;
   product_id: ProductType;

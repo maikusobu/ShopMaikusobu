@@ -45,7 +45,6 @@ export const updateDeleteAddress = expressAsyncHandler(
         data: userAddress,
       });
     } catch (error: any) {
-      console.log(error);
       return next(error);
     }
   }
@@ -76,7 +75,6 @@ export const updateInsertAddress = expressAsyncHandler(
         data: userAddress,
       });
     } catch (error: any) {
-      console.log(error);
       return next(error);
     }
   }

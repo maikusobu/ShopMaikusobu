@@ -10,13 +10,10 @@ import {
 } from "@mantine/core";
 import Layout from "../layout/layout";
 import GeneralInfo from "./GeneralInfo";
-import { useLocation, useMatches } from "react-router";
-import { useEffect, useContext } from "react";
-import { ErrorContext } from "../ErrorContext/ErrorContext";
+
 import Payment from "./Payment";
 import UserAddressForm from "./Address";
-import { useAppDispatch } from "../../app/hooks";
-import { checkLogin } from "../../app/thunkDispatch/thunkLogin";
+
 import { IconArrowBack } from "@tabler/icons-react";
 
 const useStyles = createStyles(() => ({

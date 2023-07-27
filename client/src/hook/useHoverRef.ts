@@ -5,7 +5,7 @@ export const useHoverRef = () => {
   const handleHover = useCallback((hover: boolean, e: MouseEvent) => {
     if (hover === false) {
       setTimeout(() => {
-        console.log(isHovered);
+        console.log(e);
         // if (isHovered === true) return;
         // console.log("ds");
         // setIsHovered(hover);

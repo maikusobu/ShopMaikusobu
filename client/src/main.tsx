@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+
 import { MantineProvider } from '@mantine/core';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Login from './component/validation/login.tsx';
@@ -23,7 +24,7 @@ import { loader as searchLoader } from './component/Search/searchAction.ts';
 import { ModalProVider } from './component/ModalContext/ModalContext.tsx';
 import { store } from './app/store.ts';
 import { Provider } from 'react-redux/es/exports';
-import 'dayjs/locale/vi';
+import('dayjs/locale/vi');
 import { DatesProvider } from '@mantine/dates';
 import './index.css';
 const router = createBrowserRouter([

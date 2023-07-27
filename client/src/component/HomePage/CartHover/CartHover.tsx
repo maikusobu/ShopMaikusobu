@@ -4,8 +4,6 @@ import {
   Paper,
   createStyles,
   Text,
-  Anchor,
-  Container,
   Box,
   Center,
 } from "@mantine/core";
@@ -18,8 +16,7 @@ const usestyles = createStyles((theme) => ({
   root: {
     boxSizing: "border-box",
     position: "absolute",
-    top: "50px",
-    right: "180px",
+
     zIndex: 999,
     minHeight: "0px",
     display: "flex",
@@ -105,6 +102,10 @@ const usestyles = createStyles((theme) => ({
     //   color: theme.colors.red[6],
     // },
   },
+  imageCartemptyContainer: {
+    margin: "0px auto",
+    width: "50%",
+  },
   cartButton: {
     // borderRadius: theme.radius.xl,
     // padding: `${theme.spacing.sm} ${theme.spacing.lg}`,
@@ -118,21 +119,31 @@ const usestyles = createStyles((theme) => ({
 }));
 interface CartHoverProps {
   isHovered: boolean;
+  cardNode: HTMLDivElement | null;
   handleMouseEnter: () => void;
   handleMouseLeave: () => void;
 }
 function CartHover({
   isHovered,
+  cardNode,
   handleMouseEnter,
   handleMouseLeave,
 }: CartHoverProps) {
   const { classes } = usestyles();
   const auth = useAppSelector(selectAuth);
   const navigate = useNavigate();
-  const { data, isLoading, isFetching } = useGetShoppingSessionQuery(auth.id, {
+  const { data } = useGetShoppingSessionQuery(auth.id, {
     skip: !auth.isLoggedIn,
   });
-  console.log(isFetching, isLoading);
+  const top = cardNode
+    ? cardNode?.getBoundingClientRect().bottom + cardNode.clientHeight / 8
+    : 0;
+  const right = cardNode
+    ? window.innerWidth -
+      cardNode?.getBoundingClientRect().right -
+      cardNode.clientWidth / 7
+    : 0;
+
   return (
     <Paper
       className={classes.root}
@@ -144,11 +155,13 @@ function CartHover({
       sx={() => ({
         scale: isHovered ? 1 : 0,
         width: isHovered ? "30rem" : "0rem",
+        top: top + "px",
+        right: right + "px",
       })}
     >
-      <Box className={classes.containerDiv}>
+      <Box className={classes.containerDiv} sx={{}}>
         {data?.cart_items.length === 0 && (
-          <div>
+          <div className={classes.imageCartemptyContainer}>
             <Image src={imageFace} />
             <Center>
               <Text color="dark" size="lg" weight={700}>

@@ -13,8 +13,6 @@ import {
   IconSettings,
   IconTrash,
   IconHistory,
-  IconSwitchHorizontal,
-  IconList,
 } from "@tabler/icons-react";
 import { selectAuth } from "../../api/AuthReducer/AuthReduce";
 import { useAppSelector } from "../../app/hooks";

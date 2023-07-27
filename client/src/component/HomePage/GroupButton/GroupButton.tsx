@@ -5,7 +5,7 @@ import {
   IconHelpHexagonFilled,
   IconAddressBook,
 } from "@tabler/icons-react";
-const useStyles = createStyles((theme) => ({
+const useStyles = createStyles(() => ({
   icon: {
     cursor: "pointer",
     transformStyle: "preserve-3d",

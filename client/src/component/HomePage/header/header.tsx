@@ -1,6 +1,6 @@
 import ButtonAutehn from "../ButtonAuthen/ButtonAuthen";
 import { createStyles, Container, Group } from "@mantine/core";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useAppSelector } from "../../../app/hooks";
 import { selectAuth } from "../../../api/AuthReducer/AuthReduce";
 import Search from "../../Search/Search";
 import UserContainerHome from "../UserContainerHome/UserContainerHome";
