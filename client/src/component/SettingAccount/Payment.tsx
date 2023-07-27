@@ -1,19 +1,14 @@
-import React from "react";
 import {
-  TextInput,
-  Select,
   Button,
   Title,
   createStyles,
   Text,
-  Indicator,
   Group,
   Stack,
   Box,
 } from "@mantine/core";
 import type { UserPaymentModel } from "../../api/UserApi/UserPaymentManagerApi";
 import { useGetUserPaymentByIdQuery } from "../../api/UserApi/UserPaymentManagerApi";
-import { useGetUserByIdQuery } from "../../api/UserApi/UserApi";
 import { useContext } from "react";
 import { ModalAddPaymentContext } from "../ModalAddPayment/ModalAddPayment";
 import { useAppSelector } from "../../app/hooks";
@@ -42,9 +37,6 @@ function UserPaymentForm() {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const { open } = useContext(ModalAddPaymentContext)!;
   const { data } = useGetUserPaymentByIdQuery(auth.id, {
-    skip: !auth.isLoggedIn,
-  });
-  const { data: userData } = useGetUserByIdQuery(auth.id, {
     skip: !auth.isLoggedIn,
   });
   const sortArray = (arr: UserPaymentModel[]) => {

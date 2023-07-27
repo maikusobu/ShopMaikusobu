@@ -116,15 +116,12 @@ function PaymentProvider({ children }: { children: React.ReactNode }) {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.currentTarget;
-    console.log(value);
 
     form.setFieldValue(name, formatCreditCardNumber(value));
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    console.log("work");
     const formData = {
       user_id: auth.id,
       ...form.values,

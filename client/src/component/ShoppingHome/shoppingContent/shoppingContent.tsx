@@ -8,14 +8,16 @@ import {
   Group,
   Stack,
   createStyles,
+  Pagination,
 } from "@mantine/core";
-import { useEffect } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useGetAllProductQuery } from "../../../api/ProductReducer/ProductApi";
 import { MathFunction } from "../../../Helper/MathFunction";
 const useStyles = createStyles(() => ({
   root: {
-    width: "80%",
+    width: "100%",
+    padding: "30px",
   },
   BoxRoot: {
     transition: "transform 2s ease-in-out",
@@ -33,13 +35,13 @@ const useStyles = createStyles(() => ({
 function ShoppingContent() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { classes } = useStyles();
-
-  const { data, isLoading } = useGetAllProductQuery(searchParams.get("page"));
+  const [page, setPage] = useState(1);
+  const { data } = useGetAllProductQuery(searchParams.get("page"));
   console.log(data);
   return (
     <Box className={classes.root}>
-      <Grid gutter={5} gutterXs="md" gutterMd="xl" gutterXl={35} columns={15}>
-        {data?.map((product) => (
+      <Grid gutter={5} gutterXs="md" gutterMd="xl" gutterXl={35} columns={18}>
+        {data?.products.map((product) => (
           <Grid.Col span={3} key={product._id} id={product._id}>
             <Indicator
               size={16}
@@ -122,6 +124,17 @@ function ShoppingContent() {
           </Grid.Col>
         ))}
       </Grid>
+      <Pagination
+        total={data ? data.total / 36 : 10}
+        mt="md"
+        value={page}
+        onChange={(value) => {
+          window.scrollTo(0, 0);
+          setPage(value);
+          searchParams.set("page", value.toString());
+          setSearchParams(searchParams);
+        }}
+      />
     </Box>
   );
 }

@@ -1,28 +1,17 @@
 import {
   Autocomplete,
-  Avatar,
   Group,
   Loader,
-  MantineColor,
   SelectItemProps,
   Text,
 } from "@mantine/core";
 import { ComponentProps, useRef, forwardRef } from "react";
-import { useLoaderData, Form, useSubmit, Link } from "react-router-dom";
+import { useLoaderData, Form, useSubmit } from "react-router-dom";
 import { loader } from "./searchAction";
 import { useNavigation } from "react-router-dom";
 import { IconSearch } from "@tabler/icons-react";
 
-function debounce(
-  func: (name: string) => void,
-  wait: number
-): (args: string) => void {
-  let timeout: ReturnType<typeof setTimeout>;
-  return function (args: string) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(args), wait);
-  };
-}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface SearchProps extends SelectItemProps {
   name: string;
 }
@@ -40,21 +29,20 @@ const itemSearch = forwardRef<HTMLDivElement, SearchProps>(
 
 function Search(props: Omit<ComponentProps<typeof Autocomplete>, "data">) {
   const { products, q } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
+
   const submit = useSubmit();
   const navigation = useNavigation();
   const inputRef = useRef<HTMLFormElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const productsData = products?.map((product: any) => ({
     ...product,
     value: product.label,
   }));
-  productsData?.push({
-    name: "modr",
-    value: "dasdadasd",
-  });
-  console.log(navigation.state);
+  console.log(productsData);
   return (
     <Form role="search" ref={inputRef} method="GET" className={props.className}>
       <Autocomplete
+        limit={25}
         itemComponent={itemSearch}
         styles={{
           input: {

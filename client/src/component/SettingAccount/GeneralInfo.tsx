@@ -21,8 +21,7 @@ import { selectAuth } from "../../api/AuthReducer/AuthReduce";
 import { useUpdateUserMutation } from "../../api/UserApi/UserApi";
 import useAvatar from "../../hook/useAvatar";
 import Cropper from "react-easy-crop";
-import { ErrorContext } from "../ErrorContext/ErrorContext";
-import { useState, useRef, useCallback, useEffect, useContext } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { IconFileUpload, IconDeviceFloppy } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 const useStyles = createStyles(() => ({

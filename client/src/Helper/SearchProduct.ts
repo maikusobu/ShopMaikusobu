@@ -3,6 +3,5 @@ export const searchProduct = async (name: string) => {
   const data = await fetch(
     `${import.meta.env.VITE_SERVER}/products/search/${name}`
   );
-  console.log(data);
   return data.json();
 };

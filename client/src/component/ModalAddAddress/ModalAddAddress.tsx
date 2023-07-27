@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-labels */
-import React, { createContext, useState, useCallback } from "react";
+import React, { createContext, useState } from "react";
 import {
   Modal,
   Button,
@@ -14,18 +14,13 @@ import {
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import type { ModalContextType } from "../ModalContext/ModalContext";
-import {
-  provinces,
-  districts,
-  wards,
-} from "../../api/VnProvincesApi/VnProvincesApi";
+import { districts, wards } from "../../api/VnProvincesApi/VnProvincesApi";
 import { useGetProvincesQuery } from "../../api/VnProvincesApi/VnProvincesApi";
 import { selectAuth } from "../../api/AuthReducer/AuthReduce";
 import { useAppSelector } from "../../app/hooks";
 import { useGetUserByIdQuery } from "../../api/UserApi/UserApi";
 import { useCreateUserAddressMutation } from "../../api/UserApi/UserAdressApi";
 import { useUpdateInsertAddressMutation } from "../../api/UserApi/UserAddressMangaerApi";
-import { createSubscription } from "react-redux/es/utils/Subscription";
 import { useUpdateUserMutation } from "../../api/UserApi/UserApi";
 export const AddressContext = createContext<ModalContextType | null>(null);
 const useStyles = createStyles(() => ({

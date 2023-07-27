@@ -1,41 +1,20 @@
-import React, { useContext } from "react";
-import {
-  TextInput,
-  Select,
-  Button,
-  Group,
-  createStyles,
-  Stack,
-  Text,
-  Box,
-} from "@mantine/core";
-import { useGetProvincesQuery } from "../../api/VnProvincesApi/VnProvincesApi";
+import { useContext } from "react";
+import { Button, Group, Stack, Text, Box } from "@mantine/core";
 import { useGetUserAddressesQuery } from "../../api/UserApi/UserAddressMangaerApi";
 import { useAppSelector } from "../../app/hooks";
 import { selectAuth } from "../../api/AuthReducer/AuthReduce";
 import { AddressContext } from "../ModalAddAddress/ModalAddAddress";
-interface Address {
-  address_line1: string;
-  address_line2?: string;
-  city: string;
-  country: string;
-}
-const useStyles = createStyles(() => ({
-  form: {
-    width: "50%",
-  },
-}));
+
 const UserAddressForm = () => {
   const auth = useAppSelector(selectAuth);
   const { data: AdressUser } = useGetUserAddressesQuery(auth.id, {
     skip: !auth.isLoggedIn,
   });
-  const { data: provinces } = useGetProvincesQuery();
 
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   console.log(AdressUser);
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const { open, close } = useContext(AddressContext)!;
+  const { open } = useContext(AddressContext)!;
   return (
     <Box>
       <Group>

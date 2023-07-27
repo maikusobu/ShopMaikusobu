@@ -1,5 +1,5 @@
 import { Group, createStyles, rem } from "@mantine/core";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import UserIn from "../../user/user";
 import { IconGardenCart, IconMessage } from "@tabler/icons-react";
 import CartHover from "../CartHover/CartHover";
@@ -20,6 +20,7 @@ function UserContainerHome() {
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
   const { classes, theme } = useStyles();
+  const cardRef = useRef<HTMLDivElement>(null);
   const handleMouseEnter = () => {
     setIsHovered(true);
   };
@@ -33,19 +34,21 @@ function UserContainerHome() {
           onMouseEnter={handleMouseEnter}
           onClick={() => navigate("/cart")}
           onMouseLeave={handleMouseLeave}
+          ref={cardRef}
           className={classes.IconContainer}
         >
           <IconGardenCart size="2rem" stroke={1.5} />
         </div>
-        <IconMessage size="1.25rem" color={theme.colors.blue[6]} stroke={1.5} />
       </Group>
       {
         <CartHover
           isHovered={isHovered}
+          cardNode={cardRef.current}
           handleMouseEnter={handleMouseEnter}
           handleMouseLeave={handleMouseLeave}
         />
       }
+      <IconMessage size="1.25rem" color={theme.colors.blue[6]} stroke={1.5} />
       <UserIn />
     </Group>
   );

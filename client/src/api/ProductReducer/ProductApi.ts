@@ -15,9 +15,14 @@ type discountType = {
   active: boolean;
   discount_percent: number;
 };
+type AllProduct = {
+  total: number;
+  products: ProductType[];
+  page: number;
+};
 const productApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getAllProduct: builder.query<ProductType[], number>({
+    getAllProduct: builder.query<AllProduct, number>({
       query: (page = 1) => `/products?page=${page}`,
       providesTags: ["Product"],
     }),
