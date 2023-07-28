@@ -42,25 +42,17 @@ const UserAddressForm = () => {
 
 	const getNameArray = (addressList: addressUserType[] | undefined) => {
 		const nameArray = addressList?.map((item) => {
-			const province =
-				provinceData[
-					provinceData.findIndex((province) => province.codename === item.province_code)
-				];
-
-			const district =
-				province.districts[
-					province.districts?.findIndex((district) => district.codename === item.district_code)
-				];
-
-			const ward = district.wards
-				? district.wards[district.wards?.findIndex((ward) => ward.codename === item.ward_code)]
-				: { name: '' };
+			const province = provinceData.find((province) => province.codename === item.province_code);
+			const district = province?.districts?.find(
+				(district) => district.codename === item.district_code
+			);
+			const ward = district?.wards?.find((ward) => ward.codename === item.ward_code);
 
 			return {
 				_id: item._id,
-				provinceName: province.name,
-				districtName: district.name,
-				wardName: ward.name,
+				provinceName: province?.name || '',
+				districtName: district?.name || '',
+				wardName: ward?.name || '',
 			};
 		});
 
@@ -120,7 +112,8 @@ const UserAddressForm = () => {
 						<Group w='100%' position='apart'>
 							<Group>
 								<Text>
-									{item.provinceName} - {item.districtName} - {item.wardName}
+									{item.provinceName} {item.districtName ? ' - ' + item.districtName : ''}{' '}
+									{item.wardName ? ' - ' + item.wardName : ''}
 								</Text>
 							</Group>
 
