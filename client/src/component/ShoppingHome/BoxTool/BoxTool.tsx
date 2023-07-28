@@ -8,6 +8,7 @@ import {
   Stack,
 } from "@mantine/core";
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 const departments = [
   "Books",
   "Movies",
@@ -68,11 +69,19 @@ type BoxToolProps = {
   ) => void;
   categories: string[];
   setCategories: (value: string[]) => void;
+  setPage: (value: number) => void;
 };
-function BoxTool({ sort, setSort, categories, setCategories }: BoxToolProps) {
+function BoxTool({
+  sort,
+  setSort,
+  categories,
+  setCategories,
+  setPage,
+}: BoxToolProps) {
   const { classes } = useStyles();
   const [priceSort, setPriceSort] = useState<string>("");
   const [segmentedSort, setSegmentedSort] = useState<string>("relevant");
+  const [searchParams, setSearchParams] = useSearchParams();
   return (
     <Box className={classes.boxRoot} px={"20px"}>
       <Stack spacing={"25px"}>
@@ -80,7 +89,12 @@ function BoxTool({ sort, setSort, categories, setCategories }: BoxToolProps) {
           data={departments}
           searchable
           value={categories}
-          onChange={setCategories}
+          onChange={(value) => {
+            setPage(1);
+            searchParams.set("page", 1);
+            setSearchParams(searchParams);
+            setCategories(value);
+          }}
           placeholder="Lọc loại sản phẩm"
           nothingFound="Bạn hãy thử 1 từ khóa khác đi"
           radius={"20px"}
@@ -93,7 +107,7 @@ function BoxTool({ sort, setSort, categories, setCategories }: BoxToolProps) {
             value={segmentedSort}
             onChange={(value) => {
               setPriceSort("");
-              setSegmentedSort(value ? value : "");
+              setSegmentedSort(value ? value : "relevant");
               setSort(
                 value
                   ? (value as
@@ -114,7 +128,7 @@ function BoxTool({ sort, setSort, categories, setCategories }: BoxToolProps) {
             value={priceSort}
             onChange={(value) => {
               setPriceSort(value ? value : "");
-              setSegmentedSort("");
+              setSegmentedSort("relevant");
               setSort(
                 value
                   ? (value as

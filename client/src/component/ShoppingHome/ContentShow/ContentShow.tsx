@@ -7,6 +7,7 @@ function ContentShow() {
     "relevant" | "lowestprice" | "highestprice" | "popular" | "newest"
   >("relevant");
   const [categories, setCategories] = useState([] as string[]);
+  const [page, setPage] = useState(1);
   return (
     <Stack>
       <BoxTool
@@ -14,8 +15,14 @@ function ContentShow() {
         setSort={setSort}
         categories={categories}
         setCategories={setCategories}
+        setPage={setPage}
       />
-      <ShoppingContent sort={sort} categories={categories} />
+      <ShoppingContent
+        sort={sort}
+        categories={categories}
+        page={page}
+        setPage={setPage}
+      />
     </Stack>
   );
 }

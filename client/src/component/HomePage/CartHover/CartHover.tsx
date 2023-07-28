@@ -143,7 +143,7 @@ function CartHover({
       cardNode?.getBoundingClientRect().right -
       cardNode.clientWidth / 7
     : 0;
-
+  console.log(cardNode?.getBoundingClientRect());
   return (
     <Paper
       className={classes.root}

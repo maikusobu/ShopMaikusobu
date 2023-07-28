@@ -9,7 +9,9 @@ import {
   Stack,
   createStyles,
   Pagination,
+  Skeleton,
 } from "@mantine/core";
+
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useGetAllProductQuery } from "../../../api/ProductReducer/ProductApi";
@@ -17,6 +19,7 @@ import { MathFunction } from "../../../Helper/MathFunction";
 const useStyles = createStyles(() => ({
   root: {
     width: "100%",
+
     padding: "30px",
   },
   BoxRoot: {
@@ -35,16 +38,20 @@ const useStyles = createStyles(() => ({
 function ShoppingContent({
   sort,
   categories,
+  page,
+  setPage,
 }: {
   sort: "relevant" | "lowestprice" | "highestprice" | "popular" | "newest";
   categories: string[];
+  page: number;
+  setPage: (page: number) => void;
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const { classes } = useStyles();
-  const [page, setPage] = useState(1);
-  const { currentData } = useGetAllProductQuery(
+
+  const { data, isFetching } = useGetAllProductQuery(
     {
-      page: searchParams.get("page") ? searchParams.get("page") : 1,
+      page: searchParams.get("page") ? searchParams.get("page") : page,
       sort: sort,
       categories: categories,
     },
@@ -52,98 +59,104 @@ function ShoppingContent({
       refetchOnMountOrArgChange: true,
     }
   );
-  console.log(currentData);
+
   return (
-    <Box className={classes.root}>
+    <Box className={classes.root} pos="relative">
       <Grid gutter={5} gutterXs="md" gutterMd="xl" gutterXl={35} columns={18}>
-        {currentData?.products.map((product) => (
+        {data?.products.map((product) => (
           <Grid.Col span={3} key={product._id} id={product._id}>
-            <Indicator
-              size={16}
-              offset={12}
-              position="top-end"
-              styles={(theme) => ({
-                indicator: {
-                  top: "6px !important",
-                  backgroundColor: theme.colors.brandcolorRed[0],
-                },
-              })}
-              disabled={product.discount_id?.active ? false : true}
-              label="Sale off"
-            >
-              <Box id={product._id}>
-                <Card
-                  style={{
-                    padding: "9px",
-                  }}
-                >
-                  <Card.Section
+            <Skeleton visible={isFetching}>
+              <Indicator
+                size={16}
+                offset={12}
+                position="top-end"
+                styles={(theme) => ({
+                  indicator: {
+                    top: "6px !important",
+                    backgroundColor: theme.colors.brandcolorRed[0],
+                  },
+                })}
+                disabled={
+                  !product.discount_id?.active || isFetching ? true : false
+                }
+                label="Sale off"
+              >
+                <Box id={product._id}>
+                  <Card
                     style={{
-                      overflow: "hidden",
-                      height: "130px",
+                      padding: "9px",
                     }}
                   >
-                    <Image
-                      src={product.image[0]}
-                      alt={product.name}
-                      className={classes.BoxRoot}
-                    />
-                  </Card.Section>
-
-                  <Text
-                    weight={300}
-                    fz={13}
-                    sx={{
-                      marginTop: "1rem",
-                      height: "2rem",
-                      marginBottom: "0.3rem",
-                    }}
-                  >
-                    {product.name}
-                  </Text>
-                  <Group>
-                    <Text
-                      size={13}
-                      weight={500}
-                      strikethrough={product.discount_id?.active ? true : false}
+                    <Card.Section
+                      style={{
+                        overflow: "hidden",
+                        height: "130px",
+                      }}
                     >
-                      ${product.price}
-                    </Text>
-                    {product.discount_id?.active && (
-                      <Text size={13} weight={400}>
-                        {" "}
-                        $
-                        {
-                          MathFunction(
-                            product.price as number,
-                            product.discount_id?.discount_percent ?? 1
-                          ) as number
-                        }
-                      </Text>
-                    )}
-                  </Group>
+                      <Image
+                        src={product.image[0]}
+                        alt={product.name}
+                        className={classes.BoxRoot}
+                      />
+                    </Card.Section>
 
-                  <div>
-                    <Stack spacing={4}>
-                      <Text underline size={13}>
-                        Số lượng đã bán:
+                    <Text
+                      weight={300}
+                      fz={13}
+                      sx={{
+                        marginTop: "1rem",
+                        height: "2rem",
+                        marginBottom: "0.3rem",
+                      }}
+                    >
+                      {product.name}
+                    </Text>
+                    <Group>
+                      <Text
+                        size={13}
+                        weight={500}
+                        strikethrough={
+                          product.discount_id?.active ? true : false
+                        }
+                      >
+                        ${product.price}
                       </Text>
-                      <Text size={13} weight={500}>
-                        {product.amountPurchased}
-                      </Text>
-                    </Stack>
-                  </div>
-                </Card>
-              </Box>
-            </Indicator>
+                      {product.discount_id?.active && (
+                        <Text size={13} weight={400}>
+                          {" "}
+                          $
+                          {
+                            MathFunction(
+                              product.price as number,
+                              product.discount_id?.discount_percent ?? 1
+                            ) as number
+                          }
+                        </Text>
+                      )}
+                    </Group>
+
+                    <div>
+                      <Stack spacing={4}>
+                        <Text underline size={13}>
+                          Số lượng đã bán:
+                        </Text>
+                        <Text size={13} weight={500}>
+                          {product.amountPurchased}
+                        </Text>
+                      </Stack>
+                    </div>
+                  </Card>
+                </Box>
+              </Indicator>
+            </Skeleton>
           </Grid.Col>
         ))}
       </Grid>
       <Pagination
-        total={currentData?.total ? currentData.total / 36 : 10}
+        total={data?.total ? data.total / 36 : 0}
         mt="md"
         value={page}
-        boundaries={0}
+        boundaries={2}
         siblings={2}
         styles={(theme) => ({
           control: {
@@ -153,7 +166,7 @@ function ShoppingContent({
                 to: `${theme.colors.brandcolorYellow[0]}`,
               }),
               border: 0,
-              color: theme.colors.dark,
+              color: theme.colors.dark[5],
             },
           },
         })}

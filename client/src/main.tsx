@@ -68,7 +68,7 @@ const locale = {
     y: "một năm",
     yy: "%d năm",
   },
-};
+}; // dynamic import somehow not working, so I moved all codes in node modules to be here :))))
 
 dayjs.locale(locale);
 
@@ -189,6 +189,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
           <DatesProvider
             settings={{
               locale: "vi",
+              firstDayOfWeek: 0,
             }}
           >
             <ModalProVider>

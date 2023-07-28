@@ -48,7 +48,7 @@ function UserContainerHome() {
           handleMouseLeave={handleMouseLeave}
         />
       }
-      <IconMessage size="1.25rem" color={theme.colors.blue[6]} stroke={1.5} />
+
       <UserIn />
     </Group>
   );
