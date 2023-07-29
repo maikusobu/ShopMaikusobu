@@ -1,17 +1,16 @@
+import { useEffect } from 'react';
 import Layout from '../../layout/layout';
 import Header from '../header/header';
 import Content from '../Content/Content';
 import Footer from '../Footer/Footer';
 
-import { Helmet } from 'react-helmet';
-
 function Home() {
+	useEffect(() => {
+		document.title = 'Home';
+	}, []);
+
 	return (
 		<Layout>
-			<Helmet>
-				<title>Home</title>
-			</Helmet>
-
 			<Header />
 			<Content />
 			<Footer />
