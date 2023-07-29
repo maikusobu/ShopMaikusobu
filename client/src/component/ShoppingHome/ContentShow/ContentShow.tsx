@@ -1,12 +1,13 @@
 import BoxTool from "../BoxTool/BoxTool";
 import ShoppingContent from "../shoppingContent/shoppingContent";
 import { Stack, Group } from "@mantine/core";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 function ContentShow() {
   const [sort, setSort] = useState<
     "relevant" | "lowestprice" | "highestprice" | "popular" | "newest"
   >("relevant");
   const [categories, setCategories] = useState([] as string[]);
+
   const [page, setPage] = useState(1);
   return (
     <Stack>

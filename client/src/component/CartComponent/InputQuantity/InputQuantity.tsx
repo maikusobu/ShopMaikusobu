@@ -3,7 +3,6 @@ import {
   ActionIcon,
   NumberInput,
   rem,
-  NumberInputHandlers,
   createStyles,
   Overlay,
   Text,
@@ -21,6 +20,7 @@ const useStyle = createStyles(() => ({
     padding: 0,
   },
 }));
+import { notifications } from "@mantine/notifications";
 import { useUpdateCartMutation } from "../../../api/CartReducer/CartApi";
 import { useUpdateDeleteCartItemMutation } from "../../../api/ShoppingSessionApi/ShoppingSessionApi";
 import { useDeleteCartMutation } from "../../../api/CartReducer/CartApi";
@@ -47,11 +47,14 @@ const InputQuantity = memo(function InputQuantity({
   setIdFetching,
   handlersChange,
   cartId,
+  quantity,
 }: {
   value: number;
   userId: string;
   cartId: string;
   index: number;
+  quantity: number;
+
   handlersChange: handlersTpye;
   setIdFetching: (id: string) => void;
   isActive: boolean;
@@ -61,28 +64,27 @@ const InputQuantity = memo(function InputQuantity({
   refetch: () => void;
   id: string;
 }) {
-  const handlers = useRef<NumberInputHandlers>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [updateDeleteCartItem] = useUpdateDeleteCartItemMutation();
   const [deleteCart] = useDeleteCartMutation();
   const [updateCart, { isLoading }] = useUpdateCartMutation();
   const [opened, { open, close }] = useDisclosure(false);
 
-  const [inputValue, setInputValue] = useState<number>(value);
+  const [inputValue, setInputValue] = useState<number>(value ? value : 0);
 
   const { classes } = useStyle();
 
-  const handleChangeTotal = () => {
-    handlersChange.setItemProp(index, "quantity", inputValue);
+  const handleChangeTotal = (quantityValue: number) => {
+    handlersChange.setItemProp(index, "quantity", quantityValue);
     if (isActive) {
       handlersChange.setItemProp(
         index,
         "price",
         parseInt(
-          (MathFunction(price, discount) * inputValue).toFixed(2) as string
+          (MathFunction(price, discount) * quantityValue).toFixed(2) as string
         )
       );
-    } else handlersChange.setItemProp(index, "price", price * inputValue);
+    } else handlersChange.setItemProp(index, "price", price * quantityValue);
   };
 
   const handleChange = (valueRef: number) => {
@@ -90,20 +92,28 @@ const InputQuantity = memo(function InputQuantity({
       setInputValue(value);
       return;
     }
+    if (valueRef > quantity) {
+      notifications.show({
+        id: "overcart",
+        title: "Hàng quá tải",
+        message: "Quả tải đơn hàng",
+      });
+
+      setInputValue(quantity);
+      return;
+    }
+
     if (!(inputRef.current === document.activeElement)) {
       setIdFetching(id);
-      handleChangeTotal();
+      setInputValue(valueRef);
+
       updateCart({
         product_id: id,
         quantity: valueRef,
       })
         .unwrap()
-        .then((res) => {
-          handlersChange.setItemProp(index, "quantity", valueRef);
+        .then(() => {
           setIdFetching("");
-          setInputValue(valueRef);
-
-          console.log(res, "từ change");
         })
         .catch((err) => console.log(err));
     }
@@ -134,7 +144,6 @@ const InputQuantity = memo(function InputQuantity({
                   })
                     .unwrap()
                     .then((res) => {
-                      console.log(res);
                       handlersChange.remove(index);
                       close();
                     })
@@ -175,7 +184,10 @@ const InputQuantity = memo(function InputQuantity({
             if (inputValue === 1) {
               open();
               return;
-            } else handlers.current?.decrement();
+            } else {
+              handleChange(inputValue - 1);
+              handleChangeTotal(inputValue - 1);
+            }
           }}
         >
           -
@@ -189,11 +201,14 @@ const InputQuantity = memo(function InputQuantity({
           onKeyUp={isNumberKey}
           onBlur={() => {
             const valueInput = parseInt(inputRef.current?.value as string);
-            console.log(valueInput);
+
             if (valueInput >= 1)
               if (value !== valueInput) {
-                handleChangeTotal();
-                setInputValue(valueInput);
+                if (valueInput > quantity) {
+                  setInputValue(quantity);
+                  return;
+                } else setInputValue(valueInput);
+                handleChangeTotal(valueInput);
                 updateCart({
                   product_id: id,
                   quantity: valueInput,
@@ -207,7 +222,6 @@ const InputQuantity = memo(function InputQuantity({
           }}
           className={classes.numberInput}
           min={1}
-          handlersRef={handlers}
           styles={{
             wrapper: {
               borderRadius: "0px",
@@ -222,7 +236,6 @@ const InputQuantity = memo(function InputQuantity({
               backgroundColor: "white",
             },
           }}
-          onChange={handleChange}
         />
         <ActionIcon
           size={30}
@@ -237,7 +250,19 @@ const InputQuantity = memo(function InputQuantity({
           }}
           radius="0px"
           variant="default"
-          onClick={() => handlers.current?.increment()}
+          onClick={() => {
+            if (inputValue + 1 > quantity) {
+              notifications.show({
+                id: "overcart",
+                title: "Hàng quá tải",
+                message: "Quả tải đơn hàng",
+              });
+              return;
+            } else {
+              handleChange(inputValue + 1);
+              handleChangeTotal(inputValue + 1); //optimistic update,
+            }
+          }}
         >
           +
         </ActionIcon>

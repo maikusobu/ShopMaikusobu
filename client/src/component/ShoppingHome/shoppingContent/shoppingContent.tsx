@@ -12,7 +12,7 @@ import {
   Skeleton,
 } from "@mantine/core";
 
-import { useState } from "react";
+import { useNavigate } from "react-router";
 import { useSearchParams } from "react-router-dom";
 import { useGetAllProductQuery } from "../../../api/ProductReducer/ProductApi";
 import { MathFunction } from "../../../Helper/MathFunction";
@@ -33,6 +33,11 @@ const useStyles = createStyles(() => ({
   BoxRoot2: {
     height: "200px",
   },
+  productCard: {
+    "&:hover": {
+      boxShadow: "0px 0px 10px #ccc",
+    },
+  },
 }));
 
 function ShoppingContent({
@@ -44,12 +49,13 @@ function ShoppingContent({
   sort: "relevant" | "lowestprice" | "highestprice" | "popular" | "newest";
   categories: string[];
   page: number;
+
   setPage: (page: number) => void;
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const { classes } = useStyles();
-
-  const { data, isFetching } = useGetAllProductQuery(
+  const navigate = useNavigate();
+  const { data, isFetching, isLoading } = useGetAllProductQuery(
     {
       page: searchParams.get("page") ? searchParams.get("page") : page,
       sort: sort,
@@ -59,13 +65,25 @@ function ShoppingContent({
       refetchOnMountOrArgChange: true,
     }
   );
+  console.log(data);
 
   return (
     <Box className={classes.root} pos="relative">
       <Grid gutter={5} gutterXs="md" gutterMd="xl" gutterXl={35} columns={18}>
         {data?.products.map((product) => (
-          <Grid.Col span={3} key={product._id} id={product._id}>
-            <Skeleton visible={isFetching}>
+          <Grid.Col
+            className={classes.productCard}
+            span={3}
+            key={product._id}
+            id={product._id}
+            sx={{
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              navigate(`/shopping/products/${product._id}`);
+            }}
+          >
+            <Skeleton visible={isFetching || isLoading}>
               <Indicator
                 size={16}
                 offset={12}
@@ -77,7 +95,9 @@ function ShoppingContent({
                   },
                 })}
                 disabled={
-                  !product.discount_id?.active || isFetching ? true : false
+                  !product.discount_id?.active || isFetching || isLoading
+                    ? true
+                    : false
                 }
                 label="Sale off"
               >

@@ -7,6 +7,8 @@ import productModel from "./api/v1/models/Product_management/productModel";
 import product_categoryModel from "./api/v1/models/Product_management/product_categoryModel";
 import product_discountModel from "./api/v1/models/Product_management/product_discountModel";
 import product_inventoryModel from "./api/v1/models/Product_management/product_inventoryModel";
+import product_rating from "./api/v1/models/Product_management/product_ratingModel";
+import userModel from "./api/v1/models/User_management/userModel";
 import { Request, Response } from "express";
 const app = express();
 mongoose.connect(`${process.env.MONGO_URL}`, {
@@ -22,8 +24,10 @@ app.get(
   expressAsyncHandler(async (req: Request, res: Response) => {
     try {
       const products = [];
+      const userRandom = await userModel.findOne();
       for (let i = 0; i < 40; i++) {
         console.log("add database at", i);
+
         const name = faker.commerce.productName();
         const desc = faker.lorem.sentence();
         const SKU = faker.string.alphanumeric(6).toUpperCase();
@@ -42,6 +46,10 @@ app.get(
           })
         );
         const amountPurchased = faker.number.int({ min: 1 });
+        const rating = await product_rating.create({
+          user_id: userRandom ? userRandom._id : null,
+          rating_value: faker.number.float({ min: 1, max: 5 }),
+        });
         const category = await product_categoryModel.create({
           name: [
             faker.commerce.department(),
@@ -72,6 +80,7 @@ app.get(
           category_id: category._id,
           discount_id: discount._id,
           inventory_id: inventory._id,
+          rating_id: rating._id,
           image: imageUrlArray,
           amountPurchased,
         });

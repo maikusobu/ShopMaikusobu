@@ -105,9 +105,11 @@ function BoxTool({
           <SegmentedControl
             data={filters}
             value={segmentedSort}
+            transitionDuration={0}
             onChange={(value) => {
-              setPriceSort("");
               setSegmentedSort(value ? value : "relevant");
+
+              setPriceSort("");
               setSort(
                 value
                   ? (value as
@@ -128,6 +130,7 @@ function BoxTool({
             value={priceSort}
             onChange={(value) => {
               setPriceSort(value ? value : "");
+
               setSegmentedSort("relevant");
               setSort(
                 value

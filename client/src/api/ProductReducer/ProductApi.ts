@@ -7,14 +7,27 @@ export type ProductType = {
   desc?: string;
   SKU?: string;
   price: number;
-  category_id: string;
+  category_id: categories;
+  rating_id: rating_id[];
   discount_id?: discountType;
-  inventory_id?: string;
+  inventory_id?: inventory_id;
 };
 import { constructUrlString } from "../../Helper/constructParamString";
 type discountType = {
   active: boolean;
   discount_percent: number;
+};
+type inventory_id = {
+  quantity: number;
+  _id: string;
+};
+type rating_id = {
+  user_id: string;
+  rating_value: number;
+};
+type categories = {
+  _id: string;
+  name: string[];
 };
 type AllProduct = {
   total: number;
@@ -41,7 +54,11 @@ const productApi = baseApi.injectEndpoints({
       providesTags: ["Product"],
     }),
     getSearchProduct: builder.query<ProductType[], string>({
-      query: (name) => `/products/search/${name}`,
+      query: (name) => {
+        return {
+          url: `/products/search?name=${name}`,
+        };
+      },
     }),
   }),
 });

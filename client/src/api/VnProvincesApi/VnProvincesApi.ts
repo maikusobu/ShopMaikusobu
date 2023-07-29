@@ -12,7 +12,6 @@ export interface wards {
 export interface districts {
   label: string;
   value: string;
-
   name: string;
   code: number;
   codename: string;

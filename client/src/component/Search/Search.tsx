@@ -6,43 +6,62 @@ import {
   Text,
 } from "@mantine/core";
 import { ComponentProps, useRef, forwardRef } from "react";
-import { useLoaderData, Form, useSubmit } from "react-router-dom";
+import {
+  useLoaderData,
+  Form,
+  useSubmit,
+  Link,
+  useActionData,
+  useSearchParams,
+} from "react-router-dom";
 import { loader } from "./searchAction";
-import { useNavigation } from "react-router-dom";
+import { useNavigation, useNavigate } from "react-router-dom";
 import { IconSearch } from "@tabler/icons-react";
+import { useGetSearchProductQuery } from "../../api/ProductReducer/ProductApi";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface SearchProps extends SelectItemProps {
   name: string;
+  id: string;
 }
 
-const itemSearch = forwardRef<HTMLDivElement, SearchProps>(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ({ value, ...others }: SearchProps, ref) => (
-    <div ref={ref} {...others}>
-      <Group>
-        <Text>{value}</Text>
-      </Group>
-    </div>
-  )
-);
-
 function Search(props: Omit<ComponentProps<typeof Autocomplete>, "data">) {
-  const { products, q } = useLoaderData() as Awaited<ReturnType<typeof loader>>;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const {
+    data: products,
+    isLoading,
+    isFetching,
+  } = useGetSearchProductQuery(
+    searchParams.get("q") ? searchParams.get("q") : "",
+    { refetchOnMountOrArgChange: true }
+  );
+  const navigate = useNavigate();
 
-  const submit = useSubmit();
-  const navigation = useNavigation();
   const inputRef = useRef<HTMLFormElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const productsData = products?.map((product: any) => ({
     ...product,
     value: product.label,
   }));
-  console.log(productsData);
+  const itemSearch = forwardRef<HTMLDivElement, SearchProps>(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    ({ value, id, ...others }: SearchProps, ref) => (
+      <div ref={ref} {...others}>
+        <Link
+          to={`/shopping/products/${id}`}
+          style={{ textDecoration: "none" }}
+        >
+          <Group>
+            <Text>{value}</Text>
+          </Group>
+        </Link>
+      </div>
+    )
+  );
   return (
     <Form role="search" ref={inputRef} method="GET" className={props.className}>
       <Autocomplete
-        limit={25}
+        limit={14}
         itemComponent={itemSearch}
         styles={{
           input: {
@@ -50,20 +69,21 @@ function Search(props: Omit<ComponentProps<typeof Autocomplete>, "data">) {
             verticalAlign: "middle",
           },
         }}
-        defaultValue={q as string}
+        defaultValue={searchParams.get("q") as string}
         type="search"
         nothingFound="Hãy thử từ khóa mới"
         aria-label="Search products"
         placeholder="Search"
         switchDirectionOnFlip
-        onChange={() => {
-          const isFirstSearch = q == null;
-          submit(new FormData(inputRef?.current as HTMLFormElement), {
-            replace: !isFirstSearch,
-          });
+        onItemSubmit={(item) => {
+          navigate(`/shopping/products/${item.id}`);
+        }}
+        onChange={(value: string) => {
+          searchParams.set("q", value);
+          setSearchParams(searchParams);
         }}
         icon={
-          navigation.state === "loading" ? (
+          isFetching ? (
             <Loader size="xs" />
           ) : (
             <IconSearch stroke={1.5} size={"20px"} />

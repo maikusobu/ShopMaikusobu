@@ -12,6 +12,7 @@ import RestorePassword from "./component/validation/restorePassword.tsx";
 import actionChangePassword from "./component/validation/action/actionChangePassword.ts";
 import actionRestorePassword from "./component/validation/action/actionrestorePassword.ts";
 import ChangePassWord from "./component/validation/changePassword.tsx";
+import ProductPage from "./component/ShoppingHome/ProductPage/ProductPage.tsx";
 import { Notifications } from "@mantine/notifications";
 import SettingAccount from "./component/SettingAccount/SettingAccount.tsx";
 import PaymentProvider from "./component/ModalAddPayment/ModalAddPayment.tsx";
@@ -22,8 +23,9 @@ import CheckOut from "./component/CheckOutComponent/CheckOutPage.tsx";
 import ShoppingHome from "./component/ShoppingHome/shoppinghome.tsx";
 import { loader as searchLoader } from "./component/Search/searchAction.ts";
 import { ModalProVider } from "./component/ModalContext/ModalContext.tsx";
+import ContentShow from "./component/ShoppingHome/ContentShow/ContentShow.tsx";
 import { store } from "./app/store.ts";
-import { Provider } from "react-redux/es/exports";
+import { Provider } from "react-redux";
 
 import { DatesProvider } from "@mantine/dates";
 import "./index.css";
@@ -68,15 +70,12 @@ const locale = {
     y: "một năm",
     yy: "%d năm",
   },
-}; // dynamic import somehow not working, so I moved all codes in node modules to be here :))))
-
+};
 dayjs.locale(locale);
-
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
-    loader: searchLoader,
   },
   {
     path: "/authen",
@@ -101,30 +100,43 @@ const router = createBrowserRouter([
         element: <ChangePassWord />,
         action: actionChangePassword,
       },
+      {
+        path: "noauthorized",
+        element: <div>Bạn không có quyền truy cập</div>,
+      },
     ],
   },
   {
-    path: "/cart",
-    element: <CartPage />,
-    loader: searchLoader,
+    path: "/shopping",
+
+    children: [
+      {
+        path: "cart",
+        element: <CartPage />,
+      },
+      {
+        path: "checkout",
+        element: <CheckOut />,
+      },
+      {
+        path: "products",
+        element: <ShoppingHome />,
+        children: [
+          {
+            path: "all",
+            element: <ContentShow />,
+          },
+          {
+            path: ":id",
+            element: <ProductPage />,
+          },
+        ],
+      },
+    ],
   },
   {
     path: "/settingaccount",
     element: <SettingAccount />,
-  },
-  {
-    path: "/checkout",
-    element: <CheckOut />,
-    loader: searchLoader,
-  },
-  {
-    path: "/products",
-    element: <ShoppingHome />,
-    loader: searchLoader,
-  },
-  {
-    path: "/noauthorized",
-    element: <div>Bạn không có quyền truy cập</div>,
   },
 ]);
 

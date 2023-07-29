@@ -32,7 +32,7 @@ function UserContainerHome() {
       <Group spacing={5} position="left" noWrap>
         <div
           onMouseEnter={handleMouseEnter}
-          onClick={() => navigate("/cart")}
+          onClick={() => navigate("/shopping/cart")}
           onMouseLeave={handleMouseLeave}
           ref={cardRef}
           className={classes.IconContainer}

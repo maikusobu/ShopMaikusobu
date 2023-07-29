@@ -50,9 +50,9 @@ function ContentTab() {
       <IconCircleArrowDownFilled
         className="continue-icon"
         size={40}
-        onClick={() => navigate("/products?page=1")}
+        onClick={() => navigate("/shopping/products/all?page=1")}
       />
-      <div className={classes.overlay}></div>
+      b<div className={classes.overlay}></div>
     </Tabs>
   );
 }

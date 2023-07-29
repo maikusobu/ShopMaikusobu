@@ -113,7 +113,7 @@ function CartContent() {
   const allChecked = values?.every((value) => value.checked);
   const indeterminate = values?.some((value) => value.checked) && !allChecked;
   const isSomeChecked = values?.some((value) => value.checked);
-  console.log(values);
+  console.log(data);
   useEffect(() => {
     handlers.setState(initialValues as orderItem[]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -171,7 +171,7 @@ function CartContent() {
                   <Group className={classes.groupContainer}>
                     <Group w={350} noWrap>
                       <Checkbox
-                        key={values ? values[i]?.key : ""}
+                        key={values ? values[i]?.key : i}
                         checked={values ? values[i]?.checked : false}
                         onChange={(event) =>
                           handlers.setItemProp(
@@ -217,6 +217,9 @@ function CartContent() {
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         handlersChange={handlers as any}
                         refetch={refetch}
+                        quantity={
+                          cart_item.product_id.inventory_id?.quantity ?? 10000
+                        }
                         cartId={cart_item._id}
                         price={cart_item.product_id.price as number}
                         discount={
@@ -240,7 +243,6 @@ function CartContent() {
                         })
                           .unwrap()
                           .then((res) => {
-                            console.log(res);
                             handlers.remove(i);
                           })
                           .catch((err) => console.log(err));
@@ -347,7 +349,7 @@ function CartContent() {
                       }, 0),
                     })
                   );
-                  navigate("/checkout");
+                  navigate("/shopping/checkout");
                 }}
               >
                 Đặt hàng
