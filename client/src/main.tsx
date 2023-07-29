@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { Helmet } from 'react-helmet';
 import dayjs from 'dayjs';
 import { MantineProvider } from '@mantine/core';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
@@ -102,14 +101,7 @@ const router = createBrowserRouter([
 			},
 			{
 				path: 'noauthorized',
-				element: (
-					<>
-						<Helmet>
-							<title>Error</title>
-						</Helmet>
-						<div>Bạn không có quyền truy cập</div>
-					</>
-				),
+				element: <div>Bạn không có quyền truy cập</div>,
 			},
 		],
 	},

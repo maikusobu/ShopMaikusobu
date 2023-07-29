@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Button, Container, Group, Tabs, Title, createStyles } from '@mantine/core';
 import Layout from '../layout/layout';
@@ -7,9 +9,6 @@ import Payment from './Payment';
 import UserAddressForm from './Address';
 
 import { IconArrowBack } from '@tabler/icons-react';
-
-import { useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
 
 const useStyles = createStyles(() => ({
 	container: {
@@ -24,15 +23,15 @@ const useStyles = createStyles(() => ({
 	},
 }));
 function SettingAccount() {
+	useEffect(() => {
+		document.title = 'Settings';
+	}, []);
 	const { classes } = useStyles();
 
 	const navigate = useNavigate();
 
 	return (
 		<Layout>
-			<Helmet>
-				<title>Settings</title>
-			</Helmet>
 			<Container mx={0} className={classes.container} id='container'>
 				<Group>
 					<Button
