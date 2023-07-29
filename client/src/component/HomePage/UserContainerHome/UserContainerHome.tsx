@@ -32,7 +32,7 @@ function UserContainerHome() {
       <Group spacing={5} position="left" noWrap>
         <div
           onMouseEnter={handleMouseEnter}
-          onClick={() => navigate("/cart")}
+          onClick={() => navigate("/shopping/cart")}
           onMouseLeave={handleMouseLeave}
           ref={cardRef}
           className={classes.IconContainer}
@@ -48,7 +48,7 @@ function UserContainerHome() {
           handleMouseLeave={handleMouseLeave}
         />
       }
-      <IconMessage size="1.25rem" color={theme.colors.blue[6]} stroke={1.5} />
+
       <UserIn />
     </Group>
   );

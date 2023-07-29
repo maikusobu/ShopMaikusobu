@@ -1,5 +1,5 @@
 import ButtonAutehn from "../ButtonAuthen/ButtonAuthen";
-import { createStyles, Container, Group } from "@mantine/core";
+import { createStyles, Container, Group, Box } from "@mantine/core";
 import { useAppSelector } from "../../../app/hooks";
 import { selectAuth } from "../../../api/AuthReducer/AuthReduce";
 import Search from "../../Search/Search";
@@ -16,16 +16,14 @@ const useStyles = createStyles((theme) => ({
     display: "flex",
     justifyContent: "flex-end",
     gap: "45px",
-    transform: "translateX(-40px)",
   },
   mainSection: {
     position: "relative",
     zIndex: 9999,
-    paddingTop: theme.spacing.sm,
     paddingBottom: 0,
     margin: 0,
-
     minWidth: "100vw",
+    paddingTop: "10px",
     width: "100%",
   },
   search: {
@@ -37,6 +35,8 @@ const useStyles = createStyles((theme) => ({
   },
   group: {
     width: "100%",
+    paddingRight: "10px",
+    paddingLeft: "10px",
     // position: "relative",
     // zIndex: 9999,
   },
@@ -53,17 +53,11 @@ function Header() {
         <title>Home</title>
       </Helmet> */}
       <Group position="apart" align="center" className={classes.group}>
-        <Logo
-          width={40}
-          height={40}
-          style={{
-            transform: "translateX(40px)",
-          }}
-        />
+        <Logo width={40} height={40} />
         <Search className={classes.search} />
-        <Container mx={0} className={classes.user}>
+        <Box mx={0} className={classes.user}>
           {!auth.isLoggedIn ? <ButtonAutehn /> : <UserContainerHome />}
-        </Container>
+        </Box>
       </Group>
     </Container>
   );

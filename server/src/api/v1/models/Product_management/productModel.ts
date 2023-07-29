@@ -45,6 +45,7 @@ const Product = new Schema({
   },
   category_id: { type: Schema.Types.ObjectId, ref: "ProductCategory" },
   discount_id: { type: Schema.Types.ObjectId, ref: "ProductDiscount" },
+  rating_id: [{ type: Schema.Types.ObjectId, ref: "ProductRatiing" }],
   inventory_id: {
     type: Schema.Types.ObjectId,
     ref: "ProductInventory",

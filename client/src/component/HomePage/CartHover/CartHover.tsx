@@ -137,13 +137,13 @@ function CartHover({
   });
   const top = cardNode
     ? cardNode?.getBoundingClientRect().bottom + cardNode.clientHeight / 8
-    : 0;
+    : 70;
   const right = cardNode
     ? window.innerWidth -
       cardNode?.getBoundingClientRect().right -
       cardNode.clientWidth / 7
-    : 0;
-
+    : 150;
+  console.log(cardNode?.getBoundingClientRect());
   return (
     <Paper
       className={classes.root}

@@ -39,6 +39,7 @@ const action = async ({ request }: { request: Request }) => {
       await new Promise((r) => setTimeout(r, 1000));
       return redirect("/");
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     if (err.status === 400) {
       return { err, status: 400 };

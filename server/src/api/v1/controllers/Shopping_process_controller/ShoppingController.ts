@@ -13,9 +13,14 @@ export const getShoppingSession = expressAsyncHandler(
           path: "cart_items",
           populate: {
             path: "product_id",
-            populate: {
-              path: "discount_id",
-            },
+            populate: [
+              {
+                path: "discount_id",
+              },
+              {
+                path: "inventory_id",
+              },
+            ],
           },
         });
 
