@@ -13,7 +13,6 @@ import {
 	LoadingOverlay,
 } from '@mantine/core';
 import type { UserPaymentModel } from '../../api/UserApi/UserPaymentManagerApi';
-import type { UserJson } from '../../api/UserApi/UserApi';
 import { useGetUserPaymentByIdQuery } from '../../api/UserApi/UserPaymentManagerApi';
 import { useGetUserByIdQuery } from '../../api/UserApi/UserApi';
 import { useUpdateUserMutation } from '../../api/UserApi/UserApi';
@@ -22,25 +21,18 @@ import { ModalAddPaymentContext } from '../ModalAddPayment/ModalAddPayment';
 import { useAppSelector } from '../../app/hooks';
 import { selectAuth } from '../../api/AuthReducer/AuthReduce';
 const useStyles = createStyles((theme) => ({
-	formContainer: {
-		'& > *': {
-			marginTop: '1.2rem',
-		},
-		'& > *:first-child': {
-			marginTop: 0,
-		},
-	},
 	bgDiv: {
 		backgroundColor: '#fff',
 		color: 'black',
 		padding: '0.5rem',
 		height: '4rem',
 		display: 'flex',
+		border: '5px solid transparent',
 		borderRadius: '5px',
 	},
 	defaultDiv: {
-		border: `5px solid ${theme.colors.brandcolorYellow[4]}`,
-		color: theme.colors.brandcolorYellow[4],
+		border: `5px solid ${theme.colors.brandcolorYellow[4]} !important`,
+		color: `${theme.colors.brandcolorYellow[4]} !important`,
 		fontWeight: 700,
 	},
 }));
@@ -53,19 +45,20 @@ function UserPaymentForm() {
 	const { data } = useGetUserPaymentByIdQuery(auth.id, {
 		skip: !auth.isLoggedIn,
 	});
-	const { data: userData = { idDefaultPayment: null } } = useGetUserByIdQuery(auth.id, {
+	const { data: userData = { idDefaultPayment: undefined } } = useGetUserByIdQuery(auth.id, {
 		skip: !auth.isLoggedIn,
 	});
-	const sortArray = (arr: UserPaymentModel[]) => {
-		const sortedArr = [...arr];
-		const defaultIndex = sortedArr.findIndex((item) => item._id === userData.idDefaultPayment);
-		sortedArr.unshift(...sortedArr.splice(defaultIndex, 1));
+	const [updateUser, { isLoading }] = useUpdateUserMutation();
 
-		return sortedArr;
+	const sortArray = (arr: UserPaymentModel[]) => {
+		const sortedArray = [...arr];
+		const defaultIndex = sortedArray.findIndex((item) => item._id === userData.idDefaultPayment);
+		sortedArray.unshift(...sortedArray.splice(defaultIndex, 1));
+
+		return sortedArray;
 	};
 
-	const [updateUser, { isLoading }] = useUpdateUserMutation();
-	const handleSetDefault = (item: UserPaymentModel, index: number) => {
+	const handleSetDefault = (item: UserPaymentModel) => {
 		const newUserData = { ...userData, idDefaultPayment: item._id };
 
 		updateUser(newUserData)
@@ -74,12 +67,10 @@ function UserPaymentForm() {
 				// notifications
 			})
 			.catch((err) => console.log(err));
-
-		return;
 	};
 
 	return (
-		<Box>
+		<Box pos='relative'>
 			<LoadingOverlay
 				loaderProps={{ size: 'sm', color: 'pink', variant: 'bars' }}
 				overlayOpacity={0.8}
@@ -96,7 +87,7 @@ function UserPaymentForm() {
 			)}
 			<Stack spacing={10}>
 				{sortArray(data?.payment_list ? data.payment_list : ([] as UserPaymentModel[])).map(
-					(item, i) => (
+					(item) => (
 						<div
 							key={item._id}
 							className={`${classes.bgDiv} ${
@@ -114,7 +105,7 @@ function UserPaymentForm() {
 									{userData.idDefaultPayment !== item._id && (
 										<Button
 											onClick={() => {
-												handleSetDefault(item, i);
+												handleSetDefault(item);
 											}}
 										>
 											Thiết lập mặc định
