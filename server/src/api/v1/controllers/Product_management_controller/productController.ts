@@ -6,62 +6,32 @@ import product_discountModel from "../../models/Product_management/product_disco
 import product_categoryModel from "../../models/Product_management/product_categoryModel";
 import NodeCache from "node-cache";
 import product_ratingModel from "../../models/Product_management/product_ratingModel";
+import { SortOrder } from "mongoose";
 const myCache = new NodeCache();
+interface MyObject {
+  [key: string]: SortOrder;
+}
 export const productGetAllMiddleware = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const cacheKey = JSON.stringify({
-        categories: req.query.categories,
-        sort: req.query.sort,
-      });
+      const { categories, sort, page = "1" } = req.query;
+      const cacheKey = JSON.stringify({ categories, sort });
       let products = myCache.get(cacheKey) as any[] | unknown;
       if (!products) {
-        req.query.page = req.query.page ? req.query.page : "1";
-        const arrayCategories = req.query.categories
-          ? (req.query.categories as string).split(",")
-          : [];
-        const productsPromiseBase = productModel
-          .find({})
-
-          .sort({
-            ...(req.query.sort === "relevant" && { name: -1 }),
-            ...(req.query.sort === "newest" && { createdAt: -1 }),
-            ...(req.query.sort === "popular" && { amountPurchases: 1 }),
-            ...(req.query.sort === "lowestprice" && { price: 1 }),
-            ...(req.query.sort === "highestprice" && { price: -1 }),
-          })
-          .populate({
-            path: "inventory_id",
-            model: product_inventoryModel,
-            match: { quantity: { $gt: 0 } },
-          })
-          .populate({
-            path: "discount_id",
-            model: product_discountModel,
-          })
-          .populate({
-            path: "category_id",
-            model: product_categoryModel,
-          })
-          .populate({
-            path: "rating_id",
-            model: product_ratingModel,
-          });
-        products = await productsPromiseBase.exec();
-
-        products = (products as any[]).filter((product) => {
-          if (arrayCategories.length === 0) return true;
-          return product.category_id.name.includes(...arrayCategories);
-        });
+        products = await getProductsFromDB(
+          categories as string,
+          sort as string
+        );
         myCache.set(cacheKey, products);
       }
+      const productsPerPage = 36;
+      const startIndex = productsPerPage * (parseInt(page as string) - 1);
+      const endIndex = productsPerPage * parseInt(page as string);
+      const paginatedProducts = (products as any[]).slice(startIndex, endIndex); // pagination and page
       res.status(200).json({
         total: (products as any[]).length,
-        page: req.query.page,
-        products: (products as any[]).slice(
-          36 * (parseInt(req.query.page as string) - 1),
-          36 * parseInt(req.query.page as string)
-        ),
+        page: page,
+        products: paginatedProducts,
       });
     } catch (err) {
       console.log(err);
@@ -69,7 +39,41 @@ export const productGetAllMiddleware = expressAsyncHandler(
     }
   }
 );
-
+const getProductsFromDB = async (categories: string, sort: string) => {
+  const arrayCategories = categories ? (categories as string).split(",") : [];
+  const sortOptions: Record<string, MyObject> = {
+    relevant: { name: -1 },
+    newest: { createdAt: -1 },
+    popular: { amountPurchases: 1 },
+    lowestprice: { price: 1 },
+    highestprice: { price: -1 },
+  };
+  const productsPromiseBase = productModel
+    .find({})
+    .sort(sortOptions[sort])
+    .populate({
+      path: "inventory_id",
+      model: product_inventoryModel,
+      match: { quantity: { $gt: 0 } },
+    })
+    .populate({
+      path: "discount_id",
+      model: product_discountModel,
+    })
+    .populate({
+      path: "category_id",
+      model: product_categoryModel,
+    })
+    .populate({
+      path: "rating_id",
+      model: product_ratingModel,
+    });
+  const products = await productsPromiseBase.exec();
+  return (products as any[]).filter((product) => {
+    if (arrayCategories.length === 0) return true;
+    return product.category_id.name.includes(...arrayCategories);
+  });
+};
 export const productGetByIdMiddleware = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -128,15 +132,10 @@ export const productSearch = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       let products: any[];
-      console.log(req.query.name, "why it here ?");
-      if (
-        req.query.name !== null &&
-        req.query.name !== undefined &&
-        req.query.name !== ""
-      ) {
-        console.log(req.query.name, "why it here ?");
+      const { name } = req.query;
+      if (name !== null && name !== undefined && name !== "") {
         products = await productModel
-          .find({ name: { $regex: `${req.query.name}`, $options: "i" } })
+          .find({ name: { $regex: `${name}`, $options: "i" } }) // search name with case-insenitivity for example: "ALICE, Alice, alice " are be matched by the regex
           .select(["_id", "name"])
           .exec();
       } else products = [];

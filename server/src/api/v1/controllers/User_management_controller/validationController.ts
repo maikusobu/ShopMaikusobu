@@ -30,24 +30,24 @@ export const signupMiddeware = asyncHandler(
           const salt = await bcrypt.genSalt(Number(process.env.SALT_ROUND));
           const hash = await bcrypt.hash(req.body.password, salt);
           req.body.password = hash;
-          saveDataURLToFile(req.body.avatar, req.body.username);
-          delete req.body.avatar;
-
+          saveDataURLToFile(req.body.avatar, req.body.username); // as the name suggested, this code convert dataurl to file
+          delete req.body.avatar; // no need to handle avatar anymore
           const userMade = new userModel(req.body);
           await userMade.save();
-          console.log(userMade, "dad");
-          await shopping_session.create({
-            user_id: userMade._id,
-            cart_items: [],
-          });
-          await user_addressManagerModel.create({
-            user_id: userMade._id,
-            address_list: [],
-          });
-          await user_manager_paymentModel.create({
-            user_id: userMade._id,
-            payment_list: [],
-          });
+          await Promise.all([
+            shopping_session.create({
+              user_id: userMade._id,
+              cart_items: [],
+            }),
+            user_addressManagerModel.create({
+              user_id: userMade._id,
+              address_list: [],
+            }),
+            user_manager_paymentModel.create({
+              user_id: userMade._id,
+              payment_list: [],
+            }),
+          ]);
           res.status(201).json({
             response: { message: "User created successfully", status: 201 },
           });

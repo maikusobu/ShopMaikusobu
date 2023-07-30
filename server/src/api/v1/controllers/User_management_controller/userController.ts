@@ -37,7 +37,6 @@ export const userUpdateMiddleware = asynchandle(
     try {
       if (req.body.avatar) {
         saveDataURLToFile(req.body.avatar, req.body.username);
-        console.log(req.body.avatar);
         delete req.body.avatar;
       }
       const user = await userModel.findByIdAndUpdate(req.params.id, req.body, {
@@ -46,7 +45,7 @@ export const userUpdateMiddleware = asynchandle(
       if (!user) {
         throw new Error("User not found");
       }
-      const imageData = fs.readFileSync(`${dirPath}/${user.username}.png`);
+      const imageData = fs.readFileSync(`${dirPath}/${user.username}.png`); // read image file from dir path and convert it to dataUrl
       const dataURL = "data:image/png;base64," + imageData.toString("base64");
       res.status(200).json({
         username: user.username,
