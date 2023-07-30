@@ -30,8 +30,11 @@ export const signupMiddeware = asyncHandler(
           const salt = await bcrypt.genSalt(Number(process.env.SALT_ROUND));
           const hash = await bcrypt.hash(req.body.password, salt);
           req.body.password = hash;
-          saveDataURLToFile(req.body.avatar, req.body.username); // as the name suggested, this code convert dataurl to file
-          delete req.body.avatar; // no need to handle avatar anymore
+          req.body.avatar = saveDataURLToFile(
+            req.body.avatar,
+            req.body.username
+          ); // as the name suggested, this code convert dataurl to file
+          // delete req.body.avatar; // no need to handle avatar anymore
           const userMade = new userModel(req.body);
           await userMade.save();
           await Promise.all([

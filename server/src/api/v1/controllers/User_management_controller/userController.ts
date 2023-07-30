@@ -12,8 +12,8 @@ export const userMiddleware = asynchandle(
       if (!user) {
         throw new Error("User not found");
       }
-      const imageData = fs.readFileSync(`${dirPath}/${user.username}.png`);
-      const dataURL = "data:image/png;base64," + imageData.toString("base64");
+      // const imageData = fs.readFileSync(`${dirPath}/${user.username}.png`);
+      const dataURL = "data:image/png;base64," + user.avatar.toString("base64");
       const userForfrondent = {
         idDefaultPayment: user.idDefaultPayment,
         idDefaultAddress: user.idDefaultAddress,
@@ -36,8 +36,7 @@ export const userUpdateMiddleware = asynchandle(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (req.body.avatar) {
-        saveDataURLToFile(req.body.avatar, req.body.username);
-        delete req.body.avatar;
+        req.body.avatar = saveDataURLToFile(req.body.avatar, req.body.username);
       }
       const user = await userModel.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
@@ -45,8 +44,8 @@ export const userUpdateMiddleware = asynchandle(
       if (!user) {
         throw new Error("User not found");
       }
-      const imageData = fs.readFileSync(`${dirPath}/${user.username}.png`); // read image file from dir path and convert it to dataUrl
-      const dataURL = "data:image/png;base64," + imageData.toString("base64");
+      // const imageData = fs.readFileSync(`${dirPath}/${user.username}.png`); // read image file from dir path and convert it to dataUrl
+      const dataURL = "data:image/png;base64," + user.avatar.toString("base64");
       res.status(200).json({
         username: user.username,
         first_name: user.first_name,

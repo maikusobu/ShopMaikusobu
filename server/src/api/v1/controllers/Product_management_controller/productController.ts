@@ -21,7 +21,7 @@ export const productGetAllMiddleware = expressAsyncHandler(
         products = await getProductsFromDB(
           categories as string,
           sort as string
-        );
+        ); 
         myCache.set(cacheKey, products);
       }
       const productsPerPage = 36;
