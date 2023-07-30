@@ -22,6 +22,7 @@ export const productGetAllMiddleware = expressAsyncHandler(
           : [];
         const productsPromiseBase = productModel
           .find({})
+
           .sort({
             ...(req.query.sort === "relevant" && { name: -1 }),
             ...(req.query.sort === "newest" && { createdAt: -1 }),
@@ -74,6 +75,7 @@ export const productGetByIdMiddleware = expressAsyncHandler(
     try {
       const products = await productModel
         .findById(req.params.id)
+        .lean()
         .populate({
           path: "inventory_id",
           model: product_inventoryModel,

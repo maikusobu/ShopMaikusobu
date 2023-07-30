@@ -6,6 +6,7 @@ const ShoppingSession = new Schema({
   cart_items: [{ type: Schema.Types.ObjectId, ref: "CartItem" }],
 });
 type ShoppingSessionType = InferSchemaType<typeof ShoppingSession>;
+ShoppingSession.index({ user_id: 1 }, { unique: true });
 export default mongoose.model<ShoppingSessionType>(
   "ShoppingSession",
   ShoppingSession

@@ -5,7 +5,7 @@ export const getCartItemByProductId = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { product_id } = req.params;
-      const cartItem = await cart_itemModel.findOne({ product_id });
+      const cartItem = await cart_itemModel.findOne({ product_id }).lean();
       if (!cartItem) {
         throw new Error("Cart item not found");
       }
@@ -23,7 +23,7 @@ export const createCartItem = expressAsyncHandler(
     try {
       const { product_id, quantity } = req.body;
       let cartItem;
-      const cartItemFound = await cart_itemModel.findOne({ product_id });
+      const cartItemFound = await cart_itemModel.findOne({ product_id }).lean();
       if (cartItemFound) {
         cartItem = await cart_itemModel.findOneAndUpdate(
           { product_id: product_id },

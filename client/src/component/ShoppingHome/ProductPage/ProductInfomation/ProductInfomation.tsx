@@ -24,6 +24,7 @@ import { ModalContext } from "../../../ModalContext/ModalContext";
 
 function ProductDetail({ data }: { data: ProductType | undefined }) {
   const [inputValue, setInputValue] = useState("1");
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const { open, close } = useContext(ModalContext)!;
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const { setData, setError } = useContext(ErrorContext);

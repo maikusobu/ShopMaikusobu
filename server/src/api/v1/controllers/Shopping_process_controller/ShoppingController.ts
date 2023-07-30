@@ -9,6 +9,7 @@ export const getShoppingSession = expressAsyncHandler(
         .findOne({
           user_id: req.params.id,
         })
+        .lean()
         .populate({
           path: "cart_items",
           populate: {
@@ -90,9 +91,11 @@ export const updateCartItem = expressAsyncHandler(
 export const deleteALlCartItem = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const shopping_session_data = await shopping_session.findOne({
-        user_id: req.params.id,
-      });
+      const shopping_session_data = await shopping_session
+        .findOne({
+          user_id: req.params.id,
+        })
+        .lean();
       const arrayHandleDelete = shopping_session_data?.cart_items.map(
         async (item) => await cart_itemModel.findByIdAndDelete(item)
       );

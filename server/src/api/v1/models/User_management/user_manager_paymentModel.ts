@@ -6,7 +6,7 @@ const userPaymentManager = new Schema({
   payment_list: [{ type: Schema.Types.ObjectId, ref: "UserPayment" }],
 });
 type userPaymentManagerType = InferSchemaType<typeof userPaymentManager>;
-
+userPaymentManager.index({ user_id: 1 }, { unique: true });
 export default mongoose.model<userPaymentManagerType>(
   "UserPaymentManager",
   userPaymentManager

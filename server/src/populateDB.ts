@@ -50,28 +50,31 @@ app.get(
           user_id: userRandom ? userRandom._id : null,
           rating_value: faker.number.float({ min: 1, max: 5 }),
         });
-        const category = await product_categoryModel.create({
-          name: [
-            faker.commerce.department(),
-            faker.commerce.department(),
-            faker.commerce.department(),
-            faker.commerce.department(),
-            faker.commerce.department(),
-          ],
-        });
-        const discount = await product_discountModel.create({
-          name: faker.lorem.word(),
-          desc: faker.lorem.sentence(),
-          discount_percent: faker.number.float({
-            min: 10,
-            max: 100,
-            precision: 0.001,
+        const [category, discount, inventory] = await Promise.all([
+          product_categoryModel.create({
+            name: [
+              faker.commerce.department(),
+              faker.commerce.department(),
+              faker.commerce.department(),
+              faker.commerce.department(),
+              faker.commerce.department(),
+            ],
           }),
-          active: faker.datatype.boolean(0.5),
-        });
-        const inventory = await product_inventoryModel.create({
-          quantity: faker.number.int({ min: 0, max: 100 }),
-        });
+          product_discountModel.create({
+            name: faker.lorem.word(),
+            desc: faker.lorem.sentence(),
+            discount_percent: faker.number.float({
+              min: 10,
+              max: 100,
+              precision: 0.001,
+            }),
+            active: faker.datatype.boolean(0.5),
+          }),
+          product_inventoryModel.create({
+            quantity: faker.number.int({ min: 0, max: 100 }),
+          }),
+        ]);
+
         const product = await productModel.create({
           name,
           desc,
