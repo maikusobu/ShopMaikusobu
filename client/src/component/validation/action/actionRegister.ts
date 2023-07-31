@@ -5,13 +5,15 @@ import { notifications } from "@mantine/notifications";
 const action = async ({ request }: { request: Request }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const formData = await request.formData();
+  let avatarUser = "";
   const blob = await generatedAvatar(formData.get("username") as string);
-  const avatarDataURL = await blobToDataURL(blob);
+  avatarUser = await blobToDataURL(blob);
   const data = {
     ...Object.fromEntries(formData),
-    avatar: avatarDataURL,
+    isSocialLogin: formData.get("picture") ? true : false,
+    avatar: avatarUser,
   };
-
+  // eslint-disable-next-line no-debugger
   try {
     const res = await fetch(`${import.meta.env.VITE_SERVER}/authen/signup`, {
       method: "POST",
@@ -23,7 +25,7 @@ const action = async ({ request }: { request: Request }) => {
     });
     const json = await res.json();
     // eslint-disable-next-line no-debugger
-
+    console.log(json);
     if (
       json.response.status === 400 ||
       json.response.status === 500 ||
@@ -44,7 +46,8 @@ const action = async ({ request }: { request: Request }) => {
         loading: false,
       });
       await new Promise((r) => setTimeout(r, 2000));
-      return redirect("/authen/login");
+      if (json.response.social === true) return redirect("/");
+      else return redirect("/authen/login");
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {

@@ -52,6 +52,7 @@ function UserIn() {
   const auth = useAppSelector(selectAuth);
   const { data } = useGetUserByIdQuery(auth.id, { skip: !auth.isLoggedIn });
   const imageUrl = useAvatar(data ? data : null);
+  console.log(data, imageUrl);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   return (

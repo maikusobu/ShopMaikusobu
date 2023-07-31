@@ -1,12 +1,11 @@
-import * as fs from "fs";
-import * as path from "path";
-import { dirPath } from "./returnUrl";
-export function saveDataURLToFile(dataURL: string, userName: string) {
+export function saveDataURLToBinaryData(dataURL: string) {
   const base64Data = dataURL.split(",")[1];
   if (typeof base64Data === "undefined") {
     throw new Error("Invalid data URL");
   }
+
   const buffer = Buffer.from(base64Data, "base64");
+  console.log(buffer);
   return buffer;
   // if (!fs.existsSync(dirPath)) {
   //   fs.mkdirSync(dirPath);

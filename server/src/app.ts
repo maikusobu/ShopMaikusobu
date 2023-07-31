@@ -2,7 +2,7 @@ import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
-require("dotenv").config({ path: "./.env" });
+require("dotenv").config();
 import { dirPath } from "./api/v1/helpers/returnUrl";
 import mongoose from "mongoose";
 const morgan = require("morgan");
