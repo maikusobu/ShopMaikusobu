@@ -24,6 +24,7 @@ import ShoppingHome from './component/ShoppingHome/shoppinghome.tsx';
 import { loader as searchLoader } from './component/Search/searchAction.ts';
 import { ModalProVider } from './component/ModalContext/ModalContext.tsx';
 import ContentShow from './component/ShoppingHome/ContentShow/ContentShow.tsx';
+import Faq from './component/Faq/Faq.tsx';
 import { store } from './app/store.ts';
 import { Provider } from 'react-redux';
 
@@ -136,6 +137,16 @@ const router = createBrowserRouter([
 	{
 		path: '/settingaccount',
 		element: <SettingAccount />,
+	},
+	{
+		path: '/support',
+		children: [
+			{
+				path: 'faq',
+				element: <Faq />,
+			},
+			{},
+		],
 	},
 ]);
 
