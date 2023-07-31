@@ -1,4 +1,8 @@
-import mongoose, { ValidatorProps, InferSchemaType } from "mongoose";
+import mongoose, {
+  ValidatorProps,
+  InferSchemaType,
+  SchemaType,
+} from "mongoose";
 
 const Schema = mongoose.Schema;
 
@@ -76,7 +80,12 @@ const userSchema = new Schema(
     },
     avatar: {
       type: Buffer,
-      required: true,
+
+      default: null,
+    },
+    picture: {
+      default: "",
+      type: String,
     },
   },
   { timestamps: true }

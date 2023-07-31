@@ -4,10 +4,10 @@ import {
   signinMiddeware,
   forgotPasswordMiddeware,
   changePasswordMiddeware,
-} from "../../controllers/User_management_controller/validationController";
-
+} from "../../controllers/services/validationController";
+import { middlwareSocialLogin } from "../../controllers/services/CheckSoscial";
 const router = express.Router();
-router.post("/login", signinMiddeware);
+router.post("/login", middlwareSocialLogin, signinMiddeware);
 router.post("/signup", signupMiddeware);
 router.post("/forgotpassword", forgotPasswordMiddeware);
 router.patch("/changepassword", changePasswordMiddeware);

@@ -1,5 +1,6 @@
-import { redirect } from "react-router-dom";
 import { notifications } from "@mantine/notifications";
+import { redirect } from "react-router";
+
 const action = async ({ request }: { request: Request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);

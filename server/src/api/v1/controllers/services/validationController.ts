@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { saveDataURLToFile } from "../../helpers/savedataurl";
+import { saveDataURLToBinaryData } from "../../helpers/savedataurl";
 import { generateToken } from "../../validations/generateToken";
 import asyncHandler from "express-async-handler";
 import userModel from "../../models/User_management/userModel";
@@ -30,10 +30,7 @@ export const signupMiddeware = asyncHandler(
           const salt = await bcrypt.genSalt(Number(process.env.SALT_ROUND));
           const hash = await bcrypt.hash(req.body.password, salt);
           req.body.password = hash;
-          req.body.avatar = saveDataURLToFile(
-            req.body.avatar,
-            req.body.username
-          ); // as the name suggested, this code convert dataurl to file
+          req.body.avatar = saveDataURLToBinaryData(req.body.avatar); // as the name suggested, this code convert dataurl to file
           // delete req.body.avatar; // no need to handle avatar anymore
           const userMade = new userModel(req.body);
           await userMade.save();
@@ -52,7 +49,11 @@ export const signupMiddeware = asyncHandler(
             }),
           ]);
           res.status(201).json({
-            response: { message: "User created successfully", status: 201 },
+            response: {
+              message: "User created successfully",
+              status: 201,
+              social: req.body.isSocialLogin ? true : false,
+            },
           });
         } catch (err: any) {
           console.log(err);
@@ -78,10 +79,15 @@ export const signupMiddeware = asyncHandler(
 export const signinMiddeware = asyncHandler(
   async (req: Request, res: Response) => {
     try {
-      console.log(req.body);
       const User = await userModel.findOne({ username: req.body.username });
+
       if (!User) throw new Error("User not found");
-      const match = await checkUser(req.body.password, User?.password);
+      let match = false;
+      if (req.body.isSocialLogin) {
+        match = true;
+      } else {
+        match = await checkUser(req.body.password, User?.password);
+      }
       if (match) {
         const token = generateToken(User.id);
         res.cookie("token", token, {
@@ -93,6 +99,7 @@ export const signinMiddeware = asyncHandler(
           .status(200)
           .json({
             message: "login sucess",
+            social: req.body.isSocialLogin ? true : false,
             status: 200,
             id: User?.id,
             username: User?.username,

@@ -94,9 +94,11 @@ function GeneralInfo() {
         croppedAreaPixels as PixelCropType,
         rotation
       );
+
       dataUrlRef.current = await blobToDataURL(croppedImage as Blob);
 
       const url = URL.createObjectURL(croppedImage as Blob);
+
       if (ImageRef.current) {
         ImageRef.current.src = url;
       }
@@ -139,9 +141,8 @@ function GeneralInfo() {
     if (dataUrlRef.current) {
       formData.append("avatar", dataUrlRef.current as string);
     }
-
+    formData.append("picture", "");
     const dataObject = Object.fromEntries(formData);
-
     updateUser(dataObject)
       .unwrap()
       .then(() => {
