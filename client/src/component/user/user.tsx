@@ -17,7 +17,7 @@ import {
 import { selectAuth } from "../../api/AuthReducer/AuthReduce";
 import { useAppSelector } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAppDispatch } from "../../app/hooks";
 
 import { Logout } from "../../api/AuthReducer/AuthReduce";
@@ -50,11 +50,22 @@ function UserIn() {
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const { classes, cx } = useStyles();
   const auth = useAppSelector(selectAuth);
+
   const { data } = useGetUserByIdQuery(auth.id, { skip: !auth.isLoggedIn });
   const imageUrl = useAvatar(data ? data : null);
-  console.log(data, imageUrl);
+  // console.log(data, imageUrl);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  useEffect(() => {
+    fetch(`http://localhost:3000/user/${auth.id}`, {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((e) => console.log(e));
+  }, []);
   return (
     <Menu
       width={240}

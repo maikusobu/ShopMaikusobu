@@ -16,7 +16,11 @@ type shoppingType = {
 const shoppingApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getShoppingSession: builder.query<ShoppingSessionType, string>({
-      query: (id: string) => `shopping/${id}`,
+      query: (id: string) => ({
+        url: `shopping/${id}`,
+        credentials: "include",
+      }),
+
       providesTags: ["Shopping"],
     }),
     updateCartItem: builder.mutation<ShoppingSessionType, shoppingType>({

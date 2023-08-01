@@ -59,15 +59,18 @@ function Login() {
           body: body,
         }
       );
+      console.log(signals);
       const data = await signals.json();
-
+      console.log(data);
       if (data.isExisted === false) {
         setData(data.user);
         navigate("/authen/signup");
       }
       if (data.social === true) {
+        console.log(data);
         localStorage.setItem("id", data.id);
         localStorage.setItem("expires", data.expires);
+        localStorage.setItem("refreshToken", data.refreshToken);
         notifications.show({
           id: "register",
           withCloseButton: false,

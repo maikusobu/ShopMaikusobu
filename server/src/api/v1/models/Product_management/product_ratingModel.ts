@@ -9,6 +9,10 @@ const productRating = new Schema({
     type: Number,
     require: true,
   },
+  review: {
+    type: String,
+    require: true,
+  },
 });
 
 export default mongoose.model<InferSchemaType<typeof productRating>>(

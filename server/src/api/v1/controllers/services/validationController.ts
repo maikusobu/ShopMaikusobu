@@ -1,13 +1,17 @@
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { saveDataURLToBinaryData } from "../../helpers/savedataurl";
-import { generateToken } from "../../validations/generateToken";
+import { sign } from "jsonwebtoken";
+import { config } from "../../../../config/configJWT";
 import asyncHandler from "express-async-handler";
 import userModel from "../../models/User_management/userModel";
 import shopping_session from "../../models/Shopping_process/shopping_session";
 import checkUser from "../../validations/checkPassWord";
 import user_addressManagerModel from "../../models/User_management/user_addressManagerModel";
 import user_manager_paymentModel from "../../models/User_management/user_manager_paymentModel";
+import { verify } from "jsonwebtoken";
+const refreshTokens: string[] = [];
+
 export const signupMiddeware = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -89,25 +93,35 @@ export const signinMiddeware = asyncHandler(
         match = await checkUser(req.body.password, User?.password);
       }
       if (match) {
-        const token = generateToken(User.id);
-        res.cookie("token", token, {
-          expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-          secure: true,
-          httpOnly: true,
+        const token = sign({ id: User.id }, process.env.JWT_TOKEN_SECRET, {
+          expiresIn: config.tokenLife,
         });
-        res
-          .status(200)
-          .json({
-            message: "login sucess",
-            social: req.body.isSocialLogin ? true : false,
-            status: 200,
-            id: User?.id,
-            username: User?.username,
-            expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-              .getTime()
-              .toString(),
-          })
-          .redirect("/");
+        const refreshT = sign(
+          { id: User.id },
+          process.env.JWT_REFRESHTOKEN_SECRET,
+          {
+            expiresIn: config.refreshTokenLife,
+          }
+        );
+        res.cookie("token", token, {
+          secure: true,
+          sameSite: "none",
+          httpOnly: true,
+          expires: new Date(Date.now() + 3600000),
+          path: "/",
+        });
+        refreshTokens.push(refreshT);
+        // let SessionData = req.session;
+        // SessionData.token = token;
+        res.status(200).json({
+          message: "login sucess",
+          refreshToken: refreshT,
+          social: req.body.isSocialLogin ? true : false,
+          status: 200,
+          id: User?.id,
+          username: User?.username,
+          expires: new Date(config.tokenLife).getTime().toString(),
+        });
       } else {
         throw new Error("not matching password");
       }
@@ -152,3 +166,39 @@ export const changePasswordMiddeware = asyncHandler(
     }
   }
 );
+export const refreshToken = (req: Request, res: Response) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken || !refreshTokens.includes(refreshToken)) {
+    res.status(403).json({ message: "Unauthorized" });
+  }
+  verify(
+    refreshToken,
+    process.env.JWT_REFRESHTOKEN_SECRET,
+    (err: any, decode: { id: string }) => {
+      if (err) {
+        res.status(403).json({ message: "Unauthorized" });
+      }
+      const access_token = sign(
+        decode.id,
+        process.env.JWT_TOKEN_SECRET,
+        config.tokenLife
+      );
+      req.cookies.token = access_token;
+      res.status(200).json({
+        refreshToken: refreshToken,
+        status: 200,
+      });
+    }
+  );
+};
+export const logout = (req: Request, res: Response) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) res.status(403).json({ message: "Unauthorized" });
+  const index = refreshTokens.indexOf(refreshToken);
+  if (index !== -1) {
+    refreshToken.splice(index, 1);
+  }
+  res.status(200).json({
+    message: "Logout successfully",
+  });
+};

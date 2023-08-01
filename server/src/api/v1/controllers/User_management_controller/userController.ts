@@ -9,10 +9,8 @@ export const userMiddleware = asynchandle(
       if (!user) {
         throw new Error("User not found");
       }
-      const avatar =
-        user.picture.length === 0
-          ? "data:image/png;base64," + user.avatar.toString("base64")
-          : user.picture;
+      const avatar = "data:image/png;base64," + user.avatar.toString("base64");
+
       const userForfrondent = {
         idDefaultPayment: user.idDefaultPayment,
         idDefaultAddress: user.idDefaultAddress,
@@ -21,6 +19,7 @@ export const userMiddleware = asynchandle(
         last_name: user.last_name,
         id: user._id,
         avatar: `${avatar}`,
+        picture: user.picture,
       };
       res.status(200).json(userForfrondent);
     } catch (error: any) {

@@ -4,6 +4,7 @@ export type UserJson = {
   first_name: string;
   last_name: string;
   username: string;
+  picture: string;
   idDefaultAddress: string;
   idDefaultPayment: string;
   id: string;

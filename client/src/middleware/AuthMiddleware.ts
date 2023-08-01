@@ -5,12 +5,12 @@ import { Logout } from "../api/AuthReducer/AuthReduce";
 
 export const AuthMiddleware: Middleware =
   (storeApi: MiddlewareAPI) => (next) => (action) => {
-    console.log("log middleware");
-    if (storeApi.getState().auth.expiresAt > 0) {
-      if (storeApi.getState().auth.expiresAt < Date.now()) {
-        storeApi.dispatch(Logout());
-      }
-    }
+    // console.log("log middleware");
+    // if (storeApi.getState().auth.expiresAt > 0) {
+    //   if (storeApi.getState().auth.expiresAt < Date.now()) {
+    //     storeApi.dispatch(Logout());
+    //   }
+    // }
 
     next(action);
   };

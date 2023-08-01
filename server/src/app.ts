@@ -3,12 +3,15 @@ import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 require("dotenv").config();
+import cookieSession from "cookie-session";
 import { dirPath } from "./api/v1/helpers/returnUrl";
 import mongoose from "mongoose";
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const MONGO_URL = process.env.MONGO_URL;
+
 const URL_CLIENT = process.env.URL_CLIENT;
+import authMiddleware from "./api/v1/controllers/services/AuthMiddleware";
 import { ErrorFunction } from "./api/v1/middlewares/errorHandling";
 import authenRouter from "./api/v1/routes/User_management_routes/validation";
 import userRouter from "./api/v1/routes/User_management_routes/user";
@@ -23,24 +26,17 @@ import OrderRouter from "./api/v1/routes/Shopping_process_routes/order_item";
 //config express
 require("dotenv").config({ path: "./.env" });
 const corsOptions = {
-  origin: "*",
+  credentials: true,
+  origin: "http://localhost:5173",
 };
 const app: Express = express();
 app.use(cors(corsOptions));
+app.use(helmet());
 app.use(bodyParser.json({ limit: "5mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(morgan("dev"));
 app.use(cookieParser());
-app.use(helmet());
-app.use((req: Request, res: Response, next: NextFunction) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
-  next();
-});
+app.use(morgan("dev"));
+
 //mongo running
 mongoose.set("strictQuery", false);
 connect();
@@ -61,6 +57,16 @@ mongoose.connection.on("error", (err) => {
 mongoose.connection.on("disconnected", () => {
   console.log("mongoDB disconnected");
 });
+//excluded paths
+const excludePaths = [
+  /^\/products\/(.*)/,
+  /^\/authen\/login$/,
+  /^\/authen\/signup$/,
+  /^\/authen\/refreshToken$/,
+  /^\/authen\/logout$/,
+];
+app.use(authMiddleware.unless({ path: excludePaths }));
+
 // route handling
 app.use("/authen", authenRouter);
 app.use("/user", userRouter);
@@ -76,7 +82,6 @@ app.get("/", (req: Request, res: Response) => {
   console.log(URL_CLIENT);
   res.redirect(`${URL_CLIENT}`);
 });
-console.log("fff");
 // error handling
 app.use(ErrorFunction);
 

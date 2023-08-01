@@ -23,8 +23,10 @@ const action = async ({ request }: { request: Request }) => {
     if (json.status === 400) {
       throw json;
     } else {
+      console.log(json);
       localStorage.setItem("id", json.id);
       localStorage.setItem("expires", json.expires);
+      localStorage.setItem("refreshToken", json.refreshToken);
       notifications.show({
         id: "register",
         withCloseButton: false,
