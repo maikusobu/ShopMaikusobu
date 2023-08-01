@@ -5,7 +5,6 @@ import { combineReducers } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/dist/query';
 import { baseApi } from '../api/BaseApi/baseApi';
 import { ProvincesAPi } from '../api/VnProvincesApi/VnProvincesApi';
-import { FakeCreditCardApi } from '../api/FakeCreditCardApi/FakeCreditCardApi';
 import { ErrorLogger } from '../middleware/ErrorLogger';
 import { LogoutMiddeware } from '../middleware/logoutMiddeware';
 import OrderReducer from '../api/OrderReducer/OrderReducer';
@@ -14,7 +13,6 @@ const rootReducer = combineReducers({
 	order: OrderReducer,
 	[baseApi.reducerPath]: baseApi.reducer,
 	[ProvincesAPi.reducerPath]: ProvincesAPi.reducer,
-	[FakeCreditCardApi.reducerPath]: FakeCreditCardApi.reducer,
 });
 export const store = configureStore({
 	reducer: rootReducer,
@@ -22,7 +20,6 @@ export const store = configureStore({
 		...getDefaultMiddleware(),
 		baseApi.middleware,
 		ProvincesAPi.middleware,
-		FakeCreditCardApi.middleware,
 		AuthMiddleware,
 		LogoutMiddeware,
 		ErrorLogger,
