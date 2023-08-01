@@ -107,7 +107,7 @@ export const signinMiddeware = asyncHandler(
           secure: true,
           sameSite: "none",
           httpOnly: true,
-          expires: new Date(Date.now() + 3600000),
+          maxAge: 86500 * 1000,
           path: "/",
         });
         refreshTokens.push(refreshT);

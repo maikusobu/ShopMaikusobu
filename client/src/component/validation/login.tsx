@@ -56,10 +56,11 @@ function Login() {
             "Content-Type": "application/json",
           },
           method: "POST",
+          credentials: "include",
           body: body,
         }
       );
-      console.log(signals);
+
       const data = await signals.json();
       console.log(data);
       if (data.isExisted === false) {
@@ -89,7 +90,7 @@ function Login() {
             setSubmitloading(false);
           }, 1000)
         );
-        navigate("/");
+        // navigate("/");
       }
     },
 

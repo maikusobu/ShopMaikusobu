@@ -14,8 +14,8 @@ const action = async ({ request }: { request: Request }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          credentials: "omit",
         },
+        credentials: "include",
         body: JSON.stringify(data),
       }
     );
@@ -41,6 +41,7 @@ const action = async ({ request }: { request: Request }) => {
       });
       await new Promise((r) => setTimeout(r, 1000));
       return redirect("/");
+      // return json;
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {

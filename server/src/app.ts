@@ -25,16 +25,32 @@ import addressRouter from "./api/v1/routes/User_management_routes/userAddress";
 import OrderRouter from "./api/v1/routes/Shopping_process_routes/order_item";
 //config express
 require("dotenv").config({ path: "./.env" });
-const corsOptions = {
-  credentials: true,
-  origin: "http://localhost:5173",
-};
+// const corsOptions = {
+//   credentials: true,
+//   origin: "http://localhost:5173",
+//   methods: ["GET", "PUT", "POST", "PATCH", "DELETE", "HEAD"],
+//   exposedHeaders: ["set-cookie"],
+//   maxAge: 864000,
+// };
 const app: Express = express();
-app.use(cors(corsOptions));
-app.use(helmet());
 app.use(bodyParser.json({ limit: "5mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Origin", req.headers.origin);
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET,PUT,POST,DELETE,UPDATE,OPTIONS"
+  );
+  res.header(
+    "Access-Control-Allow-Headers",
+    "X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept"
+  );
+  next();
+});
+// app.use(cors(corsOptions));
+app.use(helmet());
 app.use(morgan("dev"));
 
 //mongo running

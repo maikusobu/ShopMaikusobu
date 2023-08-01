@@ -20,7 +20,7 @@ const action = async ({ request }: { request: Request }) => {
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "omit",
+      credentials: "include",
       body: JSON.stringify(data),
     });
     const json = await res.json();

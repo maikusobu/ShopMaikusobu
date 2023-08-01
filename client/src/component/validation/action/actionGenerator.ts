@@ -23,8 +23,8 @@ export function actionGenerator(
           method: `${method}`,
           headers: {
             "Content-Type": "application/json",
-            credentials: "omit",
           },
+          credentials: "include",
           body: JSON.stringify(data),
         }
       );
