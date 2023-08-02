@@ -14,16 +14,14 @@ export default function FaqFakeCreditCard() {
 				sử dụng thẻ tín dụng thật (để trả tiền cho chúng tôi).
 			</Text>
 			<Group position='center'>
-				{!cardNumber && (
-					<Button
-						onClick={() => {
-							const newCardNumber = faker.finance.creditCardNumber('visa');
-							setCardNumber(newCardNumber);
-						}}
-					>
-						Tạo số thẻ visa giả
-					</Button>
-				)}
+				<Button
+					onClick={() => {
+						const newCardNumber = faker.finance.creditCardNumber('visa');
+						setCardNumber(newCardNumber);
+					}}
+				>
+					Tạo số thẻ visa giả
+				</Button>
 				<Button
 					onClick={() => {
 						if (cardNumber !== '') clipboard.copy(cardNumber);
@@ -31,7 +29,7 @@ export default function FaqFakeCreditCard() {
 				>
 					{clipboard.copied ? 'Đã copy' : 'Copy số thẻ visa giả'}
 				</Button>
-				<TextInput placeholder='Số thẻ Visa' disabled value={cardNumber} />
+				<TextInput placeholder='Số thẻ Visa' value={cardNumber} />
 			</Group>
 		</Stack>
 	);

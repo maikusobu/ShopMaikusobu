@@ -1,4 +1,5 @@
-import FaqFakeCreditCard from './FaqFakeCreditCard';
+import FaqFakeCreditCard from './components/FaqFakeCreditCard';
+import FaqPasswordGenerator from './components/FaqPasswordGenerator';
 
 interface faqData {
 	value: string;
@@ -23,6 +24,11 @@ const faqDatas: faqData[] = [
 		value: 'fakeCreditCard',
 		header: 'Tôi có thể sử dụng thẻ tín dụng giả không?',
 		description: <FaqFakeCreditCard />,
+	},
+	{
+		value: 'passwordGenerator',
+		header: 'Làm sao để mật khẩu của tôi bảo mật hơn?',
+		description: <FaqPasswordGenerator />,
 	},
 ];
 
