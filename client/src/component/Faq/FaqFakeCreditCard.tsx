@@ -1,24 +1,11 @@
-import { useGetFakeCreditCardQuery } from '../../api/FakeCreditCardApi/FakeCreditCardApi';
+import { useState } from 'react';
+import { faker } from '@faker-js/faker';
 import { Stack, Group, Button, Text, TextInput } from '@mantine/core';
 import { useClipboard } from '@mantine/hooks';
 
 export default function FaqFakeCreditCard() {
+	const [cardNumber, setCardNumber] = useState<string>('');
 	const clipboard = useClipboard({ timeout: 750 });
-
-	/* giới hạn 100 request mỗi tháng tốn kém vãi lol, xài tạm cái dưới
-	  const { data, isError } = useGetFakeCreditCardQuery();
-  */
-
-	const mockUseGetFakeCreditCardQuery = () => {
-		return {
-			isError: false,
-			data: {
-				number: '4432364915907794',
-			},
-		};
-	};
-
-	const { data, isError } = mockUseGetFakeCreditCardQuery();
 
 	return (
 		<Stack spacing='lg'>
@@ -27,14 +14,24 @@ export default function FaqFakeCreditCard() {
 				sử dụng thẻ tín dụng thật (để trả tiền cho chúng tôi).
 			</Text>
 			<Group position='center'>
-				<Button onClick={() => (isError ? null : clipboard.copy(data?.number))}>
+				{!cardNumber && (
+					<Button
+						onClick={() => {
+							const newCardNumber = faker.finance.creditCardNumber('visa');
+							setCardNumber(newCardNumber);
+						}}
+					>
+						Tạo số thẻ visa giả
+					</Button>
+				)}
+				<Button
+					onClick={() => {
+						if (cardNumber !== '') clipboard.copy(cardNumber);
+					}}
+				>
 					{clipboard.copied ? 'Đã copy' : 'Copy số thẻ visa giả'}
 				</Button>
-				<TextInput
-					placeholder='Số thẻ Visa'
-					disabled
-					value={isError ? 'Đã xảy ra lỗi' : data?.number}
-				/>
+				<TextInput placeholder='Số thẻ Visa' disabled value={cardNumber} />
 			</Group>
 		</Stack>
 	);

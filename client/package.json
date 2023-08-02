@@ -11,6 +11,7 @@
 	},
 	"dependencies": {
 		"@emotion/react": "^11.11.1",
+		"@faker-js/faker": "^8.0.2",
 		"@mantine/carousel": "^6.0.16",
 		"@mantine/core": "^6.0.14",
 		"@mantine/dates": "^6.0.16",
