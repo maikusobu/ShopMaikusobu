@@ -1,5 +1,5 @@
 import { Response, Request, NextFunction } from "express";
-import { verify, VerifyErrors } from "jsonwebtoken";
+import { verify } from "jsonwebtoken";
 import { unless } from "express-unless";
 
 interface DecodedToken {
@@ -7,7 +7,6 @@ interface DecodedToken {
 }
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const token = req.cookies["token"];
-  console.log(req.cookies);
   if (!token) {
     res.status(401).json({
       message: "Unauthorized",

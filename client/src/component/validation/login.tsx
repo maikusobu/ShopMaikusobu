@@ -90,7 +90,7 @@ function Login() {
             setSubmitloading(false);
           }, 1000)
         );
-        // navigate("/");
+        navigate("/");
       }
     },
 

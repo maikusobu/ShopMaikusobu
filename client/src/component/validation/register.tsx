@@ -64,13 +64,13 @@ function Register() {
     },
     validate: {
       username: (val) =>
-        val.length >= 1 && /^[a-zA-Z]+$/i.test(val)
+        val.length >= 1 && /^[a-zA-Z0-9]+$/i.test(val)
           ? null
-          : "Username should contain only letters and not empty",
+          : "Username chỉ chứa duy nhất là những bản chữ cái và số",
       email: (val) =>
         /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(val)
           ? null
-          : "Invalid email",
+          : "Email không hợp lệ",
       password: (val) =>
         /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[$&+,:;=?@#|'<>.^*()%!-]).{6,}$/.test(
           val

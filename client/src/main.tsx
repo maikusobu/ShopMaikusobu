@@ -8,7 +8,7 @@ import ErrorProvider from "./component/ErrorContext/ErrorContext.tsx";
 import Register from "./component/validation/register.tsx";
 import actionLogin from "./component/validation/action/actionLogin.ts";
 import actionRegister from "./component/validation/action/actionRegister.ts";
-import RestorePassword from "./component/validation/restorePassword.tsx";
+import RestorePassword from "./component/validation/requestChangepassword.tsx";
 import actionChangePassword from "./component/validation/action/actionChangePassword.ts";
 import actionRestorePassword from "./component/validation/action/actionrestorePassword.ts";
 import ChangePassWord from "./component/validation/changePassword.tsx";

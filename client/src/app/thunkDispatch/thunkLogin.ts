@@ -5,6 +5,7 @@ export function checkLogin(): AppThunk {
     const auth = getState().auth;
     const id = localStorage.getItem("id");
     const refreshToken = localStorage.getItem("refreshToken");
+
     const expiresAt = localStorage.getItem("expires");
     if (id && expiresAt && !auth.isLoggedIn && refreshToken) {
       dispatch(

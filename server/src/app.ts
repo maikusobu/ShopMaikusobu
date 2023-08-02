@@ -79,6 +79,8 @@ const excludePaths = [
   /^\/authen\/login$/,
   /^\/authen\/signup$/,
   /^\/authen\/refreshToken$/,
+  /^\/authen\/forgotPassword$/,
+  /^\/authen\/resetPassword$/,
   /^\/authen\/logout$/,
 ];
 app.use(authMiddleware.unless({ path: excludePaths }));
