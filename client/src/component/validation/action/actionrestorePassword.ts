@@ -28,8 +28,12 @@ const action = async ({ request }: { request: Request }) => {
         color: "green",
         autoClose: 5000,
       });
-      await new Promise((r) => setTimeout(r, 2000));
-      return json;
+
+      await new Promise((r) => setTimeout(r, 5000));
+      return {
+        err: "",
+        status: 200,
+      };
     }
   } catch (err: any) {
     if (err.status === 400) {

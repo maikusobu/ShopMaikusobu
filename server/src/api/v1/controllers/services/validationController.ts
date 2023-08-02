@@ -148,7 +148,7 @@ export const forgotPasswordMiddeware = asyncHandler(
         token: hash,
         createdAt: new Date(),
       });
-      const link = `${process.env.URL_CLIENT}/changepassword?token=${resetToken}&id=${user._id}`;
+      const link = `${process.env.URL_CLIENT}/authen/changepassword?token=${resetToken}&id=${user._id}`;
       await sendEmail(
         user.email,
         "Reset Password",

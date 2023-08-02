@@ -1,8 +1,4 @@
-import mongoose, {
-  ValidatorProps,
-  InferSchemaType,
-  SchemaType,
-} from "mongoose";
+import mongoose, { ValidatorProps, InferSchemaType } from "mongoose";
 
 const Schema = mongoose.Schema;
 
