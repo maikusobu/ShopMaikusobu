@@ -53,7 +53,14 @@ function GroupButton() {
 							stroke={1.2}
 						/>
 					</Tooltip>
-					<Tooltip label='Contact' position='right' withArrow>
+					<Tooltip
+						label='Contact'
+						position='right'
+						withArrow
+						onClick={() => {
+							navigate('/support/contact');
+						}}
+					>
 						<IconAddressBook size={40} className={`${classes.icon} appear icon-4`} stroke={1.2} />
 					</Tooltip>
 				</SimpleGrid>

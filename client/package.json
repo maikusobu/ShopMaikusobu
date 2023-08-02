@@ -10,6 +10,7 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@emailjs/browser": "^3.11.0",
 		"@emotion/react": "^11.11.1",
 		"@faker-js/faker": "^8.0.2",
 		"@mantine/carousel": "^6.0.16",
