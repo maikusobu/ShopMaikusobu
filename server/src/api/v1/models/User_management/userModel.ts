@@ -82,6 +82,14 @@ const userSchema = new Schema(
       default: "",
       type: String,
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

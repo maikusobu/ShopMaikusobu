@@ -3,12 +3,18 @@ import { useObjectError } from "../../hook/useObjectError";
 import { upperFirst } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
 import { Form } from "react-router-dom";
+import {
+  IconUserCheck,
+  IconMailOpened,
+  IconShieldCheck,
+  IconCircleCheck,
+} from "@tabler/icons-react";
 import { SocialContext } from "../SocialContext/SocialContextProvider";
 import { useStyles } from "./styleGlobal";
 import { useNavigation, useNavigate } from "react-router-dom";
 import PasswordRequirement from "./passwordRequirementPop/passwordRequire";
 import { LoadingOverlay } from "@mantine/core";
-import { Notification } from "@mantine/core";
+import { Notification, PinInput } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import {
   TextInput,
@@ -23,6 +29,7 @@ import {
   rem,
   Progress,
   Popover,
+  Stepper,
 } from "@mantine/core";
 const requirements = [
   { re: /[0-9]/, label: "Includes number" },
@@ -48,11 +55,43 @@ function Register() {
   }, []);
   const { data } = useContext(SocialContext);
   const { classes } = useStyles();
+  const [active, setActive] = useState(0);
   const { errorAppear, handleSetErrorAppear, objectError } = useObjectError();
+  console.log(active);
+  const handleVerification = async () => {
+    if (numberConfirm.length < 6) return;
+    try {
+      const dataSent = await fetch(
+        `${import.meta.env.VITE_SERVER}/authen/verify`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: objectError.error.id,
+            numberConfirm: Number(numberConfirm),
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          credentials: "include",
+        }
+      );
+      const dataSentJson = await dataSent.json();
+      console.log(dataSentJson);
+      setActive((prev) => prev + 1);
+      setTimeout(() => {
+        if (objectError.error.social === true) navigate("/");
+        else navigate("/authen/login");
+      }, 5000);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const navigation = useNavigation();
   const navigate = useNavigate();
   const [popoverOpened, setPopoverOpened] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-debugger
+  const [numberConfirm, setNumberConfirm] = useState("");
   const form = useForm({
     initialValues: {
       username: objectError?.data?.username || "",
@@ -92,10 +131,16 @@ function Register() {
 
   const strength = getStrength(form.values.password);
   const color = strength === 100 ? "teal" : strength > 50 ? "yellow" : "red";
-
+  useEffect(() => {
+    if (errorAppear) {
+      if (objectError.error.status === 201) {
+        setActive((prev) => prev + 1);
+      }
+    }
+  }, [errorAppear, objectError]);
   return (
     <div className={classes.mainSection}>
-      {errorAppear && (
+      {errorAppear && objectError?.error.status !== 201 && (
         <Notification
           icon={<IconX size="1.1rem" />}
           color="red"
@@ -113,125 +158,174 @@ function Register() {
         </Notification>
       )}
       <Container size={800} className={classes.Container}>
-        <Center>
-          <Text fz="xl" weight={700}>
-            Welcome to{" "}
-            <Text
-              variant="gradient"
-              span={true}
-              gradient={{
-                from: "brandcolorRed.0",
-                to: "brandcolorYellow.0",
-                deg: 45,
-              }}
-            >
-              ShopMaikusobu
-            </Text>
-          </Text>
-        </Center>
-        <LoadingOverlay
-          visible={navigation.state !== "idle"}
-          loaderProps={{ size: "sm" }}
-          overlayColor="#ffffff"
-          radius={"10px"}
-        />
-
-        <Form
-          className={classes.form}
-          method="post"
-          action=""
-          onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
-            const isValid = form.isValid();
-            if (!isValid) {
-              form.validate();
-              event.preventDefault();
-            }
-          }}
+        <Stepper
+          active={active}
+          onStepClick={setActive}
+          allowNextStepsSelect={false}
+          completedIcon={<IconCircleCheck size="1.1rem" />}
         >
-          <Stack spacing={rem(5)}>
-            <Group>
-              <TextInput
-                label="First name"
-                placeholder="Nguyen"
-                name="first_name"
-                value={form.values.first_name}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  form.setFieldValue("first_name", event.currentTarget.value)
-                }
-                styles={{
-                  label: {
-                    color: "grey",
-                  },
-                }}
-                radius="md"
-              />
-              <TextInput
-                label="Last name"
-                placeholder="Hung"
-                name="last_name"
-                value={form.values.last_name}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                  form.setFieldValue("last_name", event.currentTarget.value)
-                }
-                styles={{
-                  label: {
-                    color: "grey",
-                  },
-                }}
-                radius="md"
-              />
-            </Group>
-            <TextInput
-              required
-              label="User name"
-              name="username"
-              placeholder="username1"
-              value={form.values.username}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                form.setFieldValue("username", event.currentTarget.value)
-              }
-              styles={{
-                label: {
-                  color: "grey",
-                },
-              }}
-              radius="md"
-              error={form.errors.username}
+          <Stepper.Step
+            description="Tạo tài khoảng"
+            icon={<IconUserCheck size="1.1rem" />}
+          >
+            <Center>
+              <Text fz="xl" weight={700}>
+                Welcome to{" "}
+                <Text
+                  variant="gradient"
+                  span={true}
+                  gradient={{
+                    from: "brandcolorRed.0",
+                    to: "brandcolorYellow.0",
+                    deg: 45,
+                  }}
+                >
+                  ShopMaikusobu
+                </Text>
+              </Text>
+            </Center>
+            <LoadingOverlay
+              visible={navigation.state !== "idle"}
+              loaderProps={{ size: "sm" }}
+              overlayColor="#ffffff"
+              radius={"10px"}
             />
-            <TextInput
-              required
-              label="Email"
-              name="email"
-              placeholder="hello@gmail.com"
-              value={form.values.email}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                form.setFieldValue("email", event.currentTarget.value)
-              }
-              styles={{
-                label: {
-                  color: "grey",
-                },
+
+            <Form
+              className={classes.form}
+              method="post"
+              action=""
+              onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
+                const isValid = form.isValid();
+                if (!isValid) {
+                  form.validate();
+                  event.preventDefault();
+                }
               }}
-              error={form.errors.email}
-              radius="md"
-            />
-            <Popover
-              opened={popoverOpened}
-              position="bottom"
-              width="target"
-              transitionProps={{ transition: "pop" }}
             >
-              <Popover.Target>
+              <Stack spacing={rem(5)}>
+                <Group>
+                  <TextInput
+                    label="First name"
+                    placeholder="Nguyen"
+                    name="first_name"
+                    value={form.values.first_name}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                      form.setFieldValue(
+                        "first_name",
+                        event.currentTarget.value
+                      )
+                    }
+                    styles={{
+                      label: {
+                        color: "grey",
+                      },
+                    }}
+                    radius="md"
+                  />
+                  <TextInput
+                    label="Last name"
+                    placeholder="Hung"
+                    name="last_name"
+                    value={form.values.last_name}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                      form.setFieldValue("last_name", event.currentTarget.value)
+                    }
+                    styles={{
+                      label: {
+                        color: "grey",
+                      },
+                    }}
+                    radius="md"
+                  />
+                </Group>
+                <TextInput
+                  required
+                  label="User name"
+                  name="username"
+                  placeholder="username1"
+                  value={form.values.username}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                    form.setFieldValue("username", event.currentTarget.value)
+                  }
+                  styles={{
+                    label: {
+                      color: "grey",
+                    },
+                  }}
+                  radius="md"
+                  error={form.errors.username}
+                />
+                <TextInput
+                  required
+                  label="Email"
+                  name="email"
+                  placeholder="hello@gmail.com"
+                  value={form.values.email}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                    form.setFieldValue("email", event.currentTarget.value)
+                  }
+                  styles={{
+                    label: {
+                      color: "grey",
+                    },
+                  }}
+                  error={form.errors.email}
+                  radius="md"
+                />
+                <Popover
+                  opened={popoverOpened}
+                  position="bottom"
+                  width="target"
+                  transitionProps={{ transition: "pop" }}
+                >
+                  <Popover.Target>
+                    <PasswordInput
+                      required
+                      label="Password"
+                      name="password"
+                      placeholder="Your password"
+                      value={form.values.password}
+                      onFocusCapture={() => setPopoverOpened(true)}
+                      onBlurCapture={() => setPopoverOpened(false)}
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                        form.setFieldValue(
+                          "password",
+                          event.currentTarget.value
+                        )
+                      }
+                      styles={{
+                        label: {
+                          color: "grey",
+                        },
+                        error: {
+                          wordWrap: "break-word",
+                          maxInlineSize: "55ch",
+                        },
+                      }}
+                      error={form.errors.password}
+                      radius="md"
+                    />
+                  </Popover.Target>
+                  <Popover.Dropdown>
+                    <Progress color={color} value={strength} size={5} mb="xs" />
+                    <PasswordRequirement
+                      label="Includes at least 6 characters"
+                      meets={form.values.password.length > 5}
+                    />
+                    {checks}
+                  </Popover.Dropdown>
+                </Popover>
                 <PasswordInput
                   required
-                  label="Password"
-                  name="password"
-                  placeholder="Your password"
-                  value={form.values.password}
-                  onFocusCapture={() => setPopoverOpened(true)}
-                  onBlurCapture={() => setPopoverOpened(false)}
+                  label="Password Confirm"
+                  placeholder="Your password confirm"
+                  value={form.values.passwordConfirm}
                   onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                    form.setFieldValue("password", event.currentTarget.value)
+                    form.setFieldValue(
+                      "passwordConfirm",
+                      event.currentTarget.value
+                    )
                   }
                   styles={{
                     label: {
@@ -242,61 +336,65 @@ function Register() {
                       maxInlineSize: "55ch",
                     },
                   }}
-                  error={form.errors.password}
+                  error={form.errors.passwordConfirm}
                   radius="md"
                 />
-              </Popover.Target>
-              <Popover.Dropdown>
-                <Progress color={color} value={strength} size={5} mb="xs" />
-                <PasswordRequirement
-                  label="Includes at least 6 characters"
-                  meets={form.values.password.length > 5}
+                <input type="hidden" value={data?.picture} name="picture" />
+              </Stack>
+              <Group position="apart" mt="xl">
+                <Anchor
+                  component="button"
+                  type="button"
+                  color="dimmed"
+                  style={{
+                    color: "black",
+                  }}
+                  size="xs"
+                  onClick={() => {
+                    navigate("/authen/login");
+                  }}
+                >
+                  {"Already have an account? Login"}
+                </Anchor>
+                <Button type="submit" radius="xl">
+                  {upperFirst("Register")}
+                </Button>
+              </Group>
+            </Form>
+          </Stepper.Step>
+          <Stepper.Step
+            description="Verify email"
+            icon={<IconMailOpened size="1.1rem" />}
+          >
+            <Stack>
+              <Text>Bạn hãy kiểm tra mail để được xác nhận tài khoảng!!</Text>
+              <Group position="center">
+                <PinInput
+                  type="number"
+                  length={6}
+                  value={numberConfirm}
+                  onChange={setNumberConfirm}
+                  oneTimeCode
+                  onComplete={handleVerification}
                 />
-                {checks}
-              </Popover.Dropdown>
-            </Popover>
-            <PasswordInput
-              required
-              label="Password Confirm"
-              placeholder="Your password confirm"
-              value={form.values.passwordConfirm}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                form.setFieldValue("passwordConfirm", event.currentTarget.value)
-              }
-              styles={{
-                label: {
-                  color: "grey",
-                },
-                error: {
-                  wordWrap: "break-word",
-                  maxInlineSize: "55ch",
-                },
-              }}
-              error={form.errors.passwordConfirm}
-              radius="md"
-            />
-            <input type="hidden" value={data?.picture} name="picture" />
-          </Stack>
-          <Group position="apart" mt="xl">
-            <Anchor
-              component="button"
-              type="button"
-              color="dimmed"
-              style={{
-                color: "black",
-              }}
-              size="xs"
-              onClick={() => {
-                navigate("/authen/login");
-              }}
-            >
-              {"Already have an account? Login"}
-            </Anchor>
-            <Button type="submit" radius="xl">
-              {upperFirst("Register")}
-            </Button>
-          </Group>
-        </Form>
+              </Group>
+              <Button type="button" onClick={handleVerification}>
+                Xác thực
+              </Button>
+            </Stack>
+          </Stepper.Step>
+          <Stepper.Step
+            description="get full access"
+            icon={<IconShieldCheck size="1.1rem" />}
+          >
+            <Stack>
+              <Text>
+                Chúc mừng bạn đã xác thực thành công, bạn sẽ được trả về trang
+                chủ sau ít phút
+              </Text>
+            </Stack>
+          </Stepper.Step>
+        </Stepper>
       </Container>
     </div>
   );

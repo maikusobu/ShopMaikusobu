@@ -10,11 +10,11 @@ import checkUser from "../../validations/checkPassWord";
 import user_addressManagerModel from "../../models/User_management/user_addressManagerModel";
 import user_manager_paymentModel from "../../models/User_management/user_manager_paymentModel";
 import user_token from "../../models/User_management/user_token";
+import user_confirm_number from "../../models/User_management/user_confirm_number";
 import { sendEmail } from "../../utils/email/sendMail";
 import crypto from "crypto";
 import { verify } from "jsonwebtoken";
 const refreshTokens: string[] = [];
-
 export const signupMiddeware = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -37,8 +37,7 @@ export const signupMiddeware = asyncHandler(
           const salt = await bcrypt.genSalt(Number(process.env.SALT_ROUND));
           const hash = await bcrypt.hash(req.body.password, salt);
           req.body.password = hash;
-          req.body.avatar = saveDataURLToBinaryData(req.body.avatar); // as the name suggested, this code convert dataurl to file
-          // delete req.body.avatar; // no need to handle avatar anymore
+          req.body.avatar = saveDataURLToBinaryData(req.body.avatar);
           const userMade = new userModel(req.body);
           await userMade.save();
           await Promise.all([
@@ -55,15 +54,40 @@ export const signupMiddeware = asyncHandler(
               payment_list: [],
             }),
           ]);
+          const num = Math.floor(Math.random() * 900000) + 100000;
+          await user_confirm_number.create({
+            user_id: userMade._id,
+            numberConfirm: num,
+            createdAt: new Date(),
+          });
+          try {
+            await sendEmail(
+              userMade.email,
+              "Verify Account",
+              {
+                "user-name": userMade.username,
+                "site-name": "ShopMaikusobu",
+                "confirm-number": num,
+              },
+              "requestRegister"
+            );
+          } catch (err) {
+            res.status(500).json({
+              response: {
+                message: "Cannot send email",
+                status: 500,
+              },
+            });
+          }
           res.status(201).json({
             response: {
-              message: "User created successfully",
+              message: "Thư xác nhận đã được chuyển đến mail của bạn",
               status: 201,
+              id: userMade._id,
               social: req.body.isSocialLogin ? true : false,
             },
           });
         } catch (err: any) {
-          console.log(err);
           if (err.name === "ValidationError") {
             const errors = Object.values(err.errors).map(
               (error: any) => error.message
@@ -90,6 +114,7 @@ export const signinMiddeware = asyncHandler(
 
       if (!User) throw new Error("User not found");
       let match = false;
+      if (!User.isVerified) throw new Error("User not verified");
       if (req.body.isSocialLogin) {
         match = true;
       } else {

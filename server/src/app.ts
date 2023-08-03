@@ -24,7 +24,7 @@ import paymentRouter from "./api/v1/routes/User_management_routes/userPayment";
 import addressRouter from "./api/v1/routes/User_management_routes/userAddress";
 import OrderRouter from "./api/v1/routes/Shopping_process_routes/order_item";
 //config express
-require("dotenv").config({ path: "./.env" });
+
 // const corsOptions = {
 //   credentials: true,
 //   origin: "http://localhost:5173",

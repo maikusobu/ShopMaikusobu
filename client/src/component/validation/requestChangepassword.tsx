@@ -56,9 +56,10 @@ function RestorePassword() {
       <Container size={800} className={classes.Container}>
         {objectError?.status === 200 && errorAppear && (
           <Overlay center opacity={1} color="white">
-            <Text color="white">
-              Mail của bạn đang được gửi đi, khi thành công bạn nhớ kiểm tra thư
-              mục spam
+            <Text color="black">
+              Yêu cầu đổi mật khẩu của bạn đã được gửi thành công, bạn vui lòng
+              kiểm tra mail, nếu không có bạn hãy thử kiểm trả cả thử mục spam,
+              lưu ý: yêu cầu chỉ có thời hạn 1 giờ
             </Text>
           </Overlay>
         )}
