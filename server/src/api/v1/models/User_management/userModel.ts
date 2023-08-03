@@ -1,8 +1,4 @@
-import mongoose, {
-  ValidatorProps,
-  InferSchemaType,
-  SchemaType,
-} from "mongoose";
+import mongoose, { ValidatorProps, InferSchemaType } from "mongoose";
 
 const Schema = mongoose.Schema;
 
@@ -26,7 +22,7 @@ const userSchema = new Schema(
 
         {
           validator: function (v: string) {
-            return /^[a-zA-Z]+$/i.test(v);
+            return /^[a-zA-Z0-9]+$/i.test(v);
           },
           message: (props: ValidatorProps) =>
             `${props.value} is not a valid username.`,
@@ -35,7 +31,8 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      required: [true, "User email required"],
+      required: true,
+      unique: true,
       validate: {
         validator: function (v: string) {
           return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
@@ -47,7 +44,6 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: true,
-      unique: true,
       minlength: 6,
       validate: [
         {
@@ -76,7 +72,7 @@ const userSchema = new Schema(
     idDefaultPayment: {
       type: Schema.Types.ObjectId,
       default: new mongoose.Types.ObjectId("507f191e810c19729de860ea"),
-      refL: "UserPayment",
+      ref: "UserPayment",
     },
     avatar: {
       type: Buffer,
@@ -85,6 +81,14 @@ const userSchema = new Schema(
     picture: {
       default: "",
       type: String,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

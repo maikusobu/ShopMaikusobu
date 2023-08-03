@@ -6,7 +6,6 @@ function useAvatar(data: UserJson | null) {
   useEffect(() => {
     if (data) {
       let url = "";
-      console.log(data.avatar);
       if (data.picture.length === 0) {
         const blob = dataURLToBlob(data.avatar);
         url = URL.createObjectURL(blob);

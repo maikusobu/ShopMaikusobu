@@ -6,6 +6,7 @@ export interface OrderItem {
 }
 interface OrderDetail {
   _id: string;
+  user_id: string;
   totalPrice: number;
   totalQuantity: number;
   address_id: string;
@@ -16,7 +17,17 @@ const OrderAPi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getOrderList: builder.query<OrderDetail[], string>({
       query: (id: string) => `/order/${id}`,
-      providesTags: ["Order"],
+      providesTags: (result) =>
+        result
+          ? [
+              // eslint-disable-next-line no-unsafe-optional-chaining
+              ...result.map((item) => ({
+                type: "Order" as const,
+                id: item._id,
+              })),
+              "Order",
+            ]
+          : ["Order"],
     }),
     createOrder: builder.mutation<OrderDetail, Omit<OrderDetail, "_id">>({
       query: (data) => ({
@@ -31,7 +42,7 @@ const OrderAPi = baseApi.injectEndpoints({
         url: `/order/delete/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Order"],
+      invalidatesTags: (_result, _error, arg) => [{ type: "Order", id: arg }],
     }),
   }),
 });

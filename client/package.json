@@ -23,6 +23,7 @@
 		"@reduxjs/toolkit": "^1.9.5",
 		"@tabler/icons-react": "^2.23.0",
 		"@types/react-helmet": "^6.1.6",
+		"async-mutex": "^0.4.0",
 		"dayjs": "^1.11.9",
 		"embla-carousel-autoplay": "^8.0.0-rc07",
 		"embla-carousel-react": "^8.0.0-rc07",

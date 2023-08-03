@@ -46,8 +46,10 @@ const action = async ({ request }: { request: Request }) => {
         loading: false,
       });
       await new Promise((r) => setTimeout(r, 2000));
-      if (json.response.social === true) return redirect("/");
-      else return redirect("/authen/login");
+      return {
+        data,
+        error: json.response,
+      };
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {

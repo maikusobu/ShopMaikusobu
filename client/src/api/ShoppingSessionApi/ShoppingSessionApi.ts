@@ -21,7 +21,16 @@ const shoppingApi = baseApi.injectEndpoints({
         credentials: "include",
       }),
 
-      providesTags: ["Shopping"],
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.cart_items.map((cart_item) => ({
+                type: "Shopping" as const,
+                id: cart_item._id,
+              })),
+              "Shopping",
+            ]
+          : ["Shopping"],
     }),
     updateCartItem: builder.mutation<ShoppingSessionType, shoppingType>({
       query: ({ id, CartItemId }: shoppingType) => ({
@@ -29,7 +38,9 @@ const shoppingApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: { CartItemId },
       }),
-      invalidatesTags: ["Shopping"],
+      invalidatesTags: (_result, _error, arg) => [
+        { type: "Shopping", id: arg.CartItemId },
+      ],
     }),
     updateDeleteCartItem: builder.mutation<ShoppingSessionType, shoppingType>({
       query: ({ id, CartItemId }: shoppingType) => ({
@@ -37,7 +48,9 @@ const shoppingApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: { CartItemId },
       }),
-      invalidatesTags: ["Shopping"],
+      invalidatesTags: (_result, _error, arg) => [
+        { type: "Shopping", id: arg.CartItemId },
+      ],
     }),
     updateDeleteAllCartItem: builder.mutation<ShoppingSessionType, string>({
       query: (id: string) => ({

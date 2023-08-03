@@ -1,9 +1,9 @@
-import express, { Express, NextFunction, Request, Response } from "express";
-import cors from "cors";
+import express, { Express, Request, Response } from "express";
+
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 require("dotenv").config();
-import cookieSession from "cookie-session";
+
 import { dirPath } from "./api/v1/helpers/returnUrl";
 import mongoose from "mongoose";
 const morgan = require("morgan");
@@ -24,7 +24,7 @@ import paymentRouter from "./api/v1/routes/User_management_routes/userPayment";
 import addressRouter from "./api/v1/routes/User_management_routes/userAddress";
 import OrderRouter from "./api/v1/routes/Shopping_process_routes/order_item";
 //config express
-require("dotenv").config({ path: "./.env" });
+
 // const corsOptions = {
 //   credentials: true,
 //   origin: "http://localhost:5173",
@@ -74,13 +74,7 @@ mongoose.connection.on("disconnected", () => {
   console.log("mongoDB disconnected");
 });
 //excluded paths
-const excludePaths = [
-  /^\/products\/(.*)/,
-  /^\/authen\/login$/,
-  /^\/authen\/signup$/,
-  /^\/authen\/refreshToken$/,
-  /^\/authen\/logout$/,
-];
+const excludePaths = [/^\/products\/(.*)/, /^\/authen\/(.*)/];
 app.use(authMiddleware.unless({ path: excludePaths }));
 
 // route handling

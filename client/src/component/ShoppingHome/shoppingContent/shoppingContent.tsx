@@ -117,6 +117,9 @@ function ShoppingContent({
                         src={product.image[0]}
                         alt={product.name}
                         className={classes.BoxRoot}
+                        imageProps={{
+                          loading: "lazy",
+                        }}
                       />
                     </Card.Section>
 

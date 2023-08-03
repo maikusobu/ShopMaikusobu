@@ -1,6 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
-import { faker } from "@faker-js/faker";
+
+import { fakerVI as vietnameseFaker } from "@faker-js/faker";
+
 require("dotenv").config();
 import expressAsyncHandler from "express-async-handler";
 import productModel from "./api/v1/models/Product_management/productModel";
@@ -19,6 +21,7 @@ const db = mongoose.connection;
 db.on("error", (err: any) => {
   console.error("MongoDB connection error:", err);
 });
+
 app.get(
   "/",
   expressAsyncHandler(async (req: Request, res: Response) => {
@@ -28,50 +31,53 @@ app.get(
       for (let i = 0; i < 40; i++) {
         console.log("add database at", i);
 
-        const name = faker.commerce.productName();
-        const desc = faker.lorem.sentence();
-        const SKU = faker.string.alphanumeric(6).toUpperCase();
-        const price = faker.commerce.price({
+        const name = vietnameseFaker.commerce.productName();
+        const desc = vietnameseFaker.lorem.sentence();
+        const SKU = vietnameseFaker.string.alphanumeric(6).toUpperCase();
+        const price = vietnameseFaker.commerce.price({
           min: 100,
           max: 200,
           dec: 0,
         });
-        let imageUrlArray = Array(3).fill(null);
+        let imageUrlArray = Array(4).fill(null);
 
         imageUrlArray = imageUrlArray.map(() =>
-          faker.image.urlLoremFlickr({
-            category: `${faker.commerce.department().replace(/s/g, "")}`,
+          vietnameseFaker.image.urlLoremFlickr({
+            category: `${vietnameseFaker.commerce
+              .department()
+              .replace(/s/g, "")}`,
             height: 200,
             width: 200,
           })
         );
-        const amountPurchased = faker.number.int({ min: 1 });
+        const amountPurchased = vietnameseFaker.number.int({ min: 1 });
         const rating = await product_rating.create({
           user_id: userRandom ? userRandom._id : null,
-          rating_value: faker.number.float({ min: 1, max: 5 }),
+          rating_value: vietnameseFaker.number.float({ min: 1, max: 5 }),
+          review: vietnameseFaker.company.catchPhrase(),
         });
         const [category, discount, inventory] = await Promise.all([
           product_categoryModel.create({
             name: [
-              faker.commerce.department(),
-              faker.commerce.department(),
-              faker.commerce.department(),
-              faker.commerce.department(),
-              faker.commerce.department(),
+              vietnameseFaker.commerce.department(),
+              vietnameseFaker.commerce.department(),
+              vietnameseFaker.commerce.department(),
+              vietnameseFaker.commerce.department(),
+              vietnameseFaker.commerce.department(),
             ],
           }),
           product_discountModel.create({
-            name: faker.lorem.word(),
-            desc: faker.lorem.sentence(),
-            discount_percent: faker.number.float({
+            name: vietnameseFaker.lorem.word(),
+            desc: vietnameseFaker.lorem.sentence(),
+            discount_percent: vietnameseFaker.number.float({
               min: 10,
               max: 100,
               precision: 0.001,
             }),
-            active: faker.datatype.boolean(0.5),
+            active: vietnameseFaker.datatype.boolean(0.5),
           }),
           product_inventoryModel.create({
-            quantity: faker.number.int({ min: 0, max: 100 }),
+            quantity: vietnameseFaker.number.int({ min: 0, max: 100 }),
           }),
         ]);
 

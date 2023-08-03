@@ -60,16 +60,11 @@ function Login() {
           body: body,
         }
       );
-
       const data = await signals.json();
-      console.log(data);
       if (data.isExisted === false) {
         setData(data.user);
         navigate("/authen/signup");
-      }
-      if (data.social === true) {
-        console.log(data);
-        localStorage.setItem("id", data.id);
+        if (data.social === true) localStorage.setItem("id", data.id);
         localStorage.setItem("expires", data.expires);
         localStorage.setItem("refreshToken", data.refreshToken);
         notifications.show({
@@ -90,25 +85,13 @@ function Login() {
             setSubmitloading(false);
           }, 1000)
         );
-        // navigate("/");
+        navigate("/");
       }
     },
 
     scope: "profile",
     flow: "auth-code",
   });
-  // useEffect(() => {
-  //   if (user) {
-  //     fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
-  //       headers: {
-  //         Authorization: `Bearer ${user.access_token}`,
-  //         Accept: "application/json",
-  //       },
-  //     })
-  //       .then((res) => res.json())
-  //       .then((res) => console.log(res));
-  //   }
-  // }, [user]);
   return (
     <div className={classes.mainSection}>
       {errorAppear && (

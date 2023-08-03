@@ -56,16 +56,6 @@ function UserIn() {
   // console.log(data, imageUrl);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  useEffect(() => {
-    fetch(`http://localhost:3000/user/${auth.id}`, {
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((e) => console.log(e));
-  }, []);
   return (
     <Menu
       width={240}
