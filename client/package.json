@@ -10,6 +10,7 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@emailjs/browser": "^3.11.0",
 		"@emotion/react": "^11.11.1",
 		"@faker-js/faker": "^8.0.2",
 		"@mantine/carousel": "^6.0.16",
@@ -26,9 +27,11 @@
 		"dayjs": "^1.11.9",
 		"embla-carousel-autoplay": "^8.0.0-rc07",
 		"embla-carousel-react": "^8.0.0-rc07",
+		"randexp": "^0.5.3",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-easy-crop": "^5.0.0",
+		"react-google-recaptcha": "^3.1.0",
 		"react-helmet": "^6.1.0",
 		"react-redux": "^8.1.1",
 		"react-router": "^6.13.0",
