@@ -60,13 +60,15 @@ function Login() {
           body: body,
         }
       );
-      const data = await signals.json();
-      if (data.isExisted === false) {
-        setData(data.user);
+      const dataJSon = await signals.json();
+      if (dataJSon.isExisted === false) {
+        setData(dataJSon.user);
         navigate("/authen/signup");
-        if (data.social === true) localStorage.setItem("id", data.id);
-        localStorage.setItem("expires", data.expires);
-        localStorage.setItem("refreshToken", data.refreshToken);
+      }
+      if (dataJSon.social === true) {
+        localStorage.setItem("id", dataJSon.id);
+        localStorage.setItem("expires", dataJSon.expires);
+        localStorage.setItem("refreshToken", dataJSon.refreshToken);
         notifications.show({
           id: "register",
           withCloseButton: false,
