@@ -6,9 +6,9 @@ import {
   changePasswordMiddeware,
   refreshToken,
   logout,
+  CheckRegisteration,
 } from "../../controllers/services/validationController";
 import { middlwareSocialLogin } from "../../controllers/services/CheckSoscial";
-import { CheckRegisteration } from "../../controllers/services/CheckRegisteration";
 const router = express.Router();
 router.post("/login", middlwareSocialLogin, signinMiddeware);
 router.post("/refreshToken", refreshToken);

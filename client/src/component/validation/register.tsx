@@ -80,12 +80,7 @@ function Register() {
       console.log(dataSentJson);
       setActive((prev) => prev + 1);
       setTimeout(() => {
-        if (objectError.error.social === true) {
-          localStorage.setItem("id", objectError.error.id);
-          localStorage.setItem("expires", objectError.errorexpires);
-          localStorage.setItem("refreshToken", objectError.error.refreshToken);
-          navigate("/");
-        } else navigate("/authen/login");
+        navigate("/authen/login");
       }, 5000);
     } catch (err) {
       console.log(err);
