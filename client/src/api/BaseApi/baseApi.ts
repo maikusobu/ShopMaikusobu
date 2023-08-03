@@ -9,6 +9,8 @@ import { redirect } from "react-router-dom";
 import { notifications } from "@mantine/notifications";
 import type { RootState } from "../../app/store";
 import { Logout } from "../AuthReducer/AuthReduce";
+import { Mutex } from "async-mutex";
+const mutex = new Mutex();
 const baseQuery = fetchBaseQuery({
   baseUrl: `${import.meta.env.VITE_SERVER}`,
   prepareHeaders: (headers) => {
@@ -16,48 +18,58 @@ const baseQuery = fetchBaseQuery({
   },
   credentials: "include",
 });
+
 const baseQueryWithRefreshT = async (
   args: string | FetchArgs,
   api: BaseQueryApi,
   extraOptions: object
 ) => {
+  await mutex.waitForUnlock();
   let result = await baseQuery(args, api, extraOptions);
   if (result.error && result.error.status === 401) {
-    console.log((api.getState() as RootState).auth.refreshToken);
-    const refreshResult = await baseQuery(
-      {
-        url: "authen/refreshToken",
-        method: "POST",
-        body: JSON.stringify({
-          refreshToken: (api.getState() as RootState).auth.refreshToken,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      },
-      api,
-      extraOptions
-    );
-    if (refreshResult.error) {
-      console.log(refreshResult.error);
-      api.dispatch(Logout());
-      redirect("/");
+    if (!mutex.isLocked()) {
+      const release = await mutex.acquire();
+      try {
+        const refreshResult = await baseQuery(
+          {
+            url: "authen/refreshToken",
+            method: "POST",
+            body: JSON.stringify({
+              refreshToken: (api.getState() as RootState).auth.refreshToken,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          },
+          api,
+          extraOptions
+        );
+        if (refreshResult.error) {
+          console.log(refreshResult.error);
+          api.dispatch(Logout());
+          redirect("/");
 
-      notifications.show({
-        message: "You are unauthorized. Please log in again.",
-        color: "red",
-      });
-      return refreshResult;
-    }
-    if (
-      "status" in (refreshResult.data as any) &&
-      (refreshResult.data as any).status === 200
-    ) {
-      result = await baseQuery(args, api, extraOptions);
-      if (result.error) {
-        console.log(result.error);
+          notifications.show({
+            message: "You are unauthorized. Please log in again.",
+            color: "red",
+          });
+          return refreshResult;
+        } else if (
+          "status" in (refreshResult.data as any) &&
+          refreshResult.data
+        ) {
+          result = await baseQuery(args, api, extraOptions);
+          if (result.error) {
+            console.log(result.error);
+          }
+        }
+      } finally {
+        release();
       }
+    } else {
+      await mutex.waitForUnlock();
+      result = await baseQuery(args, api, extraOptions);
     }
   }
   return result;
