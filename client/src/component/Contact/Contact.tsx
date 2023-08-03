@@ -224,7 +224,7 @@ export default function Contact() {
 
 							<Group position='right' mt='md'>
 								<ReCaptcha
-									sitekey='6LfvGXknAAAAANvldUg97O8fqZG2Pv41_rDrf1W2'
+									sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
 									required
 									onChange={(value: string) => {
 										form.setFieldValue('g-recaptcha-response', value);
