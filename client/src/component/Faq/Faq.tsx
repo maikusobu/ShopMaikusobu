@@ -34,6 +34,7 @@ const useStyles = createStyles((theme) => ({
 		minWidth: '100vw',
 		display: 'flex',
 		flexDirection: 'column',
+		alignItems: 'flex-start',
 		gap: '1rem',
 		padding: '10px',
 	},
@@ -46,17 +47,18 @@ export function Faq() {
 
 	return (
 		<Container mx={0} className={classes.container}>
-			<Group>
-				<Button
-					leftIcon={<IconArrowBack />}
-					onClick={() => {
-						navigate(-1);
-					}}
-				>
-					Back
-				</Button>
-				<Title order={1}>Frequently asked questions</Title>
-			</Group>
+			<Button
+				leftIcon={<IconArrowBack />}
+				onClick={() => {
+					navigate(-1);
+				}}
+			>
+				Back
+			</Button>
+
+			<Title order={1} mx='auto'>
+				Frequently asked questions
+			</Title>
 
 			<Container size='md' className={classes.wrapper}>
 				<Accordion variant='separated'>
