@@ -39,7 +39,7 @@ const action = async ({ request }: { request: Request }) => {
         onClose: () => console.log("unmounted"),
         onOpen: () => console.log("mounted"),
         autoClose: 2000,
-        message: "You have successfully registered",
+        message: json.response.message,
         color: "white",
         style: { backgroundColor: "green" },
         sx: { backgroundColor: "green" },
