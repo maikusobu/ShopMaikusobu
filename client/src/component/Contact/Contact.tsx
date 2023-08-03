@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import emailjs from '@emailjs/browser';
+import ReCaptcha from 'react-google-recaptcha';
 
 const useStyles = createStyles((theme) => {
 	const BREAKPOINT = theme.fn.smallerThan('sm');
@@ -116,7 +117,7 @@ const useStyles = createStyles((theme) => {
 	};
 });
 
-export function Contact() {
+export default function Contact() {
 	const navigate = useNavigate();
 	const { classes } = useStyles();
 	const form = useForm({
@@ -125,23 +126,40 @@ export function Contact() {
 			email: '',
 			subject: '',
 			message: '',
+			'g-recaptcha-response': '',
 		},
 	});
 
 	const handleSendEmail = () => {
-		// Tốn kém vãi lol, có gì comment mấy cái code này --
-		emailjs.send(
-			import.meta.env.VITE_EMAILJS_SERVICE_ID,
-			import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-			{
-				name: form.values.name !== '' ? form.values.name : 'unknown',
-				email: form.values.email,
-				subject: form.values.subject !== '' ? form.values.subject : 'no subject',
-				message: form.values.message,
-			},
-			import.meta.env.VITE_EMAILJS_PUBLIC_KEY
-		);
-		// --------------------------------------------------
+		if (form.values['g-recaptcha-response'] === '') {
+			form.setFieldError('g-recaptcha-response', 'please complete the captcha');
+			setTimeout(() => {
+				form.clearErrors();
+			}, 1000);
+			return;
+		} else {
+			form.clearErrors();
+		}
+
+		emailjs
+			.send(
+				import.meta.env.VITE_EMAILJS_SERVICE_ID,
+				import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+				{
+					name: form.values.name !== '' ? form.values.name : 'unknown',
+					email: form.values.email,
+					subject: form.values.subject !== '' ? form.values.subject : 'no subject',
+					message: form.values.message,
+					'g-recaptcha-response': form.values['g-recaptcha-response'],
+				},
+				import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+			)
+			.then((response) => {
+				console.log('SUCCESS!', response.status, response.text);
+			})
+			.catch((error) => {
+				console.log('FAILED...', error);
+			});
 	};
 
 	return (
@@ -159,7 +177,8 @@ export function Contact() {
 				<div className={classes.wrapper}>
 					<form
 						className={classes.form}
-						onSubmit={() => {
+						onSubmit={(e) => {
+							e.preventDefault();
 							handleSendEmail();
 						}}
 					>
@@ -204,10 +223,18 @@ export function Contact() {
 							/>
 
 							<Group position='right' mt='md'>
+								<ReCaptcha
+									sitekey='6LfvGXknAAAAANvldUg97O8fqZG2Pv41_rDrf1W2'
+									required
+									onChange={(value: string) => {
+										form.setFieldValue('g-recaptcha-response', value);
+									}}
+								/>
 								<Button type='submit' className={classes.control}>
 									Send message
 								</Button>
 							</Group>
+							<p>{form.errors?.['g-recaptcha-response']}</p>
 						</div>
 					</form>
 				</div>
@@ -215,5 +242,3 @@ export function Contact() {
 		</Container>
 	);
 }
-
-export default Contact;
