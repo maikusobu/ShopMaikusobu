@@ -19,14 +19,14 @@ export default function FaqPasswordGenerator() {
 						setPassword(newPassword);
 					}}
 				>
-					Tạo mật khẩu ngẫu nhiên
+					Tạo
 				</Button>
 				<Button
 					onClick={() => {
 						if (password !== '') clipboard.copy(password);
 					}}
 				>
-					{clipboard.copied ? 'Đã copy' : 'Copy mật khẩu'}
+					{clipboard.copied ? 'Đã copy' : 'Copy'}
 				</Button>
 				<PasswordInput w='200px' placeholder='Mật khẩu ngẫu nhiên' value={password} />
 			</Group>
