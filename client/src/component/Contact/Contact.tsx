@@ -130,17 +130,36 @@ export default function Contact() {
 		},
 	});
 
-	const handleSendEmail = () => {
+	const checkReCaptcha = (): boolean => {
 		if (form.values['g-recaptcha-response'] === '') {
-			form.setFieldError('g-recaptcha-response', 'please complete the captcha');
+			form.setFieldError('g-recaptcha-response', 'Please complete the captcha');
 			setTimeout(() => {
 				form.clearErrors();
 			}, 1000);
-			return;
+			return false;
 		} else {
 			form.clearErrors();
+			return true;
 		}
+	};
 
+	const verifyEmail = async () => {
+		try {
+			const response = await fetch(
+				`https://emailvalidation.abstractapi.com/v1/?api_key=${
+					import.meta.env.VITE_ABSTRACTAPI_API_KEY
+				}&email=${form.values.email}`
+			);
+			const data = await response.json();
+			console.log('returned data from abstractapi: ', data);
+			return data.quality_score >= 0.9;
+		} catch (err) {
+			console.log('error verifying email: ', err);
+			return false;
+		}
+	};
+
+	const sendEmail = (): void => {
 		emailjs
 			.send(
 				import.meta.env.VITE_EMAILJS_SERVICE_ID,
@@ -160,6 +179,19 @@ export default function Contact() {
 			.catch((error) => {
 				console.log('FAILED...', error);
 			});
+	};
+
+	const handleSendEmail = async () => {
+		if (!checkReCaptcha()) {
+			return;
+		}
+		if (!(await verifyEmail())) {
+			form.reset();
+			return;
+		}
+
+		await sendEmail();
+		form.reset();
 	};
 
 	return (
@@ -234,7 +266,9 @@ export default function Contact() {
 									Send message
 								</Button>
 							</Group>
-							<p>{form.errors?.['g-recaptcha-response']}</p>
+							{form.errors?.['g-recaptcha-response'] && (
+								<p style={{ color: 'red' }}>{form.errors['g-recaptcha-response']}</p>
+							)}
 						</div>
 					</form>
 				</div>
