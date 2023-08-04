@@ -6,6 +6,7 @@ interface DecodedToken {
   id: string;
 }
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  if (req.method === "OPTIONS") return next();
   const token = req.cookies["token"];
   if (!token) {
     res.status(401).json({

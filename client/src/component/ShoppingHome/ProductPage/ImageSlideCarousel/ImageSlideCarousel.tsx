@@ -15,7 +15,7 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
   const [emblaMainRef, emblaMainApi] = useEmblaCarousel(options);
   const [emblaThumbsRef, emblaThumbsApi] = useEmblaCarousel({
     containScroll: "keepSnaps",
-    dragFree: true,
+    dragFree: false,
   });
 
   const onThumbClick = useCallback(
@@ -68,7 +68,7 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
                 objectFit: "cover",
               }}
               src={imageByIndex(index, images)}
-              alt="Hãy đợi đi "
+              alt="Ảnh đang được tải về đợi xíu"
             />
           ))}
         </Group>

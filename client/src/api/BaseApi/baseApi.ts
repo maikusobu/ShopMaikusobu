@@ -8,8 +8,11 @@ import {
 import { redirect } from "react-router-dom";
 import { notifications } from "@mantine/notifications";
 import type { RootState } from "../../app/store";
-import { Logout } from "../AuthReducer/AuthReduce";
+
+import { checkLogout } from "../../app/thunkDispatch/thunkLogout";
 import { Mutex } from "async-mutex";
+
+import { AnyAction } from "@reduxjs/toolkit";
 const mutex = new Mutex();
 const baseQuery = fetchBaseQuery({
   baseUrl: `${import.meta.env.VITE_SERVER}`,
@@ -47,9 +50,8 @@ const baseQueryWithRefreshT = async (
         );
         if (refreshResult.error) {
           console.log(refreshResult.error);
-          api.dispatch(Logout());
+          api.dispatch(checkLogout() as unknown as AnyAction);
           redirect("/");
-
           notifications.show({
             message: "You are unauthorized. Please log in again.",
             color: "red",

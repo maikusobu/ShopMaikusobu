@@ -17,12 +17,13 @@ import {
 import { selectAuth } from "../../api/AuthReducer/AuthReduce";
 import { useAppSelector } from "../../app/hooks";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAppDispatch } from "../../app/hooks";
+import { checkLogout } from "../../app/thunkDispatch/thunkLogout";
 
-import { Logout } from "../../api/AuthReducer/AuthReduce";
 import { useGetUserByIdQuery } from "../../api/UserApi/UserApi";
 import useAvatar from "../../hook/useAvatar";
+import { AnyAction } from "@reduxjs/toolkit";
 const useStyles = createStyles((theme) => ({
   MenuFlex: {
     justifyContent: "space-between",
@@ -122,7 +123,7 @@ function UserIn() {
         <Menu.Item
           icon={<IconLogout size="0.9rem" stroke={1.5} />}
           onClick={() => {
-            dispatch(Logout());
+            dispatch(checkLogout() as unknown as AnyAction);
           }}
         >
           Logout

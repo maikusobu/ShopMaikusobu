@@ -22,6 +22,7 @@ const cartApi = baseApi.injectEndpoints({
         url: "/cart-item/create",
         method: "PUT",
         body: data,
+        credentials: "include",
       }),
     }),
     updateCart: builder.mutation<CartResponse, CartItemType>({
