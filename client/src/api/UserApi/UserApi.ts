@@ -36,7 +36,6 @@ const userApi = baseApi.injectEndpoints({
         try {
           await queryFulfilled;
         } catch (error) {
-          console.log(error);
           patchResult.undo();
         }
       },

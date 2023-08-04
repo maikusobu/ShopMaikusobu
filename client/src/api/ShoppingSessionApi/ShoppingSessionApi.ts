@@ -28,7 +28,7 @@ const shoppingApi = baseApi.injectEndpoints({
                 type: "Shopping" as const,
                 id: cart_item._id,
               })),
-              "Shopping",
+              { type: "Shopping" },
             ]
           : ["Shopping"],
     }),
@@ -38,9 +38,7 @@ const shoppingApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: { CartItemId },
       }),
-      invalidatesTags: (_result, _error, arg) => [
-        { type: "Shopping", id: arg.CartItemId },
-      ],
+      invalidatesTags: ["Shopping"],
     }),
     updateDeleteCartItem: builder.mutation<ShoppingSessionType, shoppingType>({
       query: ({ id, CartItemId }: shoppingType) => ({

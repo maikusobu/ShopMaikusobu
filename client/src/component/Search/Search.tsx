@@ -69,7 +69,9 @@ function Search(props: Omit<ComponentProps<typeof Autocomplete>, "data">) {
             verticalAlign: "middle",
           },
         }}
-        defaultValue={searchParams.get("q") as string}
+        defaultValue={
+          searchParams.get("q") === null ? "" : searchParams.get("q")
+        }
         type="search"
         nothingFound="Hãy thử từ khóa mới"
         aria-label="Search products"
