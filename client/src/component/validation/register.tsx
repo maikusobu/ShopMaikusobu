@@ -56,6 +56,8 @@ function Register() {
   }, []);
   const { data } = useContext(SocialContext);
   const { classes } = useStyles();
+  const [disable, setDisable] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [active, setActive] = useState(0);
   const { errorAppear, handleSetErrorAppear, objectError } = useObjectError();
 
@@ -83,12 +85,14 @@ function Register() {
       toast(dataSentJson.message, false, "Verification", "Xác thực");
       setTimeout(() => {
         navigate("/authen/login");
-      }, 5000);
+      }, 3000);
     } catch (err: any) {
       toast(err.message, true, "Register", "Đăng ký");
     }
   };
   const handleResend = async () => {
+    setLoading(true);
+    setDisable(true);
     try {
       const dataSent = await fetch(
         `${import.meta.env.VITE_SERVER}/authen/resend`,
@@ -104,8 +108,12 @@ function Register() {
           credentials: "include",
         }
       );
+
       const dataSentJson = await dataSent.json();
-      console.log(dataSentJson);
+      setLoading(false);
+      setTimeout(() => {
+        setDisable(false);
+      }, 5000);
       toast(dataSentJson.message, false, "Resend", "Mã xác thực");
     } catch (err: any) {
       toast(err.message, true, "Resend", "Mã xác thực");
@@ -409,7 +417,13 @@ function Register() {
                   (lưu ý: kiểm tra ở thư mục spam nếu không thấy mail)
                 </Text>
               </Stack>
-              <Button onClick={handleResend}>Resend</Button>
+              <Button
+                onClick={handleResend}
+                disabled={disable}
+                loading={loading}
+              >
+                Resend
+              </Button>
               <Group position="center">
                 <PinInput
                   type="number"
@@ -428,7 +442,7 @@ function Register() {
             <Stack>
               <Text>
                 Chúc mừng bạn đã xác thực thành công, bạn sẽ được trả về trang
-                chủ sau ít phút
+                chủ sau vài giây
               </Text>
             </Stack>
           </Stepper.Completed>

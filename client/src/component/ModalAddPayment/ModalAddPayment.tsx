@@ -20,7 +20,7 @@ import { useState } from "react";
 import { useCreateUserPaymentMutation } from "../../api/UserApi/UserPaymentApi";
 import { useUpdateInsertPaymentMutation } from "../../api/UserApi/UserPaymentManagerApi";
 import { useUpdateUserMutation } from "../../api/UserApi/UserApi";
-import { useGetUserByIdQuery } from "../../api/UserApi/UserApi";
+import { useGetUserPaymentByIdQuery } from "../../api/UserApi/UserPaymentManagerApi";
 interface UserPaymentValues {
   payment_type: "credit" | "debit" | "paypal" | "bank";
   card_number: string;
@@ -68,7 +68,8 @@ function PaymentProvider({ children }: { children: React.ReactNode }) {
   const [createUserPayment] = useCreateUserPaymentMutation();
   const [updateInsertPayment] = useUpdateInsertPaymentMutation();
   const [updateUser] = useUpdateUserMutation();
-  const { data: userData } = useGetUserByIdQuery(auth.id, {
+
+  const { data: paymentData } = useGetUserPaymentByIdQuery(auth.id, {
     skip: !auth.isLoggedIn,
   });
   const form = useForm<UserPaymentValues>({
@@ -131,10 +132,7 @@ function PaymentProvider({ children }: { children: React.ReactNode }) {
     createUserPayment(formData)
       .unwrap()
       .then((data) => {
-        if (
-          value === true ||
-          import.meta.env.VITE_DEFAULT === userData?.idDefaultPayment
-        )
+        if (value === true || paymentData?.payment_list.length === 0)
           updateUser({
             id: auth.id,
             idDefaultPayment: data.data._id,
@@ -147,7 +145,7 @@ function PaymentProvider({ children }: { children: React.ReactNode }) {
           payment_id: data.data._id,
         })
           .unwrap()
-          .then((res) => console.log(res))
+          .then(close)
           .catch((er) => console.log(er));
       })
       .catch((err) => console.log(err));
