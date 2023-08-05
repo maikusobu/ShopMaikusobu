@@ -4,9 +4,9 @@ import FacebookIcon from "../socialButton/FacebookIcon";
 import { useNavigate, useNavigation } from "react-router-dom";
 import GoogleIcon from "../socialButton/GoogleIcon";
 import { useForm } from "@mantine/form";
-import { Form, useSubmit } from "react-router-dom";
+import { Form } from "react-router-dom";
 import { useObjectError } from "../../hook/useObjectError";
-
+import { toast } from "../../toast/toast";
 import { IconX } from "@tabler/icons-react";
 import { Notification, LoadingOverlay } from "@mantine/core";
 import { useStyles } from "./styleGlobal";
@@ -24,17 +24,16 @@ import {
   Stack,
   Center,
 } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
 function Login() {
   useEffect(() => {
     document.title = "Log in";
   }, []);
-  const submit = useSubmit();
+
   const { classes } = useStyles();
   const navigate = useNavigate();
   const navigation = useNavigation();
   const [submitLoading, setSubmitloading] = useState(false);
-  const { data, setData } = useContext(SocialContext);
+  const { setData } = useContext(SocialContext);
   const { errorAppear, handleSetErrorAppear, objectError } = useObjectError();
   const form = useForm({
     initialValues: {
@@ -76,23 +75,12 @@ function Login() {
           localStorage.setItem("id", dataJSon.id);
           localStorage.setItem("expires", dataJSon.expires);
           localStorage.setItem("refreshToken", dataJSon.refreshToken);
-          notifications.show({
-            id: "register",
-            withCloseButton: false,
-            onClose: () => console.log("unmounted"),
-            onOpen: () => console.log("mounted"),
-            autoClose: 1000,
-            message: "You have successfully logined",
-            color: "white",
-            style: { backgroundColor: "green" },
-            sx: { backgroundColor: "green" },
-            loading: false,
-          });
+          toast("Bạn đã đăng nhập thành công", false, "Login", "Đăng nhập");
           await new Promise<void>((r) =>
             setTimeout(() => {
               r();
               setSubmitloading(false);
-            }, 1000)
+            }, 2000)
           );
           navigate("/");
         }
