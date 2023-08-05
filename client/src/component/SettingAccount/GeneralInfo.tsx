@@ -2,12 +2,10 @@ import {
   Title,
   Avatar,
   Stack,
-  Text,
   Group,
   FileButton,
   Button,
   createStyles,
-  Slider,
   Portal,
   TextInput,
   LoadingOverlay,
@@ -29,7 +27,6 @@ import React, {
   useRef,
   useCallback,
   useEffect,
-  useLayoutEffect,
 } from "react";
 
 import {

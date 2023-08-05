@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router';
-import { Container, Title, Accordion, createStyles, rem, Group, Button } from '@mantine/core';
+import { Container, Title, Accordion, createStyles, rem, Button } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 
 import faqData from './faqData';

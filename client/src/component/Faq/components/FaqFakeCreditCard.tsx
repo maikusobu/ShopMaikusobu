@@ -1,4 +1,4 @@
-import { EventHandler, useState } from 'react';
+import { useState } from 'react';
 import { faker } from '@faker-js/faker';
 import { Stack, Group, Button, Text, TextInput, Select } from '@mantine/core';
 import { useClipboard } from '@mantine/hooks';
