@@ -25,7 +25,6 @@ import {
   Stack,
   Center,
 } from "@mantine/core";
-import { notifications } from "@mantine/notifications";
 import { toast } from "../../toast/toast";
 
 function Login() {
@@ -145,9 +144,6 @@ function Login() {
           >
             Google
           </GoogleIcon>
-
-          {/* facebook login here */}
-          {/* =================== */}
           <FacebookLogin
             appId={import.meta.env.VITE_FACEBOOK_APP_ID}
             onSuccess={async (response) => {

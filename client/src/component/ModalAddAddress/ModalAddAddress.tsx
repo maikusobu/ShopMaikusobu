@@ -18,7 +18,7 @@ import { districts, wards } from "../../api/VnProvincesApi/VnProvincesApi";
 import { useGetProvincesQuery } from "../../api/VnProvincesApi/VnProvincesApi";
 import { selectAuth } from "../../api/AuthReducer/AuthReduce";
 import { useAppSelector } from "../../app/hooks";
-import { useGetUserByIdQuery } from "../../api/UserApi/UserApi";
+import { useGetUserAddressesQuery } from "../../api/UserApi/UserAddressMangaerApi";
 import { useCreateUserAddressMutation } from "../../api/UserApi/UserAdressApi";
 import { useUpdateInsertAddressMutation } from "../../api/UserApi/UserAddressMangaerApi";
 import { useUpdateUserMutation } from "../../api/UserApi/UserApi";
@@ -35,7 +35,7 @@ function AddressProvider({ children }: { children: React.ReactNode }) {
   const { data: provinces } = useGetProvincesQuery();
   const [valueChecked, setValueChecked] = useState(false);
   const auth = useAppSelector(selectAuth);
-  const { data: UserData } = useGetUserByIdQuery(auth.id, {
+  const { data: UserAddress } = useGetUserAddressesQuery(auth.id, {
     skip: !auth.isLoggedIn,
   });
   const [createUserAddress] = useCreateUserAddressMutation();
@@ -84,10 +84,7 @@ function AddressProvider({ children }: { children: React.ReactNode }) {
       .unwrap()
       .then((res) => {
         console.log(import.meta.env.VITE_DEFAULT);
-        if (
-          valueChecked === true ||
-          UserData?.idDefaultAddress === import.meta.env.VITE_DEFAULT
-        )
+        if (valueChecked === true || UserAddress?.address_list.length === 0)
           updateUser({
             id: auth.id,
             idDefaultAddress: res.data._id,
@@ -95,13 +92,12 @@ function AddressProvider({ children }: { children: React.ReactNode }) {
             .unwrap()
             .then((resS) => console.log(resS))
             .catch(console.log);
-
         updateInsertAddress({
           user_id: auth.id,
           address_id: res.data._id,
         })
           .unwrap()
-          .then(console.log)
+          .then(close)
           .catch(console.log);
       })
       .catch(console.log);

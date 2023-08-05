@@ -1,5 +1,5 @@
 import mongoose, { ValidatorProps, InferSchemaType } from "mongoose";
-
+import { faker } from "@faker-js/faker";
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
@@ -66,12 +66,12 @@ const userSchema = new Schema(
     },
     idDefaultAddress: {
       type: Schema.Types.ObjectId,
-      default: new mongoose.Types.ObjectId("507f191e810c19729de860ea"),
+      default: faker.database.mongodbObjectId(),
       ref: "UserAddress",
     },
     idDefaultPayment: {
       type: Schema.Types.ObjectId,
-      default: new mongoose.Types.ObjectId("507f191e810c19729de860ea"),
+      default: faker.database.mongodbObjectId(),
       ref: "UserPayment",
     },
     avatar: {
@@ -98,8 +98,11 @@ const userSchema = new Schema(
   { timestamps: true }
 );
 type UserModel = InferSchemaType<typeof userSchema>;
-userSchema.virtual("fullname").get(function (this: UserModel) {
-  return this.first_name + " " + this.last_name;
-});
-
+userSchema.index(
+  { createdAt: 1 },
+  {
+    expireAfterSeconds: 24 * 60 * 60,
+    partialFilterExpression: { isVerified: false },
+  }
+);
 export default mongoose.model<UserModel>("User", userSchema);

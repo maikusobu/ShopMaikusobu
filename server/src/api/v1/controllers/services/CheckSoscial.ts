@@ -28,7 +28,10 @@ export const middlwareSocialLogin = expressAsyncHandler(
           `https://graph.facebook.com/me?fields=id,name,email&access_token=${req.body.accessToken}`
         );
       }
+
       const data = await userInfo!.json();
+      console.log(data);
+
       const user = await userModel.findOne({ email: data.email });
       if (user) {
         if (user.isSocialConnect) {
