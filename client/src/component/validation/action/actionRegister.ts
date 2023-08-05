@@ -10,7 +10,7 @@ const action = async ({ request }: { request: Request }) => {
   avatarUser = await blobToDataURL(blob);
   const data = {
     ...Object.fromEntries(formData),
-    isSocialLogin: formData.get("picture") ? true : false,
+    isSocialConnect: formData.get("isSocialLogin") === "true" ? true : false,
     avatar: avatarUser,
   };
   // eslint-disable-next-line no-debugger

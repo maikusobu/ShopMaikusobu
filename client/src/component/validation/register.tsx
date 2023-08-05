@@ -94,9 +94,9 @@ function Register() {
   const form = useForm({
     initialValues: {
       username: objectError?.data?.username || "",
-      email: data?.email || objectError?.data?.email || "",
-      first_name: data?.given_name || objectError?.data?.first_name || "",
-      last_name: data?.family_name || objectError?.data?.last_name || "",
+      email: data?.user?.email || objectError?.data?.email || "",
+      first_name: data?.user.given_name || objectError?.data?.first_name || "",
+      last_name: data?.user.family_name || objectError?.data?.last_name || "",
       password: objectError?.data?.password || "",
       passwordConfirm: "",
     },
@@ -338,7 +338,16 @@ function Register() {
                   error={form.errors.passwordConfirm}
                   radius="md"
                 />
-                <input type="hidden" value={data?.picture} name="picture" />
+                <input
+                  type="hidden"
+                  value={data ? data.user.picture : ""}
+                  name="picture"
+                />
+                <input
+                  type="hidden"
+                  name="isSocialLogin"
+                  value={String(data?.isSocialLogin ? true : false)}
+                />
               </Stack>
               <Group position="apart" mt="xl">
                 <Anchor

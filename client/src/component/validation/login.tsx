@@ -49,7 +49,9 @@ function Login() {
       });
       setSubmitloading(true);
       const signals = await fetch(
-        `${import.meta.env.VITE_SERVER}/authen/login?isSocialLogin=true`,
+        `${
+          import.meta.env.VITE_SERVER
+        }/authen/login?isSocialLogin=true&google=true`, // với facebook thì sửa lại thành facebook=true
         {
           headers: {
             Accept: "application/json",
@@ -61,35 +63,39 @@ function Login() {
         }
       );
       const dataJSon = await signals.json();
-      console.log(dataJSon);
       if (dataJSon.isExisted === false) {
-        setData(dataJSon.user);
+        setData(dataJSon);
         navigate("/authen/signup");
-      } else if (dataJSon.social === true && dataJSon.isSocialLogin) {
-        localStorage.setItem("id", dataJSon.id);
-        localStorage.setItem("expires", dataJSon.expires);
-        localStorage.setItem("refreshToken", dataJSon.refreshToken);
-        notifications.show({
-          id: "register",
-          withCloseButton: false,
-          onClose: () => console.log("unmounted"),
-          onOpen: () => console.log("mounted"),
-          autoClose: 1000,
-          message: "You have successfully logined",
-          color: "white",
-          style: { backgroundColor: "green" },
-          sx: { backgroundColor: "green" },
-          loading: false,
-        });
-        await new Promise<void>((r) =>
-          setTimeout(() => {
-            r();
-            setSubmitloading(false);
-          }, 1000)
-        );
-        navigate("/");
       } else {
-        setSubmitloading(false);
+        if (dataJSon.isExisted === true && dataJSon.isSocialConnect === false) {
+          setSubmitloading(false);
+          alert(
+            "email đã được đăng ký với tài khoảng khác, vui lòng đăng nhập với email khác hoặc đăng ký mới"
+          );
+        } else {
+          localStorage.setItem("id", dataJSon.id);
+          localStorage.setItem("expires", dataJSon.expires);
+          localStorage.setItem("refreshToken", dataJSon.refreshToken);
+          notifications.show({
+            id: "register",
+            withCloseButton: false,
+            onClose: () => console.log("unmounted"),
+            onOpen: () => console.log("mounted"),
+            autoClose: 1000,
+            message: "You have successfully logined",
+            color: "white",
+            style: { backgroundColor: "green" },
+            sx: { backgroundColor: "green" },
+            loading: false,
+          });
+          await new Promise<void>((r) =>
+            setTimeout(() => {
+              r();
+              setSubmitloading(false);
+            }, 1000)
+          );
+          navigate("/");
+        }
       }
     },
 

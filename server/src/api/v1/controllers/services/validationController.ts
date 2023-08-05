@@ -84,7 +84,7 @@ export const signupMiddeware = asyncHandler(
               message: "Thư xác nhận đã được chuyển đến mail của bạn",
               status: 201,
               id: userMade._id,
-              social: req.body.isSocialLogin ? true : false,
+              social: req.body.isSocialConnect ? true : false,
             },
           });
         } catch (err: any) {
@@ -142,11 +142,8 @@ export const signinMiddeware = asyncHandler(
         res.status(200).json({
           message: "login sucess",
           refreshToken: refreshT,
-          social: req.body.isSocialLogin ? true : false,
           status: 200,
           id: User?.id,
-          isSocialLogin: true,
-          username: User?.username,
           expires: new Date(config.tokenLife).getTime().toString(),
         });
       } else {
