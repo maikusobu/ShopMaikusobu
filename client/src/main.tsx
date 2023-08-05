@@ -157,9 +157,9 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <GoogleOAuthProvider clientId={`${import.meta.env.VITE_CLIENT_ID}`}>
-    <SocialContextProvider>
-      <React.StrictMode>
-        <Provider store={store}>
+    <React.StrictMode>
+      <Provider store={store}>
+        <SocialContextProvider>
           <MantineProvider
             withCSSVariables
             theme={{
@@ -232,8 +232,8 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
               </DatesProvider>
             </ErrorProvider>
           </MantineProvider>
-        </Provider>
-      </React.StrictMode>
-    </SocialContextProvider>
+        </SocialContextProvider>
+      </Provider>
+    </React.StrictMode>
   </GoogleOAuthProvider>
 );
