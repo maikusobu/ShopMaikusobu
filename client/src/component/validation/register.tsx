@@ -31,11 +31,12 @@ import {
   Popover,
   Stepper,
 } from "@mantine/core";
+import { toast } from "../../toast/toast";
 const requirements = [
-  { re: /[0-9]/, label: "Includes number" },
-  { re: /[a-z]/, label: "Includes lowercase letter" },
-  { re: /[A-Z]/, label: "Includes uppercase letter" },
-  { re: /[$&+,:;=?@#|'<>.^*()%!-]/, label: "Includes special symbol" },
+  { re: /[0-9]/, label: "Chứa số" },
+  { re: /[a-z]/, label: "Chứa kí tự thường" },
+  { re: /[A-Z]/, label: "Chứa kí tự in hoa" },
+  { re: /[$&+,:;=?@#|'<>.^*()%!-]/, label: "Chứa kí tự đặc biệt" },
 ];
 function getStrength(password: string) {
   let multiplier = password.length > 5 ? 0 : 1;
@@ -57,7 +58,7 @@ function Register() {
   const { classes } = useStyles();
   const [active, setActive] = useState(0);
   const { errorAppear, handleSetErrorAppear, objectError } = useObjectError();
-  console.log(active);
+
   const handleVerification = async () => {
     if (numberConfirm.length < 6) return;
     try {
@@ -77,13 +78,37 @@ function Register() {
         }
       );
       const dataSentJson = await dataSent.json();
-      console.log(dataSentJson);
+
       setActive((prev) => prev + 1);
+      toast(dataSentJson.message, false, "Verification", "Xác thực");
       setTimeout(() => {
         navigate("/authen/login");
       }, 5000);
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
+      toast(err.message, true, "Register", "Đăng ký");
+    }
+  };
+  const handleResend = async () => {
+    try {
+      const dataSent = await fetch(
+        `${import.meta.env.VITE_SERVER}/authen/resend`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: objectError.error.id,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          credentials: "include",
+        }
+      );
+      const dataSentJson = await dataSent.json();
+      console.log(dataSentJson);
+      toast(dataSentJson.message, false, "Resend", "Mã xác thực");
+    } catch (err: any) {
+      toast(err.message, true, "Resend", "Mã xác thực");
     }
   };
   const navigation = useNavigation();
@@ -104,7 +129,7 @@ function Register() {
       username: (val) =>
         val.length >= 1 && /^[a-zA-Z0-9]+$/i.test(val)
           ? null
-          : "Username chỉ chứa duy nhất là những bản chữ cái và số",
+          : "Username chỉ chứa duy nhất là chữ cái và số",
       email: (val) =>
         /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(val)
           ? null
@@ -203,7 +228,7 @@ function Register() {
               }}
             >
               <Stack spacing={rem(5)}>
-                <Group>
+                <Group grow>
                   <TextInput
                     label="First name"
                     placeholder="Nguyen"
@@ -309,7 +334,7 @@ function Register() {
                   <Popover.Dropdown>
                     <Progress color={color} value={strength} size={5} mb="xs" />
                     <PasswordRequirement
-                      label="Includes at least 6 characters"
+                      label="Chứa ít nhất 6 kí tự"
                       meets={form.values.password.length > 5}
                     />
                     {checks}
@@ -362,7 +387,7 @@ function Register() {
                     navigate("/authen/login");
                   }}
                 >
-                  {"Already have an account? Login"}
+                  {"Đã có tài khoảng? Đăng nhập"}
                 </Anchor>
                 <Button type="submit" radius="xl">
                   {upperFirst("Register")}
@@ -371,11 +396,20 @@ function Register() {
             </Form>
           </Stepper.Step>
           <Stepper.Step
-            description="Verify email"
+            description="Xác thực email"
             icon={<IconMailOpened size="1.1rem" />}
           >
-            <Stack>
-              <Text>Bạn hãy kiểm tra mail để được xác nhận tài khoảng!!</Text>
+            <Stack px="10px" w="70%" mx="auto">
+              <Stack spacing={10}>
+                <Text size={15} weight={700}>
+                  Bạn hãy nhập mã xác nhận đã được gửi tới mail của bạn để xác
+                  thực tài khoảng
+                </Text>
+                <Text size={12} weight={300}>
+                  (lưu ý: kiểm tra ở thư mục spam nếu không thấy mail)
+                </Text>
+              </Stack>
+              <Button onClick={handleResend}>Resend</Button>
               <Group position="center">
                 <PinInput
                   type="number"
@@ -383,7 +417,6 @@ function Register() {
                   value={numberConfirm}
                   onChange={setNumberConfirm}
                   oneTimeCode
-                  onComplete={handleVerification}
                 />
               </Group>
               <Button type="button" onClick={handleVerification}>
@@ -391,17 +424,14 @@ function Register() {
               </Button>
             </Stack>
           </Stepper.Step>
-          <Stepper.Step
-            description="get full access"
-            icon={<IconShieldCheck size="1.1rem" />}
-          >
+          <Stepper.Completed>
             <Stack>
               <Text>
                 Chúc mừng bạn đã xác thực thành công, bạn sẽ được trả về trang
                 chủ sau ít phút
               </Text>
             </Stack>
-          </Stepper.Step>
+          </Stepper.Completed>
         </Stepper>
       </Container>
     </div>

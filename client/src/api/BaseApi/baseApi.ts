@@ -6,9 +6,8 @@ import {
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
 import { redirect } from "react-router-dom";
-import { notifications } from "@mantine/notifications";
 import type { RootState } from "../../app/store";
-
+import { toast } from "../../toast/toast";
 import { checkLogout } from "../../app/thunkDispatch/thunkLogout";
 import { Mutex } from "async-mutex";
 
@@ -49,13 +48,9 @@ const baseQueryWithRefreshT = async (
           extraOptions
         );
         if (refreshResult.error) {
-          console.log(refreshResult.error);
           api.dispatch(checkLogout() as unknown as AnyAction);
           redirect("/");
-          notifications.show({
-            message: "You are unauthorized. Please log in again.",
-            color: "red",
-          });
+          toast("Vui lòng đăng nhập lại", true, "authorized", "Not authorized");
           return refreshResult;
         } else if (
           "status" in (refreshResult.data as any) &&

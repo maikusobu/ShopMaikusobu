@@ -376,7 +376,6 @@ function GeneralInfo() {
 
                   let angleInDegrees =
                     Math.round((deltaAngle * 180) / Math.PI) - 180;
-
                   angleInDegrees = (angleInDegrees + 360) % 360;
                   console.log(angleInDegrees);
                   requestAnimationFrame(() => {

@@ -43,10 +43,6 @@ export const userUpdateMiddleware = asynchandle(
       delete req.body.avatar;
       Object.assign(user, req.body);
       const updatedUser = await user.save();
-
-      // const imageData = fs.readFileSync(`${dirPath}/${user.username}.png`);
-
-      // const imageData = fs.readFileSync(`${dirPath}/${user.username}.png`); // read image file from dir path and convert it to dataUrl
       const dataURL =
         "data:image/png;base64," + updatedUser.avatar.toString("base64");
       res.status(200).json({

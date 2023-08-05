@@ -23,14 +23,12 @@ import Home from "./component/HomePage/Home/Home.tsx";
 import CheckOut from "./component/CheckOutComponent/CheckOutPage.tsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import ShoppingHome from "./component/ShoppingHome/shoppinghome.tsx";
-
 import { ModalProVider } from "./component/ModalContext/ModalContext.tsx";
 import ContentShow from "./component/ShoppingHome/ContentShow/ContentShow.tsx";
 import Faq from "./component/Faq/Faq.tsx";
 import Contact from "./component/Contact/Contact.tsx";
 import { store } from "./app/store.ts";
 import { Provider } from "react-redux";
-
 import { DatesProvider } from "@mantine/dates";
 import "./index.css";
 const locale = {
@@ -158,7 +156,7 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <GoogleOAuthProvider clientId="683718000121-5ip7jgobnksg9tmcrm6aupqvvf7kr1f1.apps.googleusercontent.com">
+  <GoogleOAuthProvider clientId={`${import.meta.env.VITE_CLIENT_ID}`}>
     <SocialContextProvider>
       <React.StrictMode>
         <Provider store={store}>

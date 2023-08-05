@@ -1,6 +1,6 @@
 const urlRequest = "authen/changepassword";
 const urlRedirect = "authen/login";
-import { notifications } from "@mantine/notifications";
+import { toast } from "../../../toast/toast";
 import { redirect } from "react-router-dom";
 const action = async ({ request }: { request: Request }) => {
   const formData = await request.formData();
@@ -23,16 +23,16 @@ const action = async ({ request }: { request: Request }) => {
       console.log(json);
       throw json;
     } else {
-      notifications.show({
-        id: "resetPasswordsuccessfully",
-        title: json.message,
-        message: "Bạn sẽ được dẫn về màn hình đăng nhập sau 5 giây",
-        color: "green",
-        autoClose: 5000,
-      });
+      toast(
+        "Bạn sẽ được dẫn về màn hình đăng nhập sau 5 giây",
+        false,
+        "ResetPassword",
+        json.message
+      );
       await new Promise((resolve) => setTimeout(resolve, 5000));
       return redirect(`/${urlRedirect}`);
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
     if (err.status === 400) {
       return { err, status: 400 };
