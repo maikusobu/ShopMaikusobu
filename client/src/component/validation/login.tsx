@@ -44,13 +44,13 @@ function Login() {
   const login = useGoogleLogin({
     onSuccess: async (coderesponse) => {
       const body = JSON.stringify({
-        code: coderesponse.code,
+        code: coderesponse.code, // code là đoạn mã mà user cho phép đăng nhập, cần phải trao đổi code để lấy access token
       });
       setSubmitloading(true);
       const signals = await fetch(
         `${
           import.meta.env.VITE_SERVER
-        }/authen/login?isSocialLogin=true&google=true`, // với facebook thì sửa lại thành facebook=true
+        }/authen/login?isSocialLogin=true&google=true`, // với facebook thì sửa lại thành facebook=true, // gửi về server để trao đổi code với access_token
         {
           headers: {
             Accept: "application/json",

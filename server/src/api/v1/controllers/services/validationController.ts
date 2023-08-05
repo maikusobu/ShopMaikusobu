@@ -1,19 +1,18 @@
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { saveDataURLToBinaryData } from "../../helpers/savedataurl";
-import { sign } from "jsonwebtoken";
+import { sign, verify, VerifyOptions } from "jsonwebtoken";
 import { config } from "../../../../config/configJWT";
 import asyncHandler from "express-async-handler";
 import userModel from "../../models/User_management/userModel";
 import shopping_session from "../../models/Shopping_process/shopping_session";
-import checkUser from "../../validations/checkPassWord";
 import user_addressManagerModel from "../../models/User_management/user_addressManagerModel";
 import user_manager_paymentModel from "../../models/User_management/user_manager_paymentModel";
 import user_token from "../../models/User_management/user_token";
 import user_confirm_number from "../../models/User_management/user_confirm_number";
 import { sendEmail } from "../../utils/email/sendMail";
 import crypto from "crypto";
-import { verify } from "jsonwebtoken";
+
 const refreshTokens: string[] = [];
 export const signupMiddeware = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -67,6 +66,7 @@ export const signupMiddeware = asyncHandler(
               {
                 "user-name": userMade.username,
                 "site-name": "ShopMaikusobu",
+                "support-email": "shopmaikusobu@gmail.com",
                 "confirm-number": num,
               },
               "requestRegister"
@@ -107,6 +107,52 @@ export const signupMiddeware = asyncHandler(
     }
   }
 );
+export const resendConFirmNumber = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { user_id } = req.body;
+      const user = await userModel.findById(user_id);
+      if (!user) throw new Error("User not found");
+      await user_confirm_number.deleteMany({ user_id: user_id });
+      const num = Math.floor(Math.random() * 900000) + 100000;
+      await user_confirm_number.create({
+        user_id: user_id,
+        numberConfirm: num,
+        createdAt: new Date(),
+      });
+      try {
+        await sendEmail(
+          user.email,
+          "Verify Account",
+          {
+            "user-name": user.username,
+            "site-name": "ShopMaikusobu",
+            "support-email": "shopmaikusobu@gmail.com",
+            "confirm-number": num,
+          },
+          "requestRegister"
+        );
+      } catch (err) {
+        res.status(500).json({
+          response: {
+            message: "Cannot send email",
+            status: 500,
+          },
+        });
+      }
+      res.status(200).json({
+        response: {
+          message: "Thư xác nhận đã được chuyển đến mail của bạn",
+          status: 201,
+          id: user_id,
+          social: req.body.isSocialConnect ? true : false,
+        },
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
 export const signinMiddeware = asyncHandler(
   async (req: Request, res: Response) => {
     try {
@@ -118,15 +164,19 @@ export const signinMiddeware = asyncHandler(
       if (req.body.isSocialLogin) {
         match = true;
       } else {
-        match = await checkUser(req.body.password, User?.password);
+        match = await bcrypt.compare(req.body.password, User?.password);
       }
       if (match) {
-        const token = sign({ id: User.id }, process.env.JWT_TOKEN_SECRET, {
-          expiresIn: config.tokenLife,
-        });
+        const token = sign(
+          { id: User.id },
+          process.env.JWT_TOKEN_SECRET as string,
+          {
+            expiresIn: config.tokenLife,
+          }
+        );
         const refreshT = sign(
           { id: User.id },
-          process.env.JWT_REFRESHTOKEN_SECRET,
+          process.env.JWT_REFRESHTOKEN_SECRET as string,
           {
             expiresIn: config.refreshTokenLife,
           }
@@ -167,9 +217,10 @@ export const CheckRegisteration = asyncHandler(
         const user = await userModel.findById(user_id);
         if (!user) throw new Error("Cannot found user");
         user.isVerified = true;
-        await user.save();
-        await user_confirm_number.findByIdAndDelete(numberConfirmUser._id);
-
+        await Promise.all([
+          user.save(),
+          user_confirm_number.findByIdAndDelete(numberConfirmUser._id),
+        ]);
         res.status(200).json({ message: "Confirm success" });
       }
     } catch (err) {
@@ -201,6 +252,8 @@ export const forgotPasswordMiddeware = asyncHandler(
         {
           name: user.username,
           link: link,
+          "support-email": "shopmaikusobu@gmail.com",
+          "site-name": "Shopmaikusobu",
         },
         "requestResetPassword"
       );
@@ -244,14 +297,14 @@ export const refreshToken = (req: Request, res: Response) => {
   } else
     verify(
       refreshToken,
-      process.env.JWT_REFRESHTOKEN_SECRET,
-      (err: any, decode: { id: string }) => {
+      process.env.JWT_REFRESHTOKEN_SECRET as string,
+      ((err: any, decode: { id: string }) => {
         if (err) {
           res.status(401).json({ message: "refreshtoken failed" });
         }
         const access_token = sign(
           { id: decode.id },
-          process.env.JWT_TOKEN_SECRET,
+          process.env.JWT_TOKEN_SECRET as string,
           {
             expiresIn: config.tokenLife,
           }
@@ -267,7 +320,7 @@ export const refreshToken = (req: Request, res: Response) => {
           refreshToken: refreshToken,
           status: 200,
         });
-      }
+      }) as VerifyOptions
     );
 };
 export const logout = (req: Request, res: Response) => {
@@ -275,7 +328,7 @@ export const logout = (req: Request, res: Response) => {
   if (!refreshToken) res.status(401).json({ message: "Unauthorized" });
   const index = refreshTokens.indexOf(refreshToken);
   if (index !== -1) {
-    refreshToken.splice(index, 1);
+    refreshTokens.splice(index, 1);
   }
   console.log(refreshTokens);
   res.status(200).json({

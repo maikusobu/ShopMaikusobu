@@ -7,7 +7,6 @@ export const ErrorLogger: Middleware =
   (_api: MiddlewareAPI) => (next) => (action) => {
     if (isRejectedWithValue(action)) {
       console.warn("We got a rejected action!");
-
       toast(
         action.error.message,
         true,
