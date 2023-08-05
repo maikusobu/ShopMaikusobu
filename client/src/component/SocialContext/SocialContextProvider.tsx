@@ -1,4 +1,7 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
+import { useAppDispatch } from "../../app/hooks";
+import { checkLogin } from "../../app/thunkDispatch/thunkLogin";
+import { AnyAction } from "@reduxjs/toolkit";
 type dataType = {
   email: string;
   picture: string;
@@ -23,6 +26,11 @@ export const SocialContext = createContext<SocialContextType>({
 
 function SocialContextProvider({ children }: { children: React.ReactNode }) {
   const [data, setData] = useState<dataResponse | null>(null);
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    dispatch(checkLogin() as unknown as AnyAction);
+  }, [dispatch]);
   return (
     <SocialContext.Provider value={{ data, setData }}>
       {children}

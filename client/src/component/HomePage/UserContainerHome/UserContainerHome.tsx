@@ -19,7 +19,7 @@ const useStyles = createStyles(() => ({
 function UserContainerHome() {
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
-  const { classes, theme } = useStyles();
+  const { classes } = useStyles();
   const cardRef = useRef<HTMLDivElement>(null);
   const handleMouseEnter = () => {
     setIsHovered(true);

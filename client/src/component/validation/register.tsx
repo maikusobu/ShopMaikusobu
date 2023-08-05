@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useContext } from "react";
 import { useObjectError } from "../../hook/useObjectError";
 import { upperFirst } from "@mantine/hooks";
@@ -6,7 +7,6 @@ import { Form } from "react-router-dom";
 import {
   IconUserCheck,
   IconMailOpened,
-  IconShieldCheck,
   IconCircleCheck,
 } from "@tabler/icons-react";
 import { SocialContext } from "../SocialContext/SocialContextProvider";

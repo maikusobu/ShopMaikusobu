@@ -49,8 +49,17 @@ const baseQueryWithRefreshT = async (
         );
         if (refreshResult.error) {
           api.dispatch(checkLogout() as unknown as AnyAction);
-          redirect("/");
-          toast("Vui lòng đăng nhập lại", true, "authorized", "Not authorized");
+          if (window.location.pathname !== "/") {
+            toast(
+              "Vui lòng đăng nhập lại",
+              true,
+              "authorized",
+              "Not authorized"
+            );
+            redirect("/authen/login");
+          } else {
+            redirect("/");
+          }
           return refreshResult;
         } else if (
           "status" in (refreshResult.data as any) &&
