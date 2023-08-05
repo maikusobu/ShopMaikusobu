@@ -69,6 +69,17 @@ function AddressProvider({ children }: { children: React.ReactNode }) {
         )[0]?.wards
       : [];
   };
+  const handleProvinceChange = (value: string | null) => {
+    form.setFieldValue("province_code", value ? value : "");
+    form.setFieldValue("district_code", "");
+    form.setFieldValue("ward_code", "");
+  };
+
+  const handleDistrictChange = (value: string | null) => {
+    form.setFieldValue("district_code", value ? value : "");
+    form.setFieldValue("ward_code", "");
+  };
+
   const onHandleSumbit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!form.isValid()) {
@@ -97,7 +108,10 @@ function AddressProvider({ children }: { children: React.ReactNode }) {
           address_id: res.data._id,
         })
           .unwrap()
-          .then(close)
+          .then(() => {
+            close();
+            form.reset();
+          })
           .catch(console.log);
       })
       .catch(console.log);
@@ -123,6 +137,7 @@ function AddressProvider({ children }: { children: React.ReactNode }) {
                   clearable
                   nothingFound="Không tìm thấy"
                   {...form.getInputProps("province_code")}
+                  onChange={handleProvinceChange}
                   data={provinces ? provinces : []}
                   error={form.errors.province_code}
                 />
@@ -135,6 +150,7 @@ function AddressProvider({ children }: { children: React.ReactNode }) {
                   clearable
                   nothingFound="Không tìm thấy"
                   {...form.getInputProps("district_code")}
+                  onChange={handleDistrictChange}
                   data={
                     form.values.province_code
                       ? (arrayDistricts(form.values.province_code) as

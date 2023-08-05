@@ -145,7 +145,10 @@ function PaymentProvider({ children }: { children: React.ReactNode }) {
           payment_id: data.data._id,
         })
           .unwrap()
-          .then(close)
+          .then(() => {
+            close();
+            form.reset();
+          })
           .catch((er) => console.log(er));
       })
       .catch((err) => console.log(err));
