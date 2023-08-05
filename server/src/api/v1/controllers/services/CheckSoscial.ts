@@ -25,13 +25,17 @@ export const middlwareSocialLogin = expressAsyncHandler(
         );
       } else if (req.query.facebook) {
         userInfo = await fetch(
-          `https://graph.facebook.com/me?fields=id,name,email&access_token=${req.body.accessToken}`
+          `https://graph.facebook.com/me?fields=id,name,emai,picturel&access_token=${req.body.accessToken}`
         );
       }
 
-      const data = await userInfo!.json();
-      console.log(data);
-
+      let data = await userInfo!.json();
+      if (req.query.facebook) {
+        data = {
+          ...data,
+          picture: data.picture.data.url,
+        };
+      }
       const user = await userModel.findOne({ email: data.email });
       if (user) {
         if (user.isSocialConnect) {
