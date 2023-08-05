@@ -30,7 +30,6 @@ app.get(
       const userRandom = await userModel.findOne();
       for (let i = 0; i < 40; i++) {
         console.log("add database at", i);
-
         const name = vietnameseFaker.commerce.productName();
         const desc = vietnameseFaker.lorem.sentence();
         const SKU = vietnameseFaker.string.alphanumeric(6).toUpperCase();
@@ -40,7 +39,6 @@ app.get(
           dec: 0,
         });
         let imageUrlArray = Array(4).fill(null);
-
         imageUrlArray = imageUrlArray.map(() =>
           vietnameseFaker.image.urlLoremFlickr({
             category: `${vietnameseFaker.commerce
