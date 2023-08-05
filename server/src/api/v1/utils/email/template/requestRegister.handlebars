@@ -1,15 +1,62 @@
 <html>
+
 <head>
-    <style></style>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+        }
+
+        .logo {
+            width: 200px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        h3 {
+            color: #333333;
+            text-align: center;
+        }
+
+        p {
+            color: #666666;
+            line-height: 1.5;
+        }
+
+        .code {
+            font-family: Courier, monospace;
+            font-size: 20px;
+            font-weight: bold;
+            color: #009900;
+            text-align: center;
+        }
+        .link {
+            color: #0099ff;
+            text-decoration: none;
+        }
+    </style>
 </head>
+
 <body>
-    <h3>Xin chào {{user-name}}</h3>
-    <p>Cảm ơn bạn đã đăng ký với {{site-name}}. Chúng tôi rất vui khi bạn là một thành viên của cộng đồng của chúng tôi.</p>
-    <p>Để hoàn tất việc đăng ký, vui lòng xác minh địa chỉ email của bạn bằng cách nhập mã xác nhận dưới đây trên trang web của
-chúng tôi.</p>
-    <p>Mã xác nhận của bạn là: {{confirm-number}}</p>
-    <p>Mã này sẽ hết hạn trong 24 giờ, vì vậy vui lòng xác minh tài khoản của bạn càng sớm càng tốt.</p>
-    <p>Nếu bạn có bất kỳ câu hỏi hoặc vấn đề gì, vui lòng liên hệ với chúng tôi qua {{support-email}}.</p>
-    <p>Trân trọng, Đội ngũ {{site-name}}<p/>
+    <div class=“container”> <img src="../../../../../assets/logo.jpg" alt=“Logo” class=“logo”>
+        <h3>Xin chào {{user-name}}</h3>
+        <p>Cảm ơn bạn đã đăng ký tại {{site-name}}. Chúng tôi rất vui khi bạn là một thành viên của cộng đồng của chúng
+            tôi. 😊</p>
+        <p>Để hoàn tất việc đăng ký, vui lòng xác minh địa chỉ email của bạn bằng cách nnhập mã xác nhận sau vào trang web của chúng tôi:</p>
+        <code class=“code”>{{confirm-number}}</code>
+        <p>Mã này sẽ hết hạn trong 24 giờ, vì vậy vui lòng xác minh tài khoản của bạn càng sớm càng tốt.</p>
+        <p>Nếu bạn có bất kỳ câu hỏi hoặc vấn đề gì, vui lòng liên hệ với chúng tôi qua mail này
+            <a href="mailto:{{support-email}}" class="link">{{support-email}}</a>.
+        </p>
+        <p>Trân trọng, Đội ngũ {{site-name}}<p/>
+    </div>
 </body>
+
 </html>

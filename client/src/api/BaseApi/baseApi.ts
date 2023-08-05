@@ -6,7 +6,6 @@ import {
   fetchBaseQuery,
 } from "@reduxjs/toolkit/query/react";
 import { redirect } from "react-router-dom";
-import { notifications } from "@mantine/notifications";
 import type { RootState } from "../../app/store";
 import { toast } from "../../toast/toast";
 import { checkLogout } from "../../app/thunkDispatch/thunkLogout";
