@@ -221,7 +221,6 @@ export const CheckRegisteration = asyncHandler(
           user.save(),
           user_confirm_number.findByIdAndDelete(numberConfirmUser._id),
         ]);
-
         res.status(200).json({ message: "Confirm success" });
       }
     } catch (err) {
