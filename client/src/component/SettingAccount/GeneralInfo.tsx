@@ -11,6 +11,7 @@ import {
   Portal,
   TextInput,
   LoadingOverlay,
+  ActionIcon,
 } from "@mantine/core";
 import { useGetUserByIdQuery } from "../../api/UserApi/UserApi";
 import type { PixelCropType } from "../../Helper/getCroppedImage";
@@ -21,8 +22,22 @@ import { selectAuth } from "../../api/AuthReducer/AuthReduce";
 import { useUpdateUserMutation } from "../../api/UserApi/UserApi";
 import useAvatar from "../../hook/useAvatar";
 import Cropper from "react-easy-crop";
-import { useState, useRef, useCallback, useEffect } from "react";
-import { IconFileUpload, IconDeviceFloppy } from "@tabler/icons-react";
+
+import { boundingRect } from "../../Helper/boundingRect";
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+} from "react";
+
+import {
+  IconFileUpload,
+  IconDeviceFloppy,
+  IconRotate2,
+  IconArrowsRightDown,
+} from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 const useStyles = createStyles(() => ({
   cropImageContainer: {
@@ -30,17 +45,23 @@ const useStyles = createStyles(() => ({
     top: "10%",
     left: "50%",
     transform: "translateX(-50%)",
-    width: "500px",
-    height: "500px",
-
+    width: "540px",
+    height: "480px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    border: "1px solid #ccc",
+    alignItems: "center",
     zIndex: 10000,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    // paddingTop: "40px",
+    backgroundColor: "rgba(0,0,0,1)",
   },
   cropBox: {
     background: "rgb(0,0,0)",
     position: "relative",
-    width: "500px",
-    height: "400px",
+    width: "400px",
+
+    height: "350px",
   },
   FileButton: {
     cursor: "pointer",
@@ -65,6 +86,11 @@ function GeneralInfo() {
   const [firstname, setFirstname] = useState<string>(
     data?.first_name as string
   );
+  const [show, setShow] = useState(false);
+  const buttonRotateRef = useRef<HTMLButtonElement>(null);
+  const onMouseMove = useRef<((e: MouseEvent) => void) | null>(null);
+  const onMouseUp = useRef<((e: MouseEvent) => void) | null>(null);
+  const imageRef = useRef<HTMLImageElement | null>(null);
 
   useEffect(() => {
     if (data) {
@@ -79,6 +105,7 @@ function GeneralInfo() {
   const ImageRef = useRef<HTMLImageElement>(null);
   const dataUrlRef = useRef<string | null>(null);
   const [updateUser, { isLoading }] = useUpdateUserMutation();
+  const [position, setPosition] = useState({ x: 0, y: 0 });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<{
@@ -120,6 +147,7 @@ function GeneralInfo() {
     setCrop(newCrop);
   };
   const handleZoomChange = (newZoom: number) => {
+    console.log(newZoom);
     setZoom(newZoom);
   };
   const handleCropComplete = (
@@ -155,8 +183,6 @@ function GeneralInfo() {
           title: "Succes",
           message: "Save info succesfully",
           color: "green",
-
-          className: "my-notification-class",
           style: { backgroundColor: "green" },
           sx: { backgroundColor: "green" },
           loading: false,
@@ -164,9 +190,20 @@ function GeneralInfo() {
       })
       .catch((err) => console.log(err, "fdd"));
   };
-
+  console.log(rotation, "rotation");
   return (
     <>
+      {show && (
+        <IconArrowsRightDown
+          style={{
+            rotate: `${rotation - 45}deg`,
+            position: "absolute",
+            top: `${position.y}px`,
+            left: `${position.x}px`,
+            zIndex: 99999999,
+          }}
+        />
+      )}
       <form className={classes.formContainer} onSubmit={handleSubmit}>
         <LoadingOverlay
           loaderProps={{ size: "sm", color: "pink", variant: "bars" }}
@@ -236,8 +273,12 @@ function GeneralInfo() {
                 cropShape="round"
                 image={image as string}
                 crop={crop}
+                setImageRef={(ref) => {
+                  imageRef.current = ref.current;
+                }}
                 zoom={zoom}
                 aspect={1}
+                maxZoom={10}
                 rotation={rotation}
                 onRotationChange={setRotation}
                 onCropChange={handleCropChange}
@@ -245,31 +286,127 @@ function GeneralInfo() {
                 onCropComplete={handleCropComplete}
               />
             </div>
-            <Stack>
-              <Group>
-                <Text
-                  style={{
-                    width: "60px",
-                  }}
-                >
-                  Zoom
-                </Text>
-                <Slider
-                  labelTransition="pop-top-right"
-                  labelTransitionDuration={150}
-                  labelTransitionTimingFunction="ease"
-                  onChange={setZoom}
-                  value={zoom}
-                  style={{
-                    flexGrow: 1,
-                  }}
-                  min={1}
-                  step={0.5}
-                  max={30}
-                  label={(value) => value.toFixed(0)}
-                />
-              </Group>
-              <Group>
+            <ActionIcon
+              ref={buttonRotateRef}
+              onMouseEnter={(e) => {
+                setPosition({
+                  x:
+                    e.clientX -
+                    (buttonRotateRef.current
+                      ? buttonRotateRef.current?.clientWidth / 2
+                      : 0),
+                  y:
+                    e.clientY -
+                    (buttonRotateRef.current
+                      ? buttonRotateRef.current.clientHeight / 2
+                      : 0),
+                });
+              }}
+              style={{
+                top: ` calc(50% - ${
+                  (buttonRotateRef.current
+                    ? buttonRotateRef.current.clientHeight
+                    : 0) / 2
+                }px)`,
+                left: `calc(50% - ${
+                  (buttonRotateRef.current
+                    ? buttonRotateRef.current.clientWidth
+                    : 0) / 2
+                }px)`,
+                opacity: !show ? "1" : "0",
+                position: "absolute",
+                transform: ` rotate(${rotation}deg) translateX(-${
+                  230 - (rotation > 180 ? rotation / 2 : rotation) / 10
+                }px)`,
+              }}
+              onMouseDown={(e: React.MouseEvent) => {
+                e.preventDefault();
+                setShow(true);
+                document.body.classList.add("cursor-none");
+                // const startX = e.clientX;
+                // const startY = e.clientY;
+
+                // const rect = buttonRotateRef.current?.getBoundingClientRect();
+                // const centerX =
+                //   ((startX as number) + (window.innerWidth as number)) / 2;
+                // const centerY =
+                //   ((startY as number) + (window.innerHeight as number)) / 2;
+                // const startAngle = Math.atan2(
+                //   startY - centerY,
+                //   startX - centerX
+
+                // console.log(startAngle);
+                // console.log(rect);
+                // console.log(centerX);
+                // console.log(centerY);
+
+                const imageBoundingRect = boundingRect(
+                  imageRef.current as HTMLElement
+                );
+                console.log(imageBoundingRect);
+                console.log(imageRef.current?.offsetTop);
+                const imageCenter = {
+                  x:
+                    imageBoundingRect.left / zoom +
+                    (imageBoundingRect.width - imageBoundingRect.width / zoom) /
+                      zoom +
+                    imageBoundingRect.width / zoom / 2,
+
+                  y:
+                    imageBoundingRect.top / zoom +
+                    (imageBoundingRect.height -
+                      imageBoundingRect.height / zoom) /
+                      zoom +
+                    imageBoundingRect.height / zoom / 2,
+                };
+                console.log(imageCenter);
+                onMouseMove.current = (ev: MouseEvent): void => {
+                  const currentX = ev.clientX;
+                  const currentY = ev.clientY;
+
+                  setPosition({
+                    x: currentX,
+                    y: currentY,
+                  });
+                  const currentAngle = Math.atan2(
+                    currentY - imageCenter.y,
+                    currentX - imageCenter.x
+                  );
+                  const deltaAngle = currentAngle;
+
+                  let angleInDegrees =
+                    Math.round((deltaAngle * 180) / Math.PI) - 180;
+
+                  angleInDegrees = (angleInDegrees + 360) % 360;
+                  console.log(angleInDegrees);
+                  requestAnimationFrame(() => {
+                    setRotation(angleInDegrees);
+                  });
+
+                  if (imageRef.current) {
+                    // console.log(imageRef.current.getBoundingClientRect());
+                  }
+                };
+
+                document.addEventListener("mousemove", onMouseMove.current);
+                onMouseUp.current = () => {
+                  setShow(false);
+                  document.body.classList.remove("cursor-none");
+                  document.removeEventListener(
+                    "mousemove",
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    onMouseMove.current!
+                  );
+                  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                  document.removeEventListener("mouseup", onMouseUp.current!);
+                };
+                document.addEventListener("mouseup", onMouseUp.current);
+              }}
+            >
+              <IconRotate2 />
+            </ActionIcon>
+            <Stack sx={{ width: "100%" }}>
+              {/* <Group>
                 <Text
                   style={{
                     width: "60px",
@@ -291,19 +428,26 @@ function GeneralInfo() {
                   label={(value) => value.toFixed(0)}
                   step={10}
                 />
-              </Group>
-              <button
-                onClick={() => {
-                  showCroppedImage();
-                  setImage(null);
-                  setFile(null);
-                  setCroppedAreaPixels(null);
-                  setCrop({ x: 0, y: 0 });
-                  setZoom(1);
-                }}
-              >
-                Crop
-              </button>
+              </Group> */}
+              {!show && (
+                <Button
+                  sx={{
+                    position: "absolute",
+                    bottom: 0,
+                    right: 0,
+                  }}
+                  onClick={() => {
+                    showCroppedImage();
+                    setImage(null);
+                    setFile(null);
+                    setCroppedAreaPixels(null);
+                    setCrop({ x: 0, y: 0 });
+                    setZoom(1);
+                  }}
+                >
+                  Cắt
+                </Button>
+              )}
             </Stack>
           </div>
         </Portal>

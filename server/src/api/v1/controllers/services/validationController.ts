@@ -84,7 +84,7 @@ export const signupMiddeware = asyncHandler(
               message: "Thư xác nhận đã được chuyển đến mail của bạn",
               status: 201,
               id: userMade._id,
-              social: req.body.isSocialLogin ? true : false,
+              social: req.body.isSocialConnect ? true : false,
             },
           });
         } catch (err: any) {
@@ -142,10 +142,8 @@ export const signinMiddeware = asyncHandler(
         res.status(200).json({
           message: "login sucess",
           refreshToken: refreshT,
-          social: req.body.isSocialLogin ? true : false,
           status: 200,
           id: User?.id,
-          username: User?.username,
           expires: new Date(config.tokenLife).getTime().toString(),
         });
       } else {
@@ -240,7 +238,7 @@ export const changePasswordMiddeware = asyncHandler(
 );
 export const refreshToken = (req: Request, res: Response) => {
   const { refreshToken } = req.body;
-  console.log(req.method, req.body);
+  console.log(refreshToken, refreshTokens);
   if (!refreshToken || !refreshTokens.includes(refreshToken)) {
     res.status(401).json({ message: "refreshtoken failed" });
   } else
@@ -279,6 +277,7 @@ export const logout = (req: Request, res: Response) => {
   if (index !== -1) {
     refreshToken.splice(index, 1);
   }
+  console.log(refreshTokens);
   res.status(200).json({
     message: "Logout successfully",
   });
