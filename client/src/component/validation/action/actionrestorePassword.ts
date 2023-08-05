@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const urlRequest = "authen/forgotpassword";
-import { notifications } from "@mantine/notifications";
+
+import { toast } from "../../../toast/toast";
 const action = async ({ request }: { request: Request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
@@ -22,13 +23,12 @@ const action = async ({ request }: { request: Request }) => {
       console.log(json);
       throw json;
     } else {
-      notifications.show({
-        id: "requestchangepassword",
-        message: json.message,
-        color: "green",
-        autoClose: 5000,
-      });
-
+      toast(
+        json.message,
+        false,
+        "Request change password",
+        "Yêu cầu đổi mật khẩu"
+      );
       await new Promise((r) => setTimeout(r, 5000));
       return {
         err: "",

@@ -1,7 +1,7 @@
-import { redirect } from "react-router-dom";
+import { toast } from "../../../toast/toast";
 import { generatedAvatar } from "../../../Helper/generatedAvatar";
 import { blobToDataURL } from "../../../Helper/BlobToDataUrl";
-import { notifications } from "@mantine/notifications";
+
 const action = async ({ request }: { request: Request }) => {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const formData = await request.formData();
@@ -33,19 +33,8 @@ const action = async ({ request }: { request: Request }) => {
     ) {
       throw json;
     } else {
-      notifications.show({
-        id: "register",
-        withCloseButton: false,
-        onClose: () => console.log("unmounted"),
-        onOpen: () => console.log("mounted"),
-        autoClose: 2000,
-        message: json.response.message,
-        color: "white",
-        style: { backgroundColor: "green" },
-        sx: { backgroundColor: "green" },
-        loading: false,
-      });
-      await new Promise((r) => setTimeout(r, 2000));
+      toast(json.response.message, false, "Register", "Đăng ký");
+      await new Promise((r) => setTimeout(r, 3000));
       return {
         data,
         error: json.response,
