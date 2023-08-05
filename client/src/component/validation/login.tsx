@@ -61,11 +61,11 @@ function Login() {
         }
       );
       const dataJSon = await signals.json();
+      console.log(dataJSon);
       if (dataJSon.isExisted === false) {
         setData(dataJSon.user);
         navigate("/authen/signup");
-      }
-      if (dataJSon.social === true) {
+      } else if (dataJSon.social === true && dataJSon.isSocialLogin) {
         localStorage.setItem("id", dataJSon.id);
         localStorage.setItem("expires", dataJSon.expires);
         localStorage.setItem("refreshToken", dataJSon.refreshToken);
@@ -88,6 +88,8 @@ function Login() {
           }, 1000)
         );
         navigate("/");
+      } else {
+        setSubmitloading(false);
       }
     },
 

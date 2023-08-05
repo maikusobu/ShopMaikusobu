@@ -32,7 +32,9 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
-
+body.cursor-none * {
+  cursor: none !important;
+}
 #root {
   width: 100%;
   height: 100%;

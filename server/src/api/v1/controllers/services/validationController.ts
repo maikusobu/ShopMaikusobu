@@ -145,6 +145,7 @@ export const signinMiddeware = asyncHandler(
           social: req.body.isSocialLogin ? true : false,
           status: 200,
           id: User?.id,
+          isSocialLogin: true,
           username: User?.username,
           expires: new Date(config.tokenLife).getTime().toString(),
         });
@@ -240,7 +241,7 @@ export const changePasswordMiddeware = asyncHandler(
 );
 export const refreshToken = (req: Request, res: Response) => {
   const { refreshToken } = req.body;
-  console.log(req.method, req.body);
+  console.log(refreshToken, refreshTokens);
   if (!refreshToken || !refreshTokens.includes(refreshToken)) {
     res.status(401).json({ message: "refreshtoken failed" });
   } else
@@ -279,6 +280,7 @@ export const logout = (req: Request, res: Response) => {
   if (index !== -1) {
     refreshToken.splice(index, 1);
   }
+  console.log(refreshTokens);
   res.status(200).json({
     message: "Logout successfully",
   });

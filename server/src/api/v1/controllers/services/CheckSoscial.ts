@@ -24,7 +24,7 @@ export const middlwareSocialLogin = expressAsyncHandler(
       );
       const data = await userInfo.json();
       const user = await userModel.findOne({ email: data.email });
-      if (user) {
+      if (user?.isSocialConnect) {
         req.body.username = user.username;
         req.body.isSocialLogin = true;
         return next();
@@ -32,6 +32,7 @@ export const middlwareSocialLogin = expressAsyncHandler(
         res.json({
           isExisted: false,
           user: data,
+          isSocialLogin: user?.isSocialConnect,
         });
       }
     } else return next();
