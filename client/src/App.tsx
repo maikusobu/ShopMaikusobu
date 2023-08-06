@@ -105,7 +105,11 @@ export default function App() {
 
 	return (
 		<>
-			{isDesktopOs ? <RouterProvider router={router}></RouterProvider> : <div>Buy a PC bitch</div>}
+			{isDesktopOs ? (
+				<RouterProvider router={router}></RouterProvider>
+			) : (
+				<div>Mua PC đi bạn, web không dùng được trên điện thoại</div>
+			)}
 		</>
 	);
 }
