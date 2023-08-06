@@ -11,7 +11,7 @@ import {
   Indicator,
   Button,
 } from "@mantine/core";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { ModalContext } from "../../ModalContext/ModalContext";
 import { useAppSelector } from "../../../app/hooks";
 import { MathFunction } from "../../../Helper/MathFunction";
