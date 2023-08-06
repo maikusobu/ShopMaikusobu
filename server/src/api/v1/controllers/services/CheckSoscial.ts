@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { OAuth2Client } from "google-auth-library";
+import fetch from "node-fetch";
 import userModel from "../../models/User_management/userModel";
 require("dotenv").config();
 const oAuth2Client = new OAuth2Client(
@@ -29,7 +30,7 @@ export const middlwareSocialLogin = expressAsyncHandler(
         );
       }
 
-      let data = await userInfo!.json();
+      let data = (await userInfo!.json()) as any;
       if (req.query.facebook) {
         data = {
           ...data,
