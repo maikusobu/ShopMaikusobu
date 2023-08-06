@@ -67,7 +67,6 @@ function Login() {
         setData(dataJSon);
         navigate("/authen/signup");
       } else {
-        console.log(dataJSon);
         if (dataJSon.isExisted === true && dataJSon.isSocialConnect === false) {
           setSubmitloading(false);
           alert(
@@ -84,7 +83,7 @@ function Login() {
               setSubmitloading(false);
             }, 1000)
           );
-          // navigate("/");
+          navigate("/");
         }
       }
     },
