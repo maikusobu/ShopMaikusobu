@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-template": "npm run install & tsc & cpx \"./src/api/v1/utils/email/template/**/*.handlebars\" ./dist/js/api/v1/utils/email/template --clean",
+    "build-template": "npm install && tsc && cpx \"./src/api/v1/utils/email/template/**/*.handlebars\" ./dist/js/api/v1/utils/email/template --clean",
     "build-asset": "cpx \"./src/assets/**/*.jpg\" ./dist/assets --clean",
-    "dev": " tsc -w & nodemon dist/js/app.js",
+    "dev": "tsc -w & nodemon dist/js/app.js",
     "build-dev": "concurrently \"npm run build-template\" \"npm run dev\"",
     "populate": "nodemon dist/js/populateDB.js"
   },
