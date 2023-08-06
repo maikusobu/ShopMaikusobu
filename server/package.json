@@ -8,7 +8,7 @@
     "build-template": "npm install --force && tsc && cpx \"./src/api/v1/utils/email/template/**/*.handlebars\" ./dist/js/api/v1/utils/email/template --clean",
     "build-asset": "cpx \"./src/assets/**/*.jpg\" ./dist/assets --clean",
     "dev": "concurrently \"tsc -w\" \"nodemon dist/js/app.js\"",
-    "prod": "tsc -w & nodemon dist/js/app.js",
+    "prod": "node dist/js/app.js",
     "build-dev": "concurrently \"npm run build-template\" \"npm run dev\"",
     "populate": "nodemon dist/js/populateDB.js"
   },

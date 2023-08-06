@@ -74,7 +74,7 @@ mongoose.connection.on("disconnected", () => {
   console.log("mongoDB disconnected");
 });
 //excluded paths
-const excludePaths = [/^\/products\/(.*)/, /^\/authen\/(.*)/];
+const excludePaths = [/^\/products\/(.*)/, /^\/authen\/(.*)/, "/products"];
 app.use(authMiddleware.unless({ path: excludePaths }));
 
 // route handling
