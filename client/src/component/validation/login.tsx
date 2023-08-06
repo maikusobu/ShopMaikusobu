@@ -6,7 +6,6 @@ import GoogleIcon from "../socialButton/GoogleIcon";
 import { useForm } from "@mantine/form";
 import { Form } from "react-router-dom";
 import { useObjectError } from "../../hook/useObjectError";
-
 import { IconX } from "@tabler/icons-react";
 import { Notification, LoadingOverlay } from "@mantine/core";
 import { useStyles } from "./styleGlobal";
@@ -68,6 +67,7 @@ function Login() {
         setData(dataJSon);
         navigate("/authen/signup");
       } else {
+        console.log(dataJSon);
         if (dataJSon.isExisted === true && dataJSon.isSocialConnect === false) {
           setSubmitloading(false);
           alert(
