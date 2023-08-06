@@ -22,12 +22,7 @@ import useAvatar from "../../hook/useAvatar";
 import Cropper from "react-easy-crop";
 
 import { boundingRect } from "../../Helper/boundingRect";
-import React, {
-  useState,
-  useRef,
-  useCallback,
-  useEffect,
-} from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 
 import {
   IconFileUpload,
@@ -320,23 +315,6 @@ function GeneralInfo() {
                 e.preventDefault();
                 setShow(true);
                 document.body.classList.add("cursor-none");
-                // const startX = e.clientX;
-                // const startY = e.clientY;
-
-                // const rect = buttonRotateRef.current?.getBoundingClientRect();
-                // const centerX =
-                //   ((startX as number) + (window.innerWidth as number)) / 2;
-                // const centerY =
-                //   ((startY as number) + (window.innerHeight as number)) / 2;
-                // const startAngle = Math.atan2(
-                //   startY - centerY,
-                //   startX - centerX
-
-                // console.log(startAngle);
-                // console.log(rect);
-                // console.log(centerX);
-                // console.log(centerY);
-
                 const imageBoundingRect = boundingRect(
                   imageRef.current as HTMLElement
                 );
@@ -356,7 +334,7 @@ function GeneralInfo() {
                       zoom +
                     imageBoundingRect.height / zoom / 2,
                 };
-                console.log(imageCenter);
+
                 onMouseMove.current = (ev: MouseEvent): void => {
                   const currentX = ev.clientX;
                   const currentY = ev.clientY;
@@ -370,18 +348,12 @@ function GeneralInfo() {
                     currentX - imageCenter.x
                   );
                   const deltaAngle = currentAngle;
-
                   let angleInDegrees =
                     Math.round((deltaAngle * 180) / Math.PI) - 180;
                   angleInDegrees = (angleInDegrees + 360) % 360;
-                  console.log(angleInDegrees);
                   requestAnimationFrame(() => {
                     setRotation(angleInDegrees);
                   });
-
-                  if (imageRef.current) {
-                    // console.log(imageRef.current.getBoundingClientRect());
-                  }
                 };
 
                 document.addEventListener("mousemove", onMouseMove.current);

@@ -11,7 +11,7 @@ import {
   Indicator,
   Button,
 } from "@mantine/core";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { ModalContext } from "../../ModalContext/ModalContext";
 import { useAppSelector } from "../../../app/hooks";
 import { MathFunction } from "../../../Helper/MathFunction";
@@ -64,6 +64,7 @@ function ShoppingContent() {
         })
       );
   };
+
   if (isLoading) return <p>Loading...</p>;
   if (error)
     if ("status" in error)

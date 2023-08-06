@@ -12,6 +12,7 @@ import {
   IconBrandInstagram,
 } from "@tabler/icons-react";
 import Logo from "../../logo/logo";
+import { useEffect } from "react";
 
 const useStyles = createStyles((theme) => ({
   footer: {

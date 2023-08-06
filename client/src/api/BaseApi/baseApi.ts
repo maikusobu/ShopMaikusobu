@@ -47,7 +47,8 @@ const baseQueryWithRefreshT = async (
           extraOptions
         );
         if (refreshResult.error) {
-          api.dispatch(checkLogout() as unknown as AnyAction);
+          if ((api.getState() as RootState).auth.isLoggedIn)
+            api.dispatch(checkLogout() as unknown as AnyAction);
           if (window.location.pathname !== "/") {
             toast(
               "Vui lòng đăng nhập lại",
@@ -60,6 +61,15 @@ const baseQueryWithRefreshT = async (
             url.search = "";
             url.pathname = "/" + newpath;
             window.location.replace(url.toString());
+          } else {
+            if (api.endpoint === "createCart") {
+              toast(
+                "Vui lòng đăng nhập lại",
+                true,
+                "authorized",
+                "Not authorized"
+              );
+            }
           }
           return refreshResult;
         } else if (
