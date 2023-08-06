@@ -144,7 +144,11 @@ function Login() {
             Google
           </GoogleIcon>
           <FacebookLogin
-            appId={import.meta.env.VITE_FACEBOOK_APP_ID}
+            appId={
+              import.meta.env.VITE_MODE === "PRODUCTION"
+                ? import.meta.env.VITE_FACEBOOK_APP_ID_PROD
+                : import.meta.env.VITE_FACEBOOK_APP_ID
+            }
             onSuccess={async (response) => {
               const body = JSON.stringify({
                 accessToken: response.accessToken,
