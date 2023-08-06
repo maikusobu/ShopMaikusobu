@@ -56,9 +56,10 @@ const baseQueryWithRefreshT = async (
               "Not authorized"
             );
             const newpath = "authen/login";
-            let url = window.location.href;
-            url = url.replace(window.location.pathname, newpath);
-            window.location.replace(url);
+            const url = new URL(window.location.href);
+            url.search = "";
+            url.pathname = "/" + newpath;
+            window.location.replace(url.toString());
           }
           return refreshResult;
         } else if (
