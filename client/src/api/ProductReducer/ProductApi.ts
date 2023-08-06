@@ -44,7 +44,7 @@ const productApi = baseApi.injectEndpoints({
     getAllProduct: builder.query<AllProduct, ProductParameter>({
       query: ({ page = 1, sort = "relevant", categories }: ProductParameter) =>
         `/products?${constructUrlString({ page, sort, categories })}`,
-      providesTags: (result, error, arg) =>
+      providesTags: (result) =>
         result
           ? [
               ...result.products.map(({ _id }) => ({
