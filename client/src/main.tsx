@@ -2,36 +2,19 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import dayjs from 'dayjs';
 import { MantineProvider } from '@mantine/core';
-import { useOs } from '@mantine/hooks';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import Login from './component/validation/login.tsx';
 import ErrorProvider from './component/ErrorContext/ErrorContext.tsx';
-import Register from './component/validation/register.tsx';
-import actionLogin from './component/validation/action/actionLogin.ts';
-import actionRegister from './component/validation/action/actionRegister.ts';
-import RestorePassword from './component/validation/requestChangepassword.tsx';
-import actionChangePassword from './component/validation/action/actionChangePassword.ts';
-import actionRestorePassword from './component/validation/action/actionrestorePassword.ts';
-import ChangePassWord from './component/validation/changePassword.tsx';
-import ProductPage from './component/ShoppingHome/ProductPage/ProductPage.tsx';
 import { Notifications } from '@mantine/notifications';
-import SettingAccount from './component/SettingAccount/SettingAccount.tsx';
 import PaymentProvider from './component/ModalAddPayment/ModalAddPayment.tsx';
 import AddressProvider from './component/ModalAddAddress/ModalAddAddress.tsx';
-import CartPage from './component/CartComponent/CartPage/CartPage.tsx';
 import SocialContextProvider from './component/SocialContext/SocialContextProvider.tsx';
-import Home from './component/HomePage/Home/Home.tsx';
-import CheckOut from './component/CheckOutComponent/CheckOutPage.tsx';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import ShoppingHome from './component/ShoppingHome/shoppinghome.tsx';
 import { ModalProVider } from './component/ModalContext/ModalContext.tsx';
-import ContentShow from './component/ShoppingHome/ContentShow/ContentShow.tsx';
-import Faq from './component/Faq/Faq.tsx';
-import Contact from './component/Contact/Contact.tsx';
 import { store } from './app/store.ts';
 import { Provider } from 'react-redux';
 import { DatesProvider } from '@mantine/dates';
 import './index.css';
+import App from './App.tsx';
+
 const locale = {
 	name: 'vi',
 	weekdays: 'chủ nhật_thứ hai_thứ ba_thứ tư_thứ năm_thứ sáu_thứ bảy'.split('_'),
@@ -74,97 +57,6 @@ const locale = {
 	},
 };
 dayjs.locale(locale);
-const router = createBrowserRouter([
-	{
-		path: '/',
-		element: <Home />,
-	},
-	{
-		path: '/authen',
-		children: [
-			{
-				path: 'login',
-				element: <Login />,
-				action: actionLogin,
-			},
-			{
-				path: 'signup',
-				element: <Register />,
-				action: actionRegister,
-			},
-			{
-				path: 'forgotpassword',
-				element: <RestorePassword />,
-				action: actionRestorePassword,
-			},
-			{
-				path: 'changepassword',
-				element: <ChangePassWord />,
-				action: actionChangePassword,
-			},
-			{
-				path: 'noauthorized',
-				element: <div>Bạn không có quyền truy cập</div>,
-			},
-		],
-	},
-	{
-		path: '/shopping',
-
-		children: [
-			{
-				path: 'cart',
-				element: <CartPage />,
-			},
-			{
-				path: 'checkout',
-				element: <CheckOut />,
-			},
-			{
-				path: 'products',
-				element: <ShoppingHome />,
-				children: [
-					{
-						path: 'all',
-						element: <ContentShow />,
-					},
-					{
-						path: ':id',
-						element: <ProductPage />,
-					},
-				],
-			},
-		],
-	},
-	{
-		path: '/settingaccount',
-		element: <SettingAccount />,
-	},
-	{
-		path: '/support',
-		children: [
-			{
-				path: 'faq',
-				element: <Faq />,
-			},
-			{
-				path: 'contact',
-				element: <Contact />,
-			},
-		],
-	},
-]);
-
-const App = () => {
-	const os = useOs();
-	const isDesktopOs = os === 'macos' || os === 'windows' || os === 'linux';
-
-	return (
-		<>
-			{isDesktopOs ? <RouterProvider router={router}></RouterProvider> : <div>Buy a PC bitch</div>}
-		</>
-	);
-};
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 	<GoogleOAuthProvider clientId={`${import.meta.env.VITE_CLIENT_ID}`}>
