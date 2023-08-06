@@ -64,6 +64,7 @@ function ShoppingContent() {
         })
       );
   };
+
   if (isLoading) return <p>Loading...</p>;
   if (error)
     if ("status" in error)

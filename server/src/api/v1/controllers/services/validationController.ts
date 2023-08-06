@@ -330,7 +330,13 @@ export const logout = (req: Request, res: Response) => {
   if (index !== -1) {
     refreshTokens.splice(index, 1);
   }
-  console.log(refreshTokens);
+  res.cookie("token", "", {
+    secure: true,
+    sameSite: "none",
+    httpOnly: true,
+    maxAge: 480 * 1000,
+    path: "/",
+  });
   res.status(200).json({
     message: "Logout successfully",
   });
