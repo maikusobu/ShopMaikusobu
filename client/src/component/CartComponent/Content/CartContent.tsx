@@ -242,7 +242,7 @@ function CartContent() {
                           id: auth.id,
                         })
                           .unwrap()
-                          .then((res) => {
+                          .then(() => {
                             handlers.remove(i);
                           })
                           .catch((err) => console.log(err));
