@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { OAuth2Client } from "google-auth-library";
-import fetch from "node-fetch";
+const fetch = require("node-fetch");
 import userModel from "../../models/User_management/userModel";
 require("dotenv").config();
 const oAuth2Client = new OAuth2Client(
@@ -9,7 +9,6 @@ const oAuth2Client = new OAuth2Client(
   "postmessage"
 );
 import expressAsyncHandler from "express-async-handler";
-
 export const middlwareSocialLogin = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     if (req.query.isSocialLogin) {
@@ -30,7 +29,7 @@ export const middlwareSocialLogin = expressAsyncHandler(
         );
       }
 
-      let data = (await userInfo!.json()) as any;
+      let data = (await userInfo.json()) as any;
       if (req.query.facebook) {
         data = {
           ...data,
