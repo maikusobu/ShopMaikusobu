@@ -3,9 +3,9 @@
   <img src="https://ik.imagekit.io/tjiw3sd2q/logo.jpg?tr=w-200,h-200,q-50"/>
 </div>
 
-# ShopMaikusobu
+# 👋 Welcome! folks, to ShopMaikusobu
 
-👋 Welcome! folks, ShopMaikusobu is a full-stack e-commerce and social web application that enables users to discover, buy, and manage products online, as well as chat and connect with other customers who share their interests. It is built with React, Express, MongoDB, and RTK Query.
+ShopMaikusobu is a full-stack e-commerce and social web application that enables users to discover, buy, and manage products online, as well as chat and connect with other customers who share their interests. It is built with React, Express, MongoDB, and RTK Query.
 
 ## 📋 Table of Contents
 - 🏠[ShopMaikusobu](#shopmaikusobu)
