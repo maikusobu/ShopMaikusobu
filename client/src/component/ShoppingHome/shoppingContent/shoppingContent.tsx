@@ -67,8 +67,8 @@ function ShoppingContent({
   );
 
   return (
-    <Box className={classes.root} pos="relative">
-      <Skeleton visible={isLoading}>
+    <Skeleton visible={isLoading}>
+      <Box className={classes.root} pos="relative">
         <Grid gutter={5} gutterXs="md" gutterMd="xl" gutterXl={35} columns={18}>
           {data?.products.map((product) => (
             <Grid.Col
@@ -200,8 +200,8 @@ function ShoppingContent({
             setSearchParams(searchParams);
           }}
         />
-      </Skeleton>
-    </Box>
+      </Box>
+    </Skeleton>
   );
 }
 
