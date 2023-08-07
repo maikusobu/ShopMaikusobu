@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcrypt";
+import { Worker } from "worker_threads";
 import { saveDataURLToBinaryData } from "../../helpers/savedataurl";
 import { sign, verify, VerifyOptions } from "jsonwebtoken";
 import { config } from "../../../../config/configJWT";
@@ -12,7 +13,9 @@ import user_token from "../../models/User_management/user_token";
 import user_confirm_number from "../../models/User_management/user_confirm_number";
 import { sendEmail } from "../../utils/email/sendMail";
 import crypto from "crypto";
-
+const worker = new Worker(
+  "./dist/js/api/v1/controllers/services/sendEmailWorker.js"
+);
 const refreshTokens: string[] = [];
 export const signupMiddeware = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -59,33 +62,36 @@ export const signupMiddeware = asyncHandler(
             numberConfirm: num,
             createdAt: new Date(),
           });
-          try {
-            await sendEmail(
-              userMade.email,
-              "Verify Account",
-              {
-                "user-name": userMade.username,
-                "site-name": "ShopMaikusobu",
-                "support-email": "shopmaikusobu@gmail.com",
-                "confirm-number": num,
-              },
-              "requestRegister"
-            );
-          } catch (err) {
-            res.status(500).json({
-              response: {
-                message: "Cannot send email",
-                status: 500,
-              },
-            });
-          }
-          res.status(201).json({
-            response: {
-              message: "Thư xác nhận đã được chuyển đến mail của bạn",
-              status: 201,
-              id: userMade._id,
-              social: req.body.isSocialConnect ? true : false,
+
+          worker.postMessage({
+            email: userMade.email,
+            subject: "Verify Account",
+            templateData: {
+              "user-name": userMade.username,
+              "site-name": "ShopMaikusobu",
+              "support-email": "shopmaikusobu@gmail.com",
+              "confirm-number": num,
             },
+            templateName: "requestRegister",
+          });
+          worker.on("message", (data) => {
+            if (data.success) {
+              res.status(201).json({
+                response: {
+                  message: "Thư xác nhận đã được chuyển đến mail của bạn",
+                  status: 201,
+                  id: userMade._id,
+                  social: req.body.isSocialConnect ? true : false,
+                },
+              });
+            } else {
+              res.status(500).json({
+                response: {
+                  message: "Cannot send email",
+                  status: 500,
+                },
+              });
+            }
           });
         } catch (err: any) {
           if (err.name === "ValidationError") {
@@ -120,33 +126,35 @@ export const resendConFirmNumber = asyncHandler(
         numberConfirm: num,
         createdAt: new Date(),
       });
-      try {
-        await sendEmail(
-          user.email,
-          "Verify Account",
-          {
-            "user-name": user.username,
-            "site-name": "ShopMaikusobu",
-            "support-email": "shopmaikusobu@gmail.com",
-            "confirm-number": num,
-          },
-          "requestRegister"
-        );
-      } catch (err) {
-        res.status(500).json({
-          response: {
-            message: "Cannot send email",
-            status: 500,
-          },
-        });
-      }
-      res.status(200).json({
-        response: {
-          message: "Thư xác nhận đã được chuyển đến mail của bạn",
-          status: 201,
-          id: user_id,
-          social: req.body.isSocialConnect ? true : false,
+      worker.postMessage({
+        email: user.email,
+        subject: "Verify Account",
+        templateData: {
+          "user-name": user.username,
+          "site-name": "ShopMaikusobu",
+          "support-email": "shopmaikusobu@gmail.com",
+          "confirm-number": num,
         },
+        templateName: "requestRegister",
+      });
+      worker.on("message", (data) => {
+        if (data.success) {
+          res.status(200).json({
+            response: {
+              message: "Thư xác nhận đã được chuyển đến mail của bạn",
+              status: 201,
+              id: user_id,
+              social: req.body.isSocialConnect ? true : false,
+            },
+          });
+        } else {
+          res.status(500).json({
+            response: {
+              message: "Cannot send email",
+              status: 500,
+            },
+          });
+        }
       });
     } catch (err) {
       return next(err);
@@ -257,9 +265,29 @@ export const forgotPasswordMiddeware = asyncHandler(
         },
         "requestResetPassword"
       );
-      res.status(200).json({
-        message: "Email sent successfully",
-        link: link,
+      worker.postMessage({
+        email: user.email,
+        subject: "Reset Password",
+        templateData: {
+          name: user.username,
+          link: link,
+          "support-email": "shopmaikusobu@gmail.com",
+          "site-name": "Shopmaikusobu",
+        },
+        templateName: "requestResetPassword",
+      });
+      worker.on("message", (data) => {
+        if (data.success) {
+          res.status(200).json({
+            message: "Email sent successfully",
+            link: link,
+          });
+        } else {
+          res.status(500).json({
+            message: "Cannot send email",
+            status: 500,
+          });
+        }
       });
     } catch (err: any) {
       res.status(400).json({ message: err.message, status: 400 });
