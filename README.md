@@ -8,13 +8,14 @@
 ShopMaikusobu is a full-stack e-commerce and social web application that enables users to discover, buy, and manage products online, as well as chat and connect with other customers who share their interests. It is built with React, Express, MongoDB, and RTK Query.
 
 ## 📋 Table of Contents
-- 🏠[ShopMaikusobu](#shopmaikusobu)
+- 🏠 [ShopMaikusobu](#shopmaikusobu)
   * ✨ [Features](#features)
   * 🖨️ [Technologies](#technologies)
   * ⬇️ [Installation](#installation)
   * 🌐 [Demo](#demo)
   * 📜 [License](#license)
   * 🚍 [Resources](#resources)
+  * 🤲 [Contributors](#contributors)
   
 
 ## ✨ Features <a name="features"></a>
@@ -80,7 +81,8 @@ You can also view a live demo of the application here: https://shopmaikusobu.ver
 
 ## 📜 License <a name="license"></a>
 - This project is licensed under the MIT License
-- Owner: `maikusobu`
+- Owner: [<img src="https://github.com/maikusobu.png" width="60px;"/>](https://github.com/maikusobu/ShopMaikusobu) <br/>
+<Strong><a href="https://github.com/maikusobu">Maikusobu</a></Strong>
 
 ## 🚍 Resources <a name="resources"></a>
 Here are some external resources or references that are related to this project:
@@ -88,3 +90,12 @@ Here are some external resources or references that are related to this project:
 - [Express Documentation](https://expressjs.com/)
 - [MongoDB Documentation](https://www.mongodb.com/docs/)
 - [RTK Query Documentation](https://redux-toolkit.js.org/rtk-query/overview)
+
+## 🤲 Contributors <a name="contributors"></a>
+
+Here are the contributors of this project: 
+
+<div>
+	<a href="https://github.com/maikusobu"><img src="https://github.com/maikusobu.png" width="60px;"/> </a>
+        <a href="https://github.com/Nhat-Original"><img src="https://github.com/Nhat-Original.png" width="60px;"/> </a>
+</div>
