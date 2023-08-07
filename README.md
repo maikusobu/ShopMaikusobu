@@ -15,6 +15,7 @@
   * 🌐 [Demo](#demo)
   * 📜 [License](#license)
   * 🚍 [Resources](#resources)
+  
 
 ## ✨ Features <a name="features"></a>
 
@@ -72,8 +73,10 @@ To run the application locally, you need to have Node.js and MongoDB installed o
 
 ## 🌐 Demo <a name="demo"></a>
 
-You can also view a live demo of the application here: [https://shopmaikusobu.vercel.app/]
-![ShopMaikusobu Screenshot]
+You can also view a live demo of the application here: https://shopmaikusobu.vercel.app/
+<div>
+<img src="https://ik.imagekit.io/tjiw3sd2q/image.png?updatedAt=1691386726212"/>
+</div>
 
 ## 📜 License <a name="license"></a>
 - This project is licensed under the MIT License
