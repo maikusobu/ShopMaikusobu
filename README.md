@@ -62,15 +62,16 @@ To run the application locally, you need to have Node.js and MongoDB installed o
 2. Navigate to the project folder: `cd shopmaikusobu`
 3. Navigate to the server folder: `cd server`
 4. Install the dependencies of server: `npm install`
-5. Complete build before run the server: `npm run build-template`
-6. Run the server: `npm run dev`
-7. The server will be listened on `http://localhost:3000`
-8. Navigate back to the root folder: `cd ..`
-9. Navigate to the client folder: `cd client`
-10. Install the dependencies of the client: `npm install --force`
-11. Run build the client: `npm run build`
-12. Start the client: `npm run dev`
-13. Open your browser and go to `http://localhost:5173`
+5. Populate the database: `npm run populate`
+6. Complete build before run the server: `npm run build-template`
+7. Run the server: `npm run dev`
+8. The server will be listened on `http://localhost:3000`
+9. Navigate back to the root folder: `cd ..`
+10. Navigate to the client folder: `cd client`
+11. Install the dependencies of the client: `npm install --force`
+12. Run build the client: `npm run build`
+13. Start the client: `npm run dev`
+14. Open your browser and go to `http://localhost:5173`
 
 ## 🌐 Demo <a name="demo"></a>
 
