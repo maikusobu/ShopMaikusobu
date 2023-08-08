@@ -2,7 +2,7 @@ import { useGetReviewProductQuery } from "../../../../api/ProductReducer/Product
 import UserReviewDetail from "./UserReviewDetail";
 import { Box, Title, Stack, Group, Text, Rating } from "@mantine/core";
 function UserReviews({ product_id }: { product_id: string }) {
-  const { data: reviews, error } = useGetReviewProductQuery(product_id, {
+  const { data: reviews } = useGetReviewProductQuery(product_id, {
     skip: !product_id,
   });
 
