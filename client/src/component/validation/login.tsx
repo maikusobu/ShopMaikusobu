@@ -63,6 +63,7 @@ function Login() {
         }
       );
       const dataJSon = await signals.json();
+      console.log(dataJSon);
       if (dataJSon.isExisted === false) {
         setData(dataJSon);
         navigate("/authen/signup");

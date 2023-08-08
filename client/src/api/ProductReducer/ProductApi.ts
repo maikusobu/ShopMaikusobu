@@ -1,4 +1,5 @@
 import { baseApi } from "../BaseApi/baseApi";
+import type { UserJson } from "../UserApi/UserApi";
 export type ProductType = {
   _id: string;
   image: string[];
@@ -8,7 +9,6 @@ export type ProductType = {
   SKU?: string;
   price: number;
   category_id: categories;
-  rating_id: rating_id[];
   discount_id?: discountType;
   inventory_id?: inventory_id;
 };
@@ -21,10 +21,6 @@ type inventory_id = {
   quantity: number;
   _id: string;
 };
-type rating_id = {
-  user_id: string;
-  rating_value: number;
-};
 type categories = {
   _id: string;
   name: string[];
@@ -34,12 +30,24 @@ type AllProduct = {
   products: ProductType[];
   page: number;
 };
+type userRating = {
+  _id: string;
+  rating_value: number;
+  review: string;
+};
+export type UserReviewProduct = {
+  _id: string;
+  user_id: UserJson;
+  product_id: string;
+  user_rating: userRating;
+  reactionScore: number;
+};
 export interface ProductParameter {
   page: number;
   sort: "relevant" | "lowestprice" | "highestprice" | "popular" | "newest";
   categories?: string[];
 }
-const productApi = baseApi.injectEndpoints({
+export const productApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllProduct: builder.query<AllProduct, ProductParameter>({
       query: ({ page = 1, sort = "relevant", categories }: ProductParameter) =>
@@ -69,6 +77,9 @@ const productApi = baseApi.injectEndpoints({
         };
       },
     }),
+    getReviewProduct: builder.query<UserReviewProduct[], string>({
+      query: (product_id: string) => `/products/review/${product_id}`,
+    }),
   }),
 });
 export const {
@@ -76,4 +87,5 @@ export const {
   useGetProductByIdQuery,
   useGetTrendingProductQuery,
   useGetSearchProductQuery,
+  useGetReviewProductQuery,
 } = productApi;
