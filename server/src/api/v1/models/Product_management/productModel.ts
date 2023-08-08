@@ -16,12 +16,6 @@ const Product = new Schema({
   desc: {
     type: String,
     required: [true, "Description is required"],
-    validate: {
-      validator: function (v: string) {
-        return v.trim().length > 10;
-      },
-      message: "Description should be at least 10 characters long",
-    },
   },
   SKU: {
     type: String,
@@ -45,7 +39,6 @@ const Product = new Schema({
   },
   category_id: { type: Schema.Types.ObjectId, ref: "ProductCategory" },
   discount_id: { type: Schema.Types.ObjectId, ref: "ProductDiscount" },
-  rating_id: [{ type: Schema.Types.ObjectId, ref: "ProductRatiing" }],
   inventory_id: {
     type: Schema.Types.ObjectId,
     ref: "ProductInventory",

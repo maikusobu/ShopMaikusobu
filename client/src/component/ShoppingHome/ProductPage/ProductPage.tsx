@@ -1,8 +1,9 @@
-import { Box, Group, Skeleton } from "@mantine/core";
+import { Box, Group, Skeleton, Stack } from "@mantine/core";
 import { useGetProductByIdQuery } from "../../../api/ProductReducer/ProductApi";
 import { useParams } from "react-router-dom";
 import EmblaCarousel from "./ImageSlideCarousel/ImageSlideCarousel";
 import ProductDetail from "./ProductInfomation/ProductInfomation";
+import UserReviews from "./UserReviews/UserReviews";
 import { EmblaOptionsType } from "embla-carousel-react";
 function ProductPage() {
   const { id } = useParams();
@@ -24,6 +25,9 @@ function ProductPage() {
           <ProductDetail data={data} />
         </Skeleton>
       </Group>
+      <Stack>
+        <UserReviews product_id={id} />
+      </Stack>
       {/* build recommendation in here */}
     </Box>
   );

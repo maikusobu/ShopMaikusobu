@@ -11,7 +11,7 @@ import user_addressManagerModel from "../../models/User_management/user_addressM
 import user_manager_paymentModel from "../../models/User_management/user_manager_paymentModel";
 import user_token from "../../models/User_management/user_token";
 import user_confirm_number from "../../models/User_management/user_confirm_number";
-import { sendEmail } from "../../utils/email/sendMail";
+
 import crypto from "crypto";
 const worker = new Worker(
   "./dist/js/api/v1/controllers/services/sendEmailWorker.js"
@@ -254,17 +254,6 @@ export const forgotPasswordMiddeware = asyncHandler(
         createdAt: new Date(),
       });
       const link = `${process.env.URL_CLIENT}/authen/changepassword?token=${resetToken}&id=${user._id}`;
-      await sendEmail(
-        user.email,
-        "Reset Password",
-        {
-          name: user.username,
-          link: link,
-          "support-email": "shopmaikusobu@gmail.com",
-          "site-name": "Shopmaikusobu",
-        },
-        "requestResetPassword"
-      );
       worker.postMessage({
         email: user.email,
         subject: "Reset Password",

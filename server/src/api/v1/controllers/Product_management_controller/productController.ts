@@ -5,7 +5,6 @@ import product_inventoryModel from "../../models/Product_management/product_inve
 import product_discountModel from "../../models/Product_management/product_discountModel";
 import product_categoryModel from "../../models/Product_management/product_categoryModel";
 import NodeCache from "node-cache";
-import product_ratingModel from "../../models/Product_management/product_ratingModel";
 import { SortOrder } from "mongoose";
 const myCache = new NodeCache();
 interface MyObject {
@@ -21,7 +20,7 @@ export const productGetAllMiddleware = expressAsyncHandler(
         products = await getProductsFromDB(
           categories as string,
           sort as string
-        ); 
+        );
         myCache.set(cacheKey, products);
       }
       const productsPerPage = 36;
@@ -63,11 +62,8 @@ const getProductsFromDB = async (categories: string, sort: string) => {
     .populate({
       path: "category_id",
       model: product_categoryModel,
-    })
-    .populate({
-      path: "rating_id",
-      model: product_ratingModel,
     });
+
   const products = await productsPromiseBase.exec();
   return (products as any[]).filter((product) => {
     if (arrayCategories.length === 0) return true;
@@ -92,10 +88,6 @@ export const productGetByIdMiddleware = expressAsyncHandler(
         .populate({
           path: "category_id",
           model: product_categoryModel,
-        })
-        .populate({
-          path: "rating_id",
-          model: product_ratingModel,
         })
         .exec();
       res.status(200).json(products);
