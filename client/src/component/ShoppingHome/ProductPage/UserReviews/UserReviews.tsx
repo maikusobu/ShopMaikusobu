@@ -25,7 +25,6 @@ function UserReviews({ product_id }: { product_id: string }) {
   const isDownvote = (review: any) => {
     return review.reactionScore.downvote.includes(auth.id);
   };
-  console.log(reviews);
   return (
     <Box>
       <Title order={3}>Review</Title>
