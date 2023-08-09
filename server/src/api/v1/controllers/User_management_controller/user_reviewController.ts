@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import user_review from "../../models/User_management/user_review";
 import user_rating from "../../models/User_management/user_rating";
+import user_reaction from "../../models/User_management/user_reaction";
 import userModel from "../../models/User_management/userModel";
 import expressAsyncHandler from "express-async-handler";
 export const getReviewRating = expressAsyncHandler(
@@ -17,6 +18,10 @@ export const getReviewRating = expressAsyncHandler(
         .populate({
           path: "user_id",
           model: userModel,
+        })
+        .populate({
+          path: "reactionScore",
+          model: user_reaction,
         })
         .exec();
       res.status(200).json(review);

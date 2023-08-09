@@ -1,7 +1,8 @@
 import useAvatar from "../../../../hook/useAvatar";
 import { useState } from "react";
 import type { UserJson } from "../../../../api/UserApi/UserApi";
-import { Image, Box, Group, Text, Stack, ActionIcon } from "@mantine/core";
+import { IconArrowDown, IconArrowUp } from "@tabler/icons-react";
+import { Box, Group, Text, Stack, ActionIcon, Avatar } from "@mantine/core";
 import { selectAuth } from "../../../../api/AuthReducer/AuthReduce";
 import { useAppSelector } from "../../../../app/hooks";
 import { useUpdateReactionMutation } from "../../../../api/UserApi/UserApi";
@@ -10,11 +11,15 @@ function UserReviewDetail({
   reactionValue,
   product_id,
   id_rating,
+  isUpvote,
+  isDownvote,
 }: {
   user: UserJson;
   reactionValue: number;
   product_id: string;
   id_rating: string;
+  isUpvote: boolean;
+  isDownvote: boolean;
 }) {
   const imageUrl = useAvatar(user);
   const [value, setValue] = useState(reactionValue);
@@ -37,22 +42,32 @@ function UserReviewDetail({
         console.log("error");
       });
   };
+
   return (
     <Box>
       <Group>
         <Group>
-          <Text>{value}</Text>
+          <Text w="30px" align="center">
+            {value}
+          </Text>
           <Stack>
             <ActionIcon onClick={() => handleUpdateReaction(value + 1)}>
-              +
+              <IconArrowUp color={`${isUpvote ? "red" : "white"}`} />
             </ActionIcon>
             <ActionIcon onClick={() => handleUpdateReaction(value - 1)}>
-              -
+              <IconArrowDown color={`${isDownvote ? "red" : "white"}`} />
             </ActionIcon>
           </Stack>
         </Group>
         <Group>
-          <Image src={imageUrl} alt="avatar" radius="xl" height={20} />
+          <Avatar
+            src={imageUrl}
+            alt="avatar"
+            radius="xl"
+            sx={{
+              border: "1px solid #ccc",
+            }}
+          />
           <Text>{user.username}</Text>
         </Group>
       </Group>

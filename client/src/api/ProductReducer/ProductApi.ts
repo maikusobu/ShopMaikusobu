@@ -35,12 +35,16 @@ type userRating = {
   rating_value: number;
   review: string;
 };
+type reactionScoreType = {
+  upvote: string[];
+  downvote: string[];
+};
 export type UserReviewProduct = {
   _id: string;
   user_id: UserJson;
   product_id: string;
   user_rating: userRating;
-  reactionScore: number;
+  reactionScore: reactionScoreType;
 };
 export interface ProductParameter {
   page: number;

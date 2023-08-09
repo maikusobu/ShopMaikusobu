@@ -12,7 +12,7 @@ import user_addressManagerModel from "./api/v1/models/User_management/user_addre
 import user_manager_paymentModel from "./api/v1/models/User_management/user_manager_paymentModel";
 import user_review from "./api/v1/models/User_management/user_review";
 import user_rating from "./api/v1/models/User_management/user_rating";
-
+import user_reaction from "./api/v1/models/User_management/user_reaction";
 require("dotenv").config();
 const app = express();
 mongoose.connect(`${process.env.MONGO_URL}`, {
@@ -30,16 +30,18 @@ app.get(
       const products: any[] = [];
       const users: any[] = [];
       const promises = [];
-      for (let i = 0; i < 25; i++) {
+      for (let i = 0; i < 100; i++) {
         console.log("add user", i);
         const user = new userModel({
           first_name: vietnameseFaker.person.firstName(),
           last_name: vietnameseFaker.person.lastName(),
-          username: faker.lorem.word(),
+          username:
+            faker.lorem.word() +
+            faker.lorem.word({ length: { min: 5, max: 7 }, strategy: "fail" }),
           email: vietnameseFaker.internet.email({
             lastName: vietnameseFaker.person.firstName() as string,
             firstName: vietnameseFaker.person.lastName() as string,
-            provider: "proMaikusobu.com",
+            provider: "badBlankandgoodMaikusobu.com",
           }),
           picture: vietnameseFaker.image.avatar(),
           isVerified: true,
@@ -78,7 +80,9 @@ app.get(
           max: 200,
           dec: 0,
         });
-        let imageUrlArray = Array(4).fill(null);
+        let imageUrlArray = Array(
+          vietnameseFaker.number.int({ min: 5, max: 10 })
+        ).fill(null);
         imageUrlArray = imageUrlArray.map(() =>
           vietnameseFaker.image.urlLoremFlickr({
             category: `${vietnameseFaker.commerce
@@ -102,7 +106,7 @@ app.get(
           }),
           product_discountModel.create({
             name: vietnameseFaker.lorem.word(),
-            desc: vietnameseFaker.lorem.sentence(),
+            desc: vietnameseFaker.lorem.sentence({ min: 6, max: 20 }),
             discount_percent: vietnameseFaker.number.float({
               min: 10,
               max: 100,
@@ -137,11 +141,19 @@ app.get(
           rating_value: vietnameseFaker.number.float({ min: 1, max: 5 }),
           review: vietnameseFaker.lorem.sentence(),
         });
+        const userReaction = await user_reaction.create({
+          upvote: vietnameseFaker.helpers
+            .arrayElements(users)
+            .map((user) => user._id),
+          downvote: vietnameseFaker.helpers
+            .arrayElements(users)
+            .map((user) => user._id),
+        });
         const review = new user_review({
           user_id,
           product_id,
           user_rating: rating._id,
-          reactionScore: vietnameseFaker.number.int({ min: 0, max: 100 }),
+          reactionScore: userReaction._id,
         });
         await Promise.all([rating.save(), review.save()]);
       }

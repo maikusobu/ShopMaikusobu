@@ -14,8 +14,8 @@ const UserReview = new Schema({
     ref: "UserRating",
   },
   reactionScore: {
-    type: Number,
-    require: true,
+    type: Schema.Types.ObjectId,
+    ref: "UserReaction",
   },
 });
 export default mongoose.model<InferSchemaType<typeof UserReview>>(
