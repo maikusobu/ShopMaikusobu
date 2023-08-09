@@ -15,7 +15,8 @@ type ReactionUser = {
   product_id: string;
   user_sent_id: string;
   user_received_id: string;
-  reactionValue: number;
+  isUpvote: boolean;
+  isDownvote: boolean;
   id_rating: string;
 };
 const userApi = baseApi.injectEndpoints({
@@ -58,7 +59,7 @@ const userApi = baseApi.injectEndpoints({
         };
       },
       async onQueryStarted(
-        { reactionValue, product_id, ...patch }: ReactionUser,
+        { isDownvote, isUpvote, product_id, ...patch }: ReactionUser,
         { dispatch, queryFulfilled }
       ) {
         const patchResult = dispatch(
@@ -68,7 +69,22 @@ const userApi = baseApi.injectEndpoints({
             (draft: UserReviewProduct[]) => {
               draft.forEach((review) => {
                 if (review.user_id.id !== patch.user_sent_id) {
-                  review.reactionScore += reactionValue;
+                  const indexUpvote = review.reactionScore.upvote.indexOf(
+                    patch.user_sent_id
+                  );
+                  const indexDownvote = review.reactionScore.downvote.indexOf(
+                    patch.user_sent_id
+                  );
+                  if (isUpvote) {
+                    review.reactionScore.upvote.push(patch.user_sent_id);
+                  } else if (isDownvote) {
+                    review.reactionScore.downvote.push(patch.user_sent_id);
+                  } else {
+                    if (indexUpvote !== -1)
+                      review.reactionScore.upvote.splice(indexUpvote, 1);
+                    if (indexDownvote !== -1)
+                      review.reactionScore.downvote.splice(indexDownvote, 1);
+                  }
                 }
               });
             }

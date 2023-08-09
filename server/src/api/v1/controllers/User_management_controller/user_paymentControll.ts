@@ -23,7 +23,6 @@ export const createUserPayment = expressAsyncHandler(
     }
   }
 );
-
 export const updateUserPayment = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {

@@ -25,7 +25,7 @@ function ProductPage() {
           <ProductDetail data={data} />
         </Skeleton>
       </Group>
-      <Stack>
+      <Stack p="lg">
         <UserReviews product_id={id} />
       </Stack>
       {/* build recommendation in here */}
