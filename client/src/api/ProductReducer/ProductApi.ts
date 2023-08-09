@@ -36,6 +36,7 @@ type userRating = {
   review: string;
 };
 type reactionScoreType = {
+  _id: string;
   upvote: string[];
   downvote: string[];
 };

@@ -197,6 +197,7 @@ export const signinMiddeware = asyncHandler(
           path: "/",
         });
         refreshTokens.push(refreshT);
+
         res.status(200).json({
           message: "login sucess",
           refreshToken: refreshT,
@@ -308,7 +309,6 @@ export const changePasswordMiddeware = asyncHandler(
 );
 export const refreshToken = (req: Request, res: Response) => {
   const { refreshToken } = req.body;
-  console.log(refreshToken, refreshTokens);
   if (!refreshToken || !refreshTokens.includes(refreshToken)) {
     res.status(401).json({ message: "refreshtoken failed" });
   } else

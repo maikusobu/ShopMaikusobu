@@ -17,9 +17,11 @@ function UserReviews({ product_id }: { product_id: string }) {
   function roundToHalf(num: number) {
     return Math.round(num * 2) / 2;
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const isUpvote = (review: any) => {
     return review.reactionScore.upvote.includes(auth.id);
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const isDownvote = (review: any) => {
     return review.reactionScore.downvote.includes(auth.id);
   };
@@ -34,7 +36,7 @@ function UserReviews({ product_id }: { product_id: string }) {
               <UserReviewDetail
                 user={review.user_id}
                 product_id={product_id}
-                id_rating={review._id}
+                id_rating={review.reactionScore._id}
                 reactionValue={reactionValue(review.reactionScore)}
                 isUpvote={isUpvote(review)}
                 isDownvote={isDownvote(review)}
