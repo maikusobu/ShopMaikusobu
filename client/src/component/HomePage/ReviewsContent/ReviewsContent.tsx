@@ -1,5 +1,5 @@
 import { useGetHighestReviewQuery } from "../../../api/ProductReducer/ProductApi";
-import { Box, Stack, SimpleGrid } from "@mantine/core";
+import { Box, SimpleGrid } from "@mantine/core";
 import UserReviewCard from "./UserReviewCard";
 function ReviewsContent() {
   const { data: reviews } = useGetHighestReviewQuery();
