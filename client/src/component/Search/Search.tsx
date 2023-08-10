@@ -19,7 +19,11 @@ interface SearchProps extends SelectItemProps {
 
 function Search(props: Omit<ComponentProps<typeof Autocomplete>, "data">) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { data: products, isFetching } = useGetSearchProductQuery(
+  const {
+    data: products,
+    isFetching,
+    isLoading,
+  } = useGetSearchProductQuery(
     searchParams.get("q") ? searchParams.get("q") : "",
     { refetchOnMountOrArgChange: true }
   );
@@ -74,7 +78,10 @@ function Search(props: Omit<ComponentProps<typeof Autocomplete>, "data">) {
         }}
         icon={
           isFetching &&
-          (searchParams.get("q") || searchParams.get("q") !== "") ? (
+          !isLoading &&
+          searchParams.get("q") !== null &&
+          searchParams.get("q") !== undefined &&
+          searchParams.get("q") !== "" ? (
             <Loader size="xs" />
           ) : (
             <IconSearch stroke={1.5} size={"20px"} />

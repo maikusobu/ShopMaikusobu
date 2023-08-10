@@ -5,7 +5,7 @@ import product_inventoryModel from "../../models/Product_management/product_inve
 import product_discountModel from "../../models/Product_management/product_discountModel";
 import product_categoryModel from "../../models/Product_management/product_categoryModel";
 import NodeCache from "node-cache";
-import { SortOrder } from "mongoose";
+import { SortOrder, PipelineStage } from "mongoose";
 const myCache = new NodeCache();
 interface MyObject {
   [key: string]: SortOrder;
@@ -15,22 +15,19 @@ export const productGetAllMiddleware = expressAsyncHandler(
     try {
       const { categories, sort, page = "1" } = req.query;
       const cacheKey = JSON.stringify({ categories, sort });
-      let products = myCache.get(cacheKey) as any[] | unknown;
-      if (!products) {
-        products = await getProductsFromDB(
+      let result = myCache.get(cacheKey) as any | unknown;
+      if (!result) {
+        result = await getProductsFromDB(
           categories as string,
-          sort as string
+          sort as string,
+          parseInt(page as string)
         );
-        myCache.set(cacheKey, products);
+        myCache.set(cacheKey, result);
       }
-      const productsPerPage = 36;
-      const startIndex = productsPerPage * (parseInt(page as string) - 1);
-      const endIndex = productsPerPage * parseInt(page as string);
-      const paginatedProducts = (products as any[]).slice(startIndex, endIndex); // pagination and page
       res.status(200).json({
-        total: (products as any[]).length,
-        page: page,
-        products: paginatedProducts,
+        total: result.total,
+        page,
+        products: result.products,
       });
     } catch (err) {
       console.log(err);
@@ -38,7 +35,12 @@ export const productGetAllMiddleware = expressAsyncHandler(
     }
   }
 );
-const getProductsFromDB = async (categories: string, sort: string) => {
+
+const getProductsFromDB = async (
+  categories: string,
+  sort: string,
+  page: number
+) => {
   const arrayCategories = categories ? (categories as string).split(",") : [];
   const sortOptions: Record<string, MyObject> = {
     relevant: { name: -1 },
@@ -47,29 +49,83 @@ const getProductsFromDB = async (categories: string, sort: string) => {
     lowestprice: { price: 1 },
     highestprice: { price: -1 },
   };
-  const productsPromiseBase = productModel
-    .find({})
-    .sort(sortOptions[sort])
-    .populate({
-      path: "inventory_id",
-      model: product_inventoryModel,
-      match: { quantity: { $gt: 0 } },
-    })
-    .populate({
-      path: "discount_id",
-      model: product_discountModel,
-    })
-    .populate({
-      path: "category_id",
-      model: product_categoryModel,
-    });
+  const productsPerPage = 36;
+  const skip = productsPerPage * (page - 1);
+  const limit = productsPerPage;
 
-  const products = await productsPromiseBase.exec();
-  return (products as any[]).filter((product) => {
-    if (arrayCategories.length === 0) return true;
-    return product.category_id.name.includes(...arrayCategories);
-  });
+  const pipeline = [
+    {
+      $lookup: {
+        from: "productcategories",
+        localField: "category_id",
+        foreignField: "_id",
+        as: "category",
+      },
+    },
+    {
+      $unwind: "$category",
+    },
+    {
+      $match: {
+        $expr: {
+          $setIsSubset: [arrayCategories, "$category.name"],
+        },
+      },
+    },
+    {
+      $facet: {
+        total: [
+          {
+            $count: "count",
+          },
+        ],
+        products: [
+          {
+            $sort: sortOptions[sort],
+          },
+          {
+            $skip: skip,
+          },
+          {
+            $limit: limit,
+          },
+          {
+            $lookup: {
+              from: "productinventories",
+              localField: "inventory_id",
+              foreignField: "_id",
+              as: "inventory",
+            },
+          },
+          {
+            $unwind: "$inventory",
+          },
+          {
+            $match: {
+              "inventory.quantity": { $gt: 0 },
+            },
+          },
+          {
+            $lookup: {
+              from: "productdiscounts",
+              localField: "discount_id",
+              foreignField: "_id",
+              as: "discount",
+            },
+          },
+        ],
+      },
+    },
+  ];
+
+  const result = await productModel
+    .aggregate(pipeline as PipelineStage[])
+    .exec();
+  const total = result[0].total[0]?.count || 0;
+  const products = result[0].products;
+  return { total, products };
 };
+
 export const productGetByIdMiddleware = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {

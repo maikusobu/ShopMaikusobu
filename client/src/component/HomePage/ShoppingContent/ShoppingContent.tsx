@@ -65,15 +65,20 @@ function ShoppingContent() {
       );
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading)
+    return (
+      <p>
+        Loading...(request đầu tiên sẽ hơi lâu do server phải reset mỗi lần chạy
+        lần đầu)
+      </p>
+    );
   if (error)
     if ("status" in error)
       return (
         <p>
-          Error: {error.status} {JSON.stringify(error.data)}{" "}
+          Error: {error.status} {JSON.stringify(error.data)}
         </p>
       );
-
   return (
     <div className={classes.root}>
       <Grid gutter={5} gutterXs="md" gutterMd="xl" gutterXl={45} columns={15}>

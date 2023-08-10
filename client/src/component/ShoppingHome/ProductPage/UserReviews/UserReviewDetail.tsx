@@ -27,7 +27,6 @@ function UserReviewDetail({
   const [isDownvoteValue, setIsDownvoteValue] = useState(isDownvote);
   const [updateReaction] = useUpdateReactionMutation();
   const auth = useAppSelector(selectAuth);
-  console.log(isUpvoteValue, isDownvoteValue);
   const handleUpdateReaction = (value: string) => {
     let currentUpvote = isUpvoteValue;
     let currentDownvote = isDownvoteValue;

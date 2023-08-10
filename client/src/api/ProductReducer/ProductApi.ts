@@ -85,6 +85,9 @@ export const productApi = baseApi.injectEndpoints({
     getReviewProduct: builder.query<UserReviewProduct[], string>({
       query: (product_id: string) => `/products/review/${product_id}`,
     }),
+    getHighestReview: builder.query<UserReviewProduct[], void>({
+      query: () => `/products/review/reacion-highest`,
+    }),
   }),
 });
 export const {
@@ -93,4 +96,5 @@ export const {
   useGetTrendingProductQuery,
   useGetSearchProductQuery,
   useGetReviewProductQuery,
+  useGetHighestReviewQuery,
 } = productApi;
