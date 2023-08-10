@@ -4,6 +4,7 @@ import user_rating from "../../models/User_management/user_rating";
 import user_reaction from "../../models/User_management/user_reaction";
 import userModel from "../../models/User_management/userModel";
 import expressAsyncHandler from "express-async-handler";
+import { error } from "console";
 
 export const getReviewRating = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -28,6 +29,72 @@ export const getReviewRating = expressAsyncHandler(
       res.status(200).json(review);
     } catch (error) {
       console.log(error);
+      return next(error);
+    }
+  }
+);
+export const getHighestReview = expressAsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      user_review
+        .aggregate([
+          {
+            $match: {
+              product_id: { $type: "objectId" },
+            },
+          },
+          {
+            $lookup: {
+              from: "userratings",
+              localField: "user_rating",
+              foreignField: "_id",
+              as: "user_rating",
+            },
+          },
+          {
+            $lookup: {
+              from: "users",
+              localField: "user_id",
+              foreignField: "_id",
+              as: "user_id",
+            },
+          },
+          {
+            $lookup: {
+              from: "userreactions",
+              localField: "reactionScore",
+              foreignField: "_id",
+              as: "reactionScore",
+            },
+          },
+          { $unwind: "$user_rating" },
+          { $unwind: "$user_id" },
+          { $unwind: "$reactionScore" },
+          {
+            $project: {
+              user_id: 1,
+              product_id: 1,
+              user_rating: 1,
+              reactionScore: 1,
+              score: {
+                $subtract: [
+                  { $size: "$reactionScore.upvote" },
+                  { $size: "$reactionScore.downvote" },
+                ],
+              },
+            },
+          },
+          { $sort: { score: -1 } },
+        ])
+        .then(
+          (result) => {
+            res.status(200).json(result);
+          },
+          (error) => {
+            throw error;
+          }
+        );
+    } catch (error) {
       return next(error);
     }
   }

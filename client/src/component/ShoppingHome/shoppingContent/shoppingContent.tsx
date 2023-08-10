@@ -65,7 +65,7 @@ function ShoppingContent({
       refetchOnMountOrArgChange: true,
     }
   );
-
+  console.log(data);
   return (
     <Skeleton visible={isLoading}>
       <Box className={classes.root} pos="relative">
