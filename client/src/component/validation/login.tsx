@@ -2,7 +2,6 @@ import { useEffect, useState, useContext } from 'react';
 import { upperFirst } from '@mantine/hooks';
 import { useNavigate, useNavigation } from 'react-router-dom';
 import GoogleIcon from '../socialButton/GoogleIcon';
-import ZaloIcon from '../socialButton/ZaloIcon';
 import { useForm } from '@mantine/form';
 import { Form } from 'react-router-dom';
 import { useObjectError } from '../../hook/useObjectError';
@@ -137,10 +136,6 @@ function Login() {
 					<GoogleIcon radius='md' className={classes.buttonSocial} onClick={() => googleLogin()}>
 						Google
 					</GoogleIcon>
-
-					<ZaloIcon radius='md' className={classes.buttonSocial}>
-						Zalo
-					</ZaloIcon>
 				</Group>
 				<Divider
 					label='Hoặc đăng nhập bằng tài khoản'
