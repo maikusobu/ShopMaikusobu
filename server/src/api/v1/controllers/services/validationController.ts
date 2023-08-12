@@ -11,7 +11,7 @@ import user_addressManagerModel from "../../models/User_management/user_addressM
 import user_manager_paymentModel from "../../models/User_management/user_manager_paymentModel";
 import user_token from "../../models/User_management/user_token";
 import user_confirm_number from "../../models/User_management/user_confirm_number";
-
+import sessionModel from "../../models/User_Chat_management/sessionModel";
 import crypto from "crypto";
 const worker = new Worker(
   "./dist/js/api/v1/controllers/services/sendEmailWorker.js"
@@ -189,6 +189,11 @@ export const signinMiddeware = asyncHandler(
             expiresIn: config.refreshTokenLife,
           }
         );
+        // const sessionID = await sessionModel.create({
+        //   userID: User.id,
+        //   connected: true,
+        //   username: User.username,
+        // });
         res.cookie("token", token, {
           secure: true,
           sameSite: "none",
@@ -201,6 +206,7 @@ export const signinMiddeware = asyncHandler(
         res.status(200).json({
           message: "login sucess",
           refreshToken: refreshT,
+          // sessionID: sessionID.id,
           status: 200,
           id: User?.id,
           expires: new Date(config.tokenLife).getTime().toString(),
@@ -215,7 +221,7 @@ export const signinMiddeware = asyncHandler(
 );
 
 export const CheckRegisteration = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     try {
       const { user_id, numberConfirm } = req.body;
       const numberConfirmUser = await user_confirm_number.findOne({
@@ -340,13 +346,14 @@ export const refreshToken = (req: Request, res: Response) => {
       }) as VerifyOptions
     );
 };
-export const logout = (req: Request, res: Response) => {
-  const { refreshToken } = req.body;
+export const logout = asyncHandler(async (req: Request, res: Response) => {
+  const { refreshToken, sessionID } = req.body;
   if (!refreshToken) res.status(401).json({ message: "Unauthorized" });
   const index = refreshTokens.indexOf(refreshToken);
   if (index !== -1) {
     refreshTokens.splice(index, 1);
   }
+  // await sessionID.findByIdAndDelete(sessionID);
   res.cookie("token", "", {
     secure: true,
     sameSite: "none",
@@ -357,4 +364,4 @@ export const logout = (req: Request, res: Response) => {
   res.status(200).json({
     message: "Logout successfully",
   });
-};
+});

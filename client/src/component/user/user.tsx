@@ -13,6 +13,7 @@ import {
   IconSettings,
   IconTrash,
   IconHistory,
+  IconMessageChatbot,
 } from "@tabler/icons-react";
 import { selectAuth } from "../../api/AuthReducer/AuthReduce";
 import { useAppSelector } from "../../app/hooks";
@@ -119,6 +120,14 @@ function UserIn() {
         </Menu.Item>
         <Menu.Item icon={<IconHistory size="0.9rem" stroke={1.5} />}>
           List Orders
+        </Menu.Item>
+        <Menu.Item
+          icon={<IconMessageChatbot size="0.9rem" stroke={1.5} />}
+          onClick={() => {
+            navigate("/chat");
+          }}
+        >
+          Chat with the World
         </Menu.Item>
         <Menu.Item
           icon={<IconLogout size="0.9rem" stroke={1.5} />}

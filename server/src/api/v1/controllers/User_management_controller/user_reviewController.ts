@@ -4,8 +4,6 @@ import user_rating from "../../models/User_management/user_rating";
 import user_reaction from "../../models/User_management/user_reaction";
 import userModel from "../../models/User_management/userModel";
 import expressAsyncHandler from "express-async-handler";
-import { error } from "console";
-
 export const getReviewRating = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -13,6 +11,7 @@ export const getReviewRating = expressAsyncHandler(
         .find({
           product_id: req.params.product_id,
         })
+        .lean()
         .populate({
           path: "user_rating",
           model: user_rating,
