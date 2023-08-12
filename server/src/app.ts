@@ -1,16 +1,17 @@
 import express, { Express, Request, Response } from "express";
-
 import helmet from "helmet";
+import cluster from "cluster";
 import cookieParser from "cookie-parser";
 require("dotenv").config();
-
+import { createServer } from "http";
+import { Server } from "socket.io";
 import { dirPath } from "./api/v1/helpers/returnUrl";
 import mongoose from "mongoose";
-const morgan = require("morgan");
-const bodyParser = require("body-parser");
+import morgan from "morgan";
+import bodyParser from "body-parser";
 const MONGO_URL = process.env.MONGO_URL;
-
 const URL_CLIENT = process.env.URL_CLIENT;
+import userModel from "./api/v1/models/User_management/userModel";
 import authMiddleware from "./api/v1/controllers/services/AuthMiddleware";
 import { ErrorFunction } from "./api/v1/middlewares/errorHandling";
 import authenRouter from "./api/v1/routes/User_management_routes/validation";
@@ -23,6 +24,11 @@ import CartItemRouter from "./api/v1/routes/Shopping_process_routes/cart_item";
 import paymentRouter from "./api/v1/routes/User_management_routes/userPayment";
 import addressRouter from "./api/v1/routes/User_management_routes/userAddress";
 import OrderRouter from "./api/v1/routes/Shopping_process_routes/order_item";
+import { setupMaster, setupWorker } from "@socket.io/sticky";
+import conversationModel from "./api/v1/models/User_Chat_management/conversationMode";
+import sessionModel from "./api/v1/models/User_Chat_management/sessionModel";
+import messageModel from "./api/v1/models/User_Chat_management/messageModel";
+import session from "express-session";
 //config express
 
 // const corsOptions = {
@@ -32,7 +38,33 @@ import OrderRouter from "./api/v1/routes/Shopping_process_routes/order_item";
 //   exposedHeaders: ["set-cookie"],
 //   maxAge: 864000,
 // };
+// if (cluster.isPrimary) {
+//   console.log(`Master ${process.pid} is running`);
+
+//   for (let i = 0; i < 4; i++) {
+//     cluster.fork();
+//   }
+
+//   cluster.on("exit", (worker) => {
+//     console.log(`Worker ${worker.process.pid} died`);
+//     cluster.fork();
+//   });
+
+//   const app: Express = express();
+//   const httpServer = createServer(app);
+//   setupMaster(httpServer, {
+//     loadBalancingMethod: "least-connection", // either "random", "round-robin" or "least-connection"
+//   });
+//   const PORT = process.env.PORT || 3001;
+
+//   httpServer.listen(PORT, () =>
+//     console.log(`server listening at http://localhost:${PORT}`)
+//   );
+// } else {
+
 const app: Express = express();
+const httpServer = createServer(app);
+
 app.use(bodyParser.json({ limit: "5mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -64,6 +96,188 @@ async function connect() {
     console.error(err);
   }
 }
+// socket config
+const io = new Server(httpServer, {
+  cors: { origin: ["http://localhost:5173"], credentials: true },
+});
+io.use(async (socket, next) => {
+  const id = socket.handshake.auth.userID;
+  const user = await userModel.findById(id);
+  if (socket.handshake.auth.sessionID) {
+    const session = await sessionModel.findById(
+      socket.handshake.auth.sessionID
+    );
+    if (session) {
+      socket.data.username = session.username;
+
+      socket.data.sessionID = session.id;
+      return next();
+    }
+  } else {
+    const session = await sessionModel.findOne({ userID: id });
+    if (session) {
+      socket.data.username = session.username;
+
+      socket.data.sessionID = session.id;
+      return next();
+    }
+  }
+
+  if (!user) {
+    return next(new Error("Not have that user"));
+  }
+  socket.data.username = user.username;
+  next();
+});
+io.on("connection", async (socket) => {
+  socket.join(socket.handshake.auth.userID);
+  console.log(socket.rooms);
+  let sessionID: string = "";
+  if (!socket.data.sessionID) {
+    sessionID = (
+      await sessionModel.create({
+        userID: socket.handshake.auth.userID,
+        username: socket.data.username,
+        connected: true,
+      })
+    ).id;
+  } else {
+    sessionID = (await sessionModel.findByIdAndUpdate(
+      socket.data.sessionID,
+      {
+        connected: true,
+      },
+      { new: true }
+    ))!.id;
+  }
+
+  socket.emit("session", {
+    userID: socket.handshake.auth.userID,
+    sessionID: sessionID,
+  });
+
+  const users: any[] = [];
+  let [conversations, sessions] = await Promise.all([
+    conversationModel
+      .find({ "participants.participant_id": socket.handshake.auth.userID })
+      .populate("messages"),
+    sessionModel.find(),
+  ]);
+  if (conversations.length === 0) {
+    sessions.forEach(async (session) => {
+      await conversationModel.create({
+        participants: [
+          {
+            participant_id: socket.handshake.auth.userID,
+            hasNewMessage: false,
+          },
+          {
+            participant_id: session.userID,
+            hasNewMessage: false,
+          },
+        ],
+        messages: [],
+      });
+    });
+  }
+  conversations = await conversationModel
+    .find({ "participants.participant_id": socket.handshake.auth.userID })
+    .populate("messages");
+  sessions.forEach((session) => {
+    if (session.userID.toString() === socket.handshake.auth.userID) {
+    } else {
+      users.push({
+        userID: session.userID,
+        username: session.username,
+        connected: session.connected,
+        conversations: conversations.filter((conversation) => {
+          return (
+            conversation.participants.includes({
+              participant_id: session.userID,
+            }) &&
+            conversation.participants.includes({
+              participant_id: socket.handshake.auth.userID,
+            })
+          );
+        }),
+      });
+    }
+  });
+
+  socket.emit("users", users);
+  socket.broadcast.emit("user connected", {
+    userID: socket.handshake.auth.userID,
+    username: socket.data.username,
+    connected: true,
+  });
+  socket.on("private message", async ({ content, to }) => {
+    const message = { content, from: socket.handshake.auth.userID, to };
+    io.to([to, socket.handshake.auth.userID]).emit("private message", message);
+    const new_message = await messageModel.create(message);
+    await conversationModel.findOneAndUpdate(
+      {
+        $and: [
+          { "participants.participant_id": socket.handshake.auth.userID },
+          { "participants.participant_id": to },
+        ],
+      },
+      {
+        $set: {
+          "participants.$[user1].hasNewMessage": false,
+          "participants.$[user2].hasNewMessage": true,
+        },
+        $push: {
+          messages: new_message._id,
+        },
+      },
+      {
+        arrayFilters: [
+          { "user1.participant_id": socket.handshake.auth.userID },
+          { "user2.participant_id": to },
+        ],
+      }
+    );
+  });
+  socket.on("typing", (data) => {
+    socket.broadcast.emit("typing", data);
+  });
+  socket.on("newMessageCheck", async (userID) => {
+    await conversationModel.findOneAndUpdate(
+      {
+        participants: {
+          $and: [userID, socket.handshake.auth.userID],
+        },
+      },
+      {
+        $set: {
+          "participants.$[user2].hasNewMessage": false,
+        },
+      },
+      {
+        arrayFilters: [
+          { "user1.participant_id": socket.handshake.auth.userID },
+          { "user2.participant_id": userID },
+        ],
+      }
+    );
+  });
+  socket.on("disconnect", async () => {
+    const matchingSockets = await io
+      .in(socket.handshake.auth.userID)
+      .fetchSockets();
+    const isDisconnected = matchingSockets.length === 0;
+    if (isDisconnected) {
+      socket.broadcast.emit("user disconnected", socket.handshake.auth.userID);
+      await sessionModel.findOneAndUpdate(
+        { userID: socket.handshake.auth.userID },
+        {
+          connected: false,
+        }
+      );
+    }
+  });
+});
+
 //static files
 app.use(express.static(dirPath));
 // mongo after initiated
@@ -95,8 +309,8 @@ app.get("/", (req: Request, res: Response) => {
 // error handling
 app.use(ErrorFunction);
 
-const port = process.env.PORT || 3001;
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
-module.exports = app;
+const PORT = process.env.PORT || 3001;
+
+httpServer.listen(PORT, () =>
+  console.log(`server listening at http://localhost:${PORT}`)
+);
