@@ -11,7 +11,7 @@ import user_addressManagerModel from "../../models/User_management/user_addressM
 import user_manager_paymentModel from "../../models/User_management/user_manager_paymentModel";
 import user_token from "../../models/User_management/user_token";
 import user_confirm_number from "../../models/User_management/user_confirm_number";
-import sessionModel from "../../models/User_Chat_management/sessionModel";
+
 import crypto from "crypto";
 const worker = new Worker(
   "./dist/js/api/v1/controllers/services/sendEmailWorker.js"
@@ -347,7 +347,7 @@ export const refreshToken = (req: Request, res: Response) => {
     );
 };
 export const logout = asyncHandler(async (req: Request, res: Response) => {
-  const { refreshToken, sessionID } = req.body;
+  const { refreshToken } = req.body;
   if (!refreshToken) res.status(401).json({ message: "Unauthorized" });
   const index = refreshTokens.indexOf(refreshToken);
   if (index !== -1) {
