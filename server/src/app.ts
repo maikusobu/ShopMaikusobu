@@ -1,6 +1,5 @@
 import express, { Express, Request, Response } from "express";
 import helmet from "helmet";
-import cluster from "cluster";
 import cookieParser from "cookie-parser";
 require("dotenv").config();
 import { createServer } from "http";
@@ -24,11 +23,10 @@ import CartItemRouter from "./api/v1/routes/Shopping_process_routes/cart_item";
 import paymentRouter from "./api/v1/routes/User_management_routes/userPayment";
 import addressRouter from "./api/v1/routes/User_management_routes/userAddress";
 import OrderRouter from "./api/v1/routes/Shopping_process_routes/order_item";
-import { setupMaster, setupWorker } from "@socket.io/sticky";
 import conversationModel from "./api/v1/models/User_Chat_management/conversationMode";
 import sessionModel from "./api/v1/models/User_Chat_management/sessionModel";
 import messageModel from "./api/v1/models/User_Chat_management/messageModel";
-import session from "express-session";
+
 //config express
 
 // const corsOptions = {
@@ -102,6 +100,7 @@ const io = new Server(httpServer, {
 });
 io.use(async (socket, next) => {
   const id = socket.handshake.auth.userID;
+  if (!id) return next(new Error("No User Id"));
   const user = await userModel.findById(id);
   if (socket.handshake.auth.sessionID) {
     const session = await sessionModel.findById(
@@ -109,7 +108,6 @@ io.use(async (socket, next) => {
     );
     if (session) {
       socket.data.username = session.username;
-
       socket.data.sessionID = session.id;
       return next();
     }
@@ -131,7 +129,6 @@ io.use(async (socket, next) => {
 });
 io.on("connection", async (socket) => {
   socket.join(socket.handshake.auth.userID);
-  console.log(socket.rooms);
   let sessionID: string = "";
   if (!socket.data.sessionID) {
     sessionID = (
@@ -155,64 +152,138 @@ io.on("connection", async (socket) => {
     userID: socket.handshake.auth.userID,
     sessionID: sessionID,
   });
-
   const users: any[] = [];
+  // let [conversations, sessions] = await Promise.all([
+  //   conversationModel
+  //     .find({ "participants.participant_id": socket.handshake.auth.userID })
+  //     .populate("messages"),
+  //   sessionModel.find(),
+  // ]);
+  // if (conversations.length === 0) {
+  //   sessions.forEach(async (session) => {
+  //     if (session.userID.toString() !== socket.handshake.auth.userID) {
+  //       await conversationModel.create({
+  //         participants: [
+  //           {
+  //             participant_id: socket.handshake.auth.userID,
+  //             hasNewMessage: false,
+  //           },
+  //           {
+  //             participant_id: session.userID,
+  //             hasNewMessage: false,
+  //           },
+  //         ],
+  //         messages: [],
+  //       });
+  //     } else {
+  //     }
+  //   });
+  //   conversations = await conversationModel
+  //     .find({ "participants.participant_id": socket.handshake.auth.userID })
+  //     .populate("messages");
+  // }
+
+  // sessions.forEach((session) => {
+  //   if (session.userID.toString() === socket.handshake.auth.userID) {
+  //   } else {
+  //     users.push({
+  //       userID: session.userID,
+  //       username: session.username,
+  //       connected: session.connected,
+  //       conversations: conversations.filter((conversation) => {
+  //         return (
+  //           conversation.participants.some(
+  //             (participant) =>
+  //               participant.participant_id?.toString() ===
+  //               session.userID.toString()
+  //           ) &&
+  //           conversation.participants.some(
+  //             (participant) =>
+  //               participant.participant_id?.toString() ===
+  //               socket.handshake.auth.userID
+  //           )
+  //         );
+  //       }),
+  //     });
+  //   }
+  // });
   let [conversations, sessions] = await Promise.all([
     conversationModel
       .find({ "participants.participant_id": socket.handshake.auth.userID })
       .populate("messages"),
     sessionModel.find(),
   ]);
-  if (conversations.length === 0) {
-    sessions.forEach(async (session) => {
-      await conversationModel.create({
-        participants: [
-          {
-            participant_id: socket.handshake.auth.userID,
-            hasNewMessage: false,
-          },
-          {
-            participant_id: session.userID,
-            hasNewMessage: false,
-          },
-        ],
-        messages: [],
-      });
-    });
-  }
+
+  sessions.forEach(async (session) => {
+    if (session.userID.toString() !== socket.handshake.auth.userID) {
+      const existingConversation = conversations.find((conversation) =>
+        conversation.participants.some(
+          (participant) =>
+            participant.participant_id?.toString() === session.userID.toString()
+        )
+      );
+      if (!existingConversation) {
+        await conversationModel.create({
+          participants: [
+            {
+              participant_id: socket.handshake.auth.userID,
+              hasNewMessage: false,
+            },
+            {
+              participant_id: session.userID,
+              hasNewMessage: false,
+            },
+          ],
+          messages: [],
+        });
+      }
+    }
+  });
+
   conversations = await conversationModel
     .find({ "participants.participant_id": socket.handshake.auth.userID })
     .populate("messages");
+
   sessions.forEach((session) => {
-    if (session.userID.toString() === socket.handshake.auth.userID) {
-    } else {
+    if (session.userID.toString() !== socket.handshake.auth.userID) {
       users.push({
         userID: session.userID,
         username: session.username,
         connected: session.connected,
         conversations: conversations.filter((conversation) => {
           return (
-            conversation.participants.includes({
-              participant_id: session.userID,
-            }) &&
-            conversation.participants.includes({
-              participant_id: socket.handshake.auth.userID,
-            })
+            conversation.participants.some(
+              (participant) =>
+                participant.participant_id?.toString() ===
+                session.userID.toString()
+            ) &&
+            conversation.participants.some(
+              (participant) =>
+                participant.participant_id?.toString() ===
+                socket.handshake.auth.userID
+            )
           );
         }),
       });
     }
   });
-
   socket.emit("users", users);
   socket.broadcast.emit("user connected", {
     userID: socket.handshake.auth.userID,
     username: socket.data.username,
+    conversations: conversations.filter((conversation) => {
+      return conversation.participants.some(
+        (participant) =>
+          participant.participant_id?.toString() ===
+          socket.handshake.auth.userID
+      );
+    }),
     connected: true,
   });
   socket.on("private message", async ({ content, to }) => {
     const message = { content, from: socket.handshake.auth.userID, to };
     io.to([to, socket.handshake.auth.userID]).emit("private message", message);
+
     const new_message = await messageModel.create(message);
     await conversationModel.findOneAndUpdate(
       {
@@ -223,7 +294,7 @@ io.on("connection", async (socket) => {
       },
       {
         $set: {
-          "participants.$[user1].hasNewMessage": false,
+          "participants.$[user1].hasNewMessage": true,
           "participants.$[user2].hasNewMessage": true,
         },
         $push: {
@@ -239,25 +310,23 @@ io.on("connection", async (socket) => {
     );
   });
   socket.on("typing", (data) => {
-    socket.broadcast.emit("typing", data);
+    socket.to(data.userID).emit("typing", data);
   });
   socket.on("newMessageCheck", async (userID) => {
     await conversationModel.findOneAndUpdate(
       {
-        participants: {
-          $and: [userID, socket.handshake.auth.userID],
-        },
+        $and: [
+          { "participants.participant_id": socket.handshake.auth.userID },
+          { "participants.participant_id": userID },
+        ],
       },
       {
         $set: {
-          "participants.$[user2].hasNewMessage": false,
+          "participants.$[user].hasNewMessage": false,
         },
       },
       {
-        arrayFilters: [
-          { "user1.participant_id": socket.handshake.auth.userID },
-          { "user2.participant_id": userID },
-        ],
+        arrayFilters: [{ "user.participant_id": userID }],
       }
     );
   });

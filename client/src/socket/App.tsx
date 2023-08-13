@@ -9,7 +9,9 @@ interface AppProps {}
 
 const AppChat: React.FC<AppProps> = () => {
   const auth = useAppSelector(selectAuth);
-
+  useEffect(() => {
+    document.title = "Home";
+  }, []);
   useEffect(() => {
     const handleSession = ({
       sessionID,
@@ -36,6 +38,7 @@ const AppChat: React.FC<AppProps> = () => {
   }, []);
 
   useEffect(() => {
+    if (!auth.isLoggedIn) return;
     const sessionID = localStorage.getItem("sessionID");
     socket.auth = { userID: auth.id, sessionID };
     socket.connect();
@@ -43,7 +46,6 @@ const AppChat: React.FC<AppProps> = () => {
       socket.disconnect();
     };
   }, [auth]);
-
   return <Layout>{auth.isLoggedIn && <Chat />}</Layout>;
 };
 
