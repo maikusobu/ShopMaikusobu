@@ -21,7 +21,6 @@ const ConversationSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
 export default mongoose.model<InferSchemaType<typeof ConversationSchema>>(
   "Conversation",
   ConversationSchema

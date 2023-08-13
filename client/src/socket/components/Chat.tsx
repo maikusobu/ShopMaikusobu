@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import socket from "../socket";
 import User from "./User";
 import MessagePanel from "./MessagePanel";
-import { Group } from "@mantine/core";
+import { Group, Stack, Title } from "@mantine/core";
 import { selectAuth } from "../../api/AuthReducer/AuthReduce";
 import { useAppSelector } from "../../app/hooks";
 interface Message {
@@ -23,7 +23,6 @@ export interface UserType {
   userID: string;
   username: string;
   connected: boolean;
-  hasNewMessages: boolean;
   conversations: Conversation[];
 }
 
@@ -39,16 +38,6 @@ const Chat: React.FC<ChatProps> = () => {
         content,
         to: selectedUser.userID,
       });
-
-      const newSelectedUser = selectedUser;
-
-      newSelectedUser.conversations[0].messages.push({
-        content,
-        fromSelf: true,
-        from: auth.id,
-      });
-      newSelectedUser.conversations[0].participants[0].hasNewMessage = false;
-      setSelectedUser(newSelectedUser);
     }
   };
   const onSelectUser = (user: UserType) => {
@@ -58,27 +47,44 @@ const Chat: React.FC<ChatProps> = () => {
         if (index === 0) {
           return {
             ...conversation,
-            participants: conversation.participants.map(
-              (participant, index) => {
-                if (index === 1) {
-                  return { ...participant, hasNewMessage: false };
-                } else {
-                  return participant;
-                }
+            participants: conversation.participants.map((participant) => {
+              if (participant.participant_id === user.userID) {
+                return { ...participant, hasNewMessage: false };
+              } else {
+                return participant;
               }
-            ),
+            }),
           };
         } else {
           return conversation;
         }
       }),
     };
+    const newUsers = users.map((existingUser) =>
+      existingUser.userID === user.userID ? newUser : existingUser
+    );
+    console.log(newUsers);
+    setUsers(newUsers);
     socket.emit("newMessageCheck", user.userID);
     setSelectedUser(newUser);
   };
 
+  const onFoundmessages = (user: UserType) => {
+    for (const conversation of user.conversations) {
+      for (const participant of conversation.participants) {
+        if (participant.participant_id === user.userID) {
+          return participant.hasNewMessage;
+        }
+      }
+    }
+    return false;
+  };
+
   useEffect(() => {
-    const handleUsersUpdate = (updatedUsers: UserType[]) => {
+    const handleUsersUpdate = (
+      updatedUsers: UserType[],
+      callback?: () => void
+    ) => {
       const updatedUserList = updatedUsers.map((user) => ({
         ...user,
         conversations: user.conversations.map((conversation) => ({
@@ -90,6 +96,10 @@ const Chat: React.FC<ChatProps> = () => {
         })),
       }));
       setUsers(updatedUserList);
+      if (callback) {
+        console.log("worked");
+        callback();
+      }
     };
 
     socket.on("connect", () => {
@@ -136,6 +146,15 @@ const Chat: React.FC<ChatProps> = () => {
         user.userID === id ? { ...user, connected: false } : user
       );
       handleUsersUpdate(updatedUsers);
+      if (selectedUser) {
+        if (selectedUser.userID === id) {
+          const newUser = {
+            ...selectedUser,
+            connected: false,
+          };
+          setSelectedUser(newUser);
+        }
+      }
     });
 
     socket.on("private message", ({ content, from, to }) => {
@@ -151,6 +170,16 @@ const Chat: React.FC<ChatProps> = () => {
               ) {
                 return {
                   ...conversation,
+                  participants: conversation.participants.map((participant) => {
+                    if (
+                      participant.participant_id ===
+                      (auth.id === from ? to : from)
+                    ) {
+                      return { ...participant, hasNewMessage: true };
+                    } else {
+                      return participant;
+                    }
+                  }),
                   messages: [
                     ...conversation.messages,
                     {
@@ -165,12 +194,55 @@ const Chat: React.FC<ChatProps> = () => {
           };
           return updatedUser;
         }
-
         return user;
       });
-
-      handleUsersUpdate(updatedUsers);
+      handleUsersUpdate(updatedUsers, () => {
+        if (selectedUser)
+          if (selectedUser.userID === (auth.id === from ? to : from)) {
+            const updatedUser = {
+              ...selectedUser,
+              conversations: selectedUser.conversations.map((conversation) => {
+                if (
+                  conversation.participants.some(
+                    (p) => p.participant_id === auth.id
+                  )
+                ) {
+                  return {
+                    ...conversation,
+                    participants: conversation.participants.map(
+                      (participant) => {
+                        if (
+                          participant.participant_id ===
+                          (auth.id === from ? to : from)
+                        ) {
+                          return {
+                            ...participant,
+                            hasNewMessage: false,
+                          };
+                        } else {
+                          return participant;
+                        }
+                      }
+                    ),
+                    messages: [
+                      ...conversation.messages,
+                      {
+                        content,
+                        fromSelf: auth.id === from,
+                        from: from,
+                      },
+                    ],
+                  };
+                } else return conversation;
+              }),
+            };
+            socket.emit("newMessageCheck", auth.id === from ? to : from);
+            setSelectedUser(updatedUser);
+            console.log("work at update");
+          }
+      });
     });
+
     return () => {
       socket.off("connect");
       socket.off("disconnect");
@@ -181,27 +253,31 @@ const Chat: React.FC<ChatProps> = () => {
     };
   }, [auth.id, selectedUser, users]);
   return (
-    <Group h="100%" w="100%" spacing={0}>
-      <div className="left-panel">
+    <Group h="100%" w="100%" spacing={25} align="start" px="20px" py="16px">
+      <Stack>
+        <Title order={4}>Danh sách user tại hệ thống</Title>
         {users.map((user) => {
           return (
             <User
               key={user.userID}
               id={user.userID}
               connect={user.connected}
-              hasNewMessages={user.hasNewMessages}
+              hasNewMessages={onFoundmessages(
+                user.userID === selectedUser?.userID ? selectedUser : user
+              )}
               selected={selectedUser?.username === user.username}
               onSelect={() => onSelectUser(user)}
             />
           );
         })}
-      </div>
+      </Stack>
 
       {selectedUser && (
         <MessagePanel
+          senderId={auth.id}
+          socket={socket}
           user={selectedUser}
           onInput={onMessage}
-          className="right-panel"
         />
       )}
     </Group>

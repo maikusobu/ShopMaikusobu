@@ -19,16 +19,21 @@ function UserChat({
   const imageUrl = useAvatar(user ? user : null);
   return (
     <Button
+      color={selected ? "pink" : "grape"}
       sx={{
-        backgroundColor: selected ? "#F8F8F8" : "#FFFFFF",
+        "&:hover ": {
+          backgroundColor: "none !important",
+        },
       }}
       onClick={onSelect}
+      p="0px"
     >
-      <Group>
+      <Group position="left" w="230px">
+        <StatusIcon connected={connect} />
         <Avatar src={imageUrl} radius="xl" />
         <Text>{user?.username}</Text>
       </Group>
-      <StatusIcon connected={connect} />
+
       {hasNewMessages && <Text>New</Text>}
     </Button>
   );
