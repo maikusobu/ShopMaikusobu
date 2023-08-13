@@ -63,7 +63,7 @@ import messageModel from "./api/v1/models/User_Chat_management/messageModel";
 const app: Express = express();
 const httpServer = createServer(app);
 
-app.use(bodyParser.json({ limit: "5mb" }));
+app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(function (req, res, next) {

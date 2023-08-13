@@ -12,6 +12,7 @@ function Layout({ children }: layoutProp) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     dispatch(checkLogin() as unknown as AnyAction);
   }, [dispatch]);
+
   return <div className="layout">{children}</div>;
 }
 export default Layout;
