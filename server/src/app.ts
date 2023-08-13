@@ -96,7 +96,7 @@ async function connect() {
 }
 // socket config
 const io = new Server(httpServer, {
-  cors: { origin: ["http://localhost:5173"], credentials: true },
+  cors: { origin: [`${process.env.URL_CLIENT}`], credentials: true },
 });
 io.use(async (socket, next) => {
   const id = socket.handshake.auth.userID;
