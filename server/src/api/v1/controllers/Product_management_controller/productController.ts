@@ -183,7 +183,7 @@ export const productSearch = expressAsyncHandler(
       const { name } = req.query;
       if (name !== null && name !== undefined && name !== "") {
         products = await productModel
-          .find({ name: { $regex: `${name}`, $options: "i" } }) // search name with case-insenitivity for example: "ALICE, Alice, alice " are be matched by the regex
+          .find({ name: { $regex: `${name}`, $options: "i" } }) // Saerching name with case-insenitivity for example: "ALICE, Alice, alice " are matched by the regex
           .select(["_id", "name"])
           .exec();
       } else products = [];
@@ -193,7 +193,6 @@ export const productSearch = expressAsyncHandler(
       }));
       res.status(200).json(transformedProducts);
     } catch (err) {
-      console.log(err);
       return next(err);
     }
   }

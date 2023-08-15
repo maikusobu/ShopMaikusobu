@@ -63,7 +63,6 @@ const Chat: React.FC<ChatProps> = () => {
     const newUsers = users.map((existingUser) =>
       existingUser.userID === user.userID ? newUser : existingUser
     );
-    console.log(newUsers);
     setUsers(newUsers);
     socket.emit("newMessageCheck", user.userID);
     setSelectedUser(newUser);
@@ -97,7 +96,6 @@ const Chat: React.FC<ChatProps> = () => {
       }));
       setUsers(updatedUserList);
       if (callback) {
-        console.log("worked");
         callback();
       }
     };
@@ -196,9 +194,11 @@ const Chat: React.FC<ChatProps> = () => {
         }
         return user;
       });
+
       handleUsersUpdate(updatedUsers, () => {
         if (selectedUser)
           if (selectedUser.userID === (auth.id === from ? to : from)) {
+            socket.emit("newMessageCheck", auth.id === from ? to : from);
             const updatedUser = {
               ...selectedUser,
               conversations: selectedUser.conversations.map((conversation) => {
@@ -236,9 +236,8 @@ const Chat: React.FC<ChatProps> = () => {
                 } else return conversation;
               }),
             };
-            socket.emit("newMessageCheck", auth.id === from ? to : from);
+
             setSelectedUser(updatedUser);
-            console.log("work at update");
           }
       });
     });
