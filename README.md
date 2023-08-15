@@ -21,7 +21,7 @@ ShopMaikusobu is a full-stack e-commerce and social web application that enables
 ## ✨ Features <a name="features"></a>
 
 - Users can view a list of products with details such as name, price, description, and rating.
-- Users can view a list of customers's review and rating on the product they have purchased (ongoing).
+- Users can view a list of customers's review and rating on the product they have purchased.
 - Users can explore a variety of products and discover other customers who have shared their opinions and experiences. They can initiate a chat with them and exchange insights and tips about the products they are interested in.
 - Users can add products to their shopping cart, change the quantity, or remove them from the cart.
 - Users can checkout and pay for their orders using a secure payment system.
@@ -31,11 +31,10 @@ ShopMaikusobu is a full-stack e-commerce and social web application that enables
 - Users can update their profile information, such as avatar, payment method and shipping address.
 - Users can view their order history and track the status of their orders.
 - Users can rate and review the products they purchased using a star rating system and a text box. They can also edit or delete their reviews at any time (ongoing).
-- Users can chat with other users who have reviewed the products they are interested in. This allows them to exchange opinions, feedback, and tips about the products (ongoing).
+- Users can chat with other users who have reviewed the products they are interested in. This allows them to exchange opinions, feedback, and tips about the products.
 - Users can also contact the shop owner or the customer service team through a contact form that verifies their identity and sends them a confirmation email.
 - Users can receive notifications and updates about their orders, products, and chats via email (ongoing).
-- The application handles user authentication and authorization using JWT tokens.
-- (Incomming Features....)
+- The application handles user authentication and authorization using JWT tokens
 
 ## 🖨️ Technologies <a name="technologies"></a>
 
@@ -46,13 +45,17 @@ ShopMaikusobu is a full-stack e-commerce and social web application that enables
 	<code><img width="50" src="https://user-images.githubusercontent.com/25181517/183859966-a3462d8d-1bc7-4880-b353-e2cbed900ed6.png" alt="Express" title="Express"/></code>
 	<code><img width="50" src="https://user-images.githubusercontent.com/25181517/187896150-cc1dcb12-d490-445c-8e4d-1275cd2388d6.png" alt="Redux" title="Redux"/></code>
 	<code><img width="50" src="https://user-images.githubusercontent.com/25181517/182884177-d48a8579-2cd0-447a-b9a6-ffc7cb02560e.png" alt="mongoDB" title="mongoDB"/></code>
+	<code><img width="50" src="https://user-images.githubusercontent.com/25181517/187070862-03888f18-2e63-4332-95fb-3ba4f2708e59.png" alt="websocket" title="websocket"/></code>
+	<code><img width="50" src="https://user-images.githubusercontent.com/25181517/192107858-fe19f043-c502-4009-8c47-476fc89718ad.png" alt="REST" title="REST"/></code>
 </div>
 
 - React: A JavaScript library for building user interfaces.
 - Express: A web framework for Node.js that provides features for web and mobile applications.
 - MongoDB: A document-based database that stores data in JSON-like format.
 - RTK Query: A data fetching and caching library for React applications that simplifies data fetching and caching logic.
-- (Incoming Technologies ...)
+- Node.js: A cross-platform runtime environment and library for running JavaScript applications outside the browser. It is used for creating server-side and networking web applications1
+- Socket.io: A library that enables low-latency, bidirectional and event-based communication between a client and a server. It is built on top of the WebSocket protocol and provides additional features like fallback to HTTP long-polling or automatic reconnection2
+- Cluster: A module that allows Node.js to create multiple processes that can share the same server port. It is useful for improving the performance and scalability of Node.js applications.
 
 ## ⬇️ Installation <a name="installation"></a>
 
