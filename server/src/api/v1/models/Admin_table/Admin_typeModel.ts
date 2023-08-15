@@ -1,5 +1,4 @@
-import mongoose from "mongoose";
-import type { AdmineType } from "../../../../types/modelTypes/Admin_table_types/AdminTypeModelTypes";
+import mongoose, { InferSchemaType } from "mongoose";
 const Schema = mongoose.Schema;
 const AdminType = new Schema(
   {
@@ -13,4 +12,7 @@ const AdminType = new Schema(
 AdminType.virtual("id").get(function () {
   return this._id.toHexString();
 });
-export default mongoose.model<AdmineType>("AdminType", AdminType);
+export default mongoose.model<InferSchemaType<typeof AdminType>>(
+  "AdminType",
+  AdminType
+);

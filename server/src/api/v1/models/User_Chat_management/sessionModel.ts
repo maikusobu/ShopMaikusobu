@@ -5,8 +5,14 @@ const sessionSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  username: String,
-  connected: Boolean,
+  username: {
+    type: String,
+    required: true,
+  },
+  connected: {
+    type: Boolean,
+    required: true,
+  },
 });
 export type Session = InferSchemaType<typeof sessionSchema>;
 export default mongoose.model<Session>("session", sessionSchema);
