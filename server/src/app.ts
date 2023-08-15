@@ -37,12 +37,20 @@ import {
   handleTyping,
   handlePrivateMessage,
 } from "./api/v1/socketConnection/Register/handlers";
-import cluster from "cluster";
-import { setupMaster, setupWorker } from "@socket.io/sticky";
-import { createAdapter, setupPrimary } from "@socket.io/cluster-adapter";
-const numCPUs = 3;
+// import cluster from "cluster";
+// import { setupMaster, setupWorker } from "@socket.io/sticky";
+// import { createAdapter, setupPrimary } from "@socket.io/cluster-adapter";
+// const numCPUs = 3;
 const app: Express = express();
 const httpServer = createServer(app);
+const io = new Server<
+  ClientToServerEvents,
+  ServerToClientEvents,
+  InterServerEvents,
+  SocketData
+>(httpServer, {
+  cors: { origin: `${process.env.URL_CLIENT}`, credentials: true },
+});
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -97,45 +105,58 @@ app.get("/", (req: Request, res: Response) => {
   res.redirect(`${URL_CLIENT}`);
 });
 app.use(ErrorFunction);
-if (cluster.isPrimary) {
-  setupMaster(httpServer, {
-    loadBalancingMethod: "least-connection",
-  });
-  setupPrimary();
-  cluster.setupPrimary({
-    serialization: "advanced",
-  });
+// if (cluster.isPrimary) {
+//   setupMaster(httpServer, {
+//     loadBalancingMethod: "least-connection",
+//   });
+//   setupPrimary();
+//   cluster.setupPrimary({
+//     serialization: "advanced",
+//   });
 
-  console.log(`Master ${process.pid} is running`);
-  const PORT = process.env.PORT || 3001;
-  httpServer.listen(PORT, () =>
-    console.log(`server listening at http://localhost:${PORT}`)
-  );
-  for (let i = 0; i < numCPUs; i++) {
-    cluster.fork();
-  }
-  cluster.on("exit", (worker) => {
-    console.log(`Worker ${worker.process.pid} died`);
-    cluster.fork();
-  });
-} else {
-  console.log(`Worker ${process.pid} started`);
-  const io = new Server<
-    ClientToServerEvents,
-    ServerToClientEvents,
-    InterServerEvents,
-    SocketData
-  >(httpServer, {
-    cors: { origin: `${process.env.URL_CLIENT}`, credentials: true },
-  });
-  io.adapter(createAdapter());
-  io.use(socketMiddleware);
-  io.on("connection", async (socket) => {
-    handleConnection(socket);
-    handlePrivateMessage(socket, io);
-    handleTyping(socket);
-    handleNewMessageCheck(socket);
-    handleDisconnection(socket, io);
-  });
-  setupWorker(io);
-}
+//   console.log(`Master ${process.pid} is running`);
+//   const PORT = process.env.PORT || 3001;
+//   httpServer.listen(PORT, () =>
+//     console.log(`server listening at http://localhost:${PORT}`)
+//   );
+//   for (let i = 0; i < numCPUs; i++) {
+//     cluster.fork();
+//   }
+//   cluster.on("exit", (worker) => {
+//     console.log(`Worker ${worker.process.pid} died`);
+//     cluster.fork();
+//   });
+// } else {
+//   console.log(`Worker ${process.pid} started`);
+//   const io = new Server<
+//     ClientToServerEvents,
+//     ServerToClientEvents,
+//     InterServerEvents,
+//     SocketData
+//   >(httpServer, {
+//     cors: { origin: `${process.env.URL_CLIENT}`, credentials: true },
+//   });
+//   io.adapter(createAdapter());
+//   io.use(socketMiddleware);
+//   io.on("connection", async (socket) => {
+//     handleConnection(socket);
+//     handlePrivateMessage(socket, io);
+//     handleTyping(socket);
+//     handleNewMessageCheck(socket);
+//     handleDisconnection(socket, io);
+//   });
+//   setupWorker(io);
+// } // absorb too much ram on server:and crash
+
+io.use(socketMiddleware);
+io.on("connection", async (socket) => {
+  handleConnection(socket);
+  handlePrivateMessage(socket, io);
+  handleTyping(socket);
+  handleNewMessageCheck(socket);
+  handleDisconnection(socket, io);
+});
+const PORT = process.env.PORT || 3001;
+httpServer.listen(PORT, () =>
+  console.log(`server listening at http://localhost:${PORT}`)
+);
