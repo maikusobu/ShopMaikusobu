@@ -40,7 +40,7 @@ import {
 import cluster from "cluster";
 import { setupMaster, setupWorker } from "@socket.io/sticky";
 import { createAdapter, setupPrimary } from "@socket.io/cluster-adapter";
-const numCPUs = 4;
+const numCPUs = 3;
 const app: Express = express();
 const httpServer = createServer(app);
 app.use(bodyParser.json({ limit: "10mb" }));
@@ -102,10 +102,15 @@ if (cluster.isPrimary) {
     loadBalancingMethod: "least-connection",
   });
   setupPrimary();
-  cluster.setupPrimary({
-    serialization: "advanced",
-  });
-
+  if (process.env.MODE === "DEVELOPMENT") {
+    cluster.setupPrimary({
+      serialization: "advanced",
+    });
+  } else {
+    cluster.setupMaster({
+      serialization: "advanced",
+    });
+  }
   console.log(`Master ${process.pid} is running`);
   const PORT = process.env.PORT || 3001;
   httpServer.listen(PORT, () =>
