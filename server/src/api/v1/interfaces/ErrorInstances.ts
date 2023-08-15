@@ -21,7 +21,7 @@ export class Unauthorized extends Error {
 export class MongoDBError extends Error {
   public error: string = "";
   constructor(public status: number, public erros: string[]) {
-    super("MongoDB validation error");
+    super("MongoDB vtlidation error");
     this.error = erros.join(", ");
   }
 }
