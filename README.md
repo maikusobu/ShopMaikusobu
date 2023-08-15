@@ -46,6 +46,7 @@ ShopMaikusobu is a full-stack e-commerce and social web application that enables
 	<code><img width="50" src="https://user-images.githubusercontent.com/25181517/187896150-cc1dcb12-d490-445c-8e4d-1275cd2388d6.png" alt="Redux" title="Redux"/></code>
 	<code><img width="50" src="https://user-images.githubusercontent.com/25181517/182884177-d48a8579-2cd0-447a-b9a6-ffc7cb02560e.png" alt="mongoDB" title="mongoDB"/></code>
 	<code><img width="50" src="https://user-images.githubusercontent.com/25181517/187070862-03888f18-2e63-4332-95fb-3ba4f2708e59.png" alt="websocket" title="websocket"/></code>
+	<code><img width="50" src="https://user-images.githubusercontent.com/25181517/183898674-75a4a1b1-f960-4ea9-abcb-637170a00a75.png" alt="CSS" title="CSS"/></code>
 	<code><img width="50" src="https://user-images.githubusercontent.com/25181517/192107858-fe19f043-c502-4009-8c47-476fc89718ad.png" alt="REST" title="REST"/></code>
 </div>
 
@@ -56,6 +57,7 @@ ShopMaikusobu is a full-stack e-commerce and social web application that enables
 - Node.js: A cross-platform runtime environment and library for running JavaScript applications outside the browser. It is used for creating server-side and networking web applications1
 - Socket.io: A library that enables low-latency, bidirectional and event-based communication between a client and a server. It is built on top of the WebSocket protocol and provides additional features like fallback to HTTP long-polling or automatic reconnection2
 - Cluster: A module that allows Node.js to create multiple processes that can share the same server port. It is useful for improving the performance and scalability of Node.js applications.
+- Mantine Ui: Mantine UI is a set of responsive components for building web applications with React. It is free and open source, and supports both light and dark themes
 
 ## ⬇️ Installation <a name="installation"></a>
 
