@@ -96,6 +96,8 @@ Here are some external resources or references that are related to this project:
 - [Express Documentation](https://expressjs.com/)
 - [MongoDB Documentation](https://www.mongodb.com/docs/)
 - [RTK Query Documentation](https://redux-toolkit.js.org/rtk-query/overview)
+- [Mantine UI Documentation](https://mantine.dev/pages/basics/)
+- [Socket.io Documentation](https://socket.io/docs/v4/)
 
 ## 🤲 Contributors <a name="contributors"></a>
 
