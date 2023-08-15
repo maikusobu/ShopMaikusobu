@@ -102,15 +102,10 @@ if (cluster.isPrimary) {
     loadBalancingMethod: "least-connection",
   });
   setupPrimary();
-  if (process.env.MODE === "DEVELOPMENT") {
-    cluster.setupPrimary({
-      serialization: "advanced",
-    });
-  } else {
-    cluster.setupMaster({
-      serialization: "advanced",
-    });
-  }
+  cluster.setupPrimary({
+    serialization: "advanced",
+  });
+
   console.log(`Master ${process.pid} is running`);
   const PORT = process.env.PORT || 3001;
   httpServer.listen(PORT, () =>
