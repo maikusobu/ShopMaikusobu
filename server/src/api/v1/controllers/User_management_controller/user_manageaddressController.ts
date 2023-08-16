@@ -2,6 +2,7 @@ import expressAsyncHandler from "express-async-handler";
 import { Request, NextFunction, Response } from "express";
 import user_addressManagerModel from "../../models/User_management/user_addressManagerModel";
 import user_addressModel from "../../models/User_management/user_addressModel";
+import { NotFound } from "../../interfaces/ErrorInstances";
 export const getUserAddresses = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -13,9 +14,10 @@ export const getUserAddresses = expressAsyncHandler(
           path: "address_list",
           model: user_addressModel,
         });
+      if (!userAddress) throw new NotFound(404, "user's address not found");
       res.status(200).json(userAddress);
-    } catch (error: any) {
-      res.status(404).json({ message: error.message, status: 404 });
+    } catch (error) {
+      return next(error);
     }
   }
 );
@@ -23,6 +25,7 @@ export const updateDeleteAddress = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { address_id } = req.body;
+      if (!address_id) throw new NotFound(404, "address_id not found");
       const userAddress = await user_addressManagerModel
         .findOneAndUpdate(
           { user_id: req.params.id },
@@ -54,6 +57,7 @@ export const updateInsertAddress = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { address_id } = req.body;
+      if (!address_id) throw new NotFound(404, "address_id not found");
       const userAddress = await user_addressManagerModel
         .findOneAndUpdate(
           { user_id: req.params.id },

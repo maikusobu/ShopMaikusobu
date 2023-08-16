@@ -17,7 +17,7 @@ export const OrderCreate = expressAsyncHandler(
         OrderItems: OrderItems,
         payment_id: req.body.payment_id,
       });
-      res.status(200).json(orderDetails);
+      res.status(201).json(orderDetails);
     } catch (err) {
       next(err);
     }

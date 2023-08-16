@@ -2,11 +2,11 @@ import { upperFirst } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
 import { useUrlSearchParams } from "../../hook/useCheckUrl";
 import { Form } from "react-router-dom";
-import { IconX } from "@tabler/icons-react";
+import { toast } from "../../toast/toast";
 import PasswordRequirement from "./passwordRequirementPop/passwordRequire";
-import { Notification, Popover, Progress } from "@mantine/core";
+import { Popover, Progress } from "@mantine/core";
 import React, { useState, useEffect } from "react";
-import { useObjectError } from "../../hook/useObjectError";
+import { useObjectActionReturn } from "../../hook/useObjectActionReturn";
 import { Container, Group, Button, Stack, PasswordInput } from "@mantine/core";
 import { useStyles } from "./styleGlobal";
 const requirements = [
@@ -34,7 +34,8 @@ function ChangePassWord() {
   console.log(isValidUrl, id, token);
   const { classes } = useStyles();
   const [popoverOpened, setPopoverOpened] = useState(false);
-  const { errorAppear, handleSetErrorAppear, objectError } = useObjectError();
+  const { isActionReturned, handleSetisActionReturned, objectAction } =
+    useObjectActionReturn();
   const form = useForm({
     initialValues: {
       password: "",
@@ -61,22 +62,19 @@ function ChangePassWord() {
 
   const strength = getStrength(form.values.password);
   const color = strength === 100 ? "teal" : strength > 50 ? "yellow" : "red";
+  useEffect(() => {
+    if (objectAction.err) {
+      toast(
+        objectAction.err.message,
+        true,
+        "ChangePassword",
+        "Lỗi",
+        handleSetisActionReturned
+      );
+    }
+  }, [handleSetisActionReturned, isActionReturned, objectAction?.err]);
   return (
     <div className={classes.mainSection}>
-      {errorAppear && (
-        <Notification
-          icon={<IconX size="1.1rem" />}
-          color="red"
-          onClose={() => {
-            handleSetErrorAppear();
-          }}
-          withCloseButton={true}
-          title="Lỗi"
-          className={classes.errorNotifi}
-        >
-          {objectError.err.message}
-        </Notification>
-      )}
       <Container size={800} className={classes.Container}>
         <Form
           action=""

@@ -1,13 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import expressAsyncHandler from "express-async-handler";
 import cart_itemModel from "../../models/Shopping_process/cart_itemModel";
+import { NotFound, MongoDBError } from "../../interfaces/ErrorInstances";
 export const getCartItemByProductId = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { product_id } = req.params;
       const cartItem = await cart_itemModel.findOne({ product_id }).lean();
       if (!cartItem) {
-        throw new Error("Cart item not found");
+        throw new NotFound(404, "Cart item not found");
       }
       res.status(200).json({
         message: "Cart item fetched successfully",
@@ -37,7 +38,13 @@ export const createCartItem = expressAsyncHandler(
         message: "Cart item created successfully",
         data: cartItem,
       });
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === "ValidationError") {
+        const errors = Object.values(error.errors).map(
+          (error: any) => error.message
+        );
+        return next(new MongoDBError(400, errors));
+      }
       next(error);
     }
   }
@@ -52,7 +59,7 @@ export const updateCartItem = expressAsyncHandler(
         { new: true, runValidators: true }
       );
       if (!cartItem) {
-        throw new Error("Cart item not found");
+        throw new NotFound(404, "Cart item not found");
       }
       res.status(200).json({
         message: "Cart item updated successfully",
@@ -69,7 +76,7 @@ export const deleteCartItem = expressAsyncHandler(
       const { product_id } = req.body;
       const cartItem = await cart_itemModel.findOneAndDelete({ product_id });
       if (!cartItem) {
-        throw new Error("Cart item not found");
+        throw new NotFound(404, "Cart item not found");
       }
       res.status(200).json({
         message: "Cart item deleted successfully",

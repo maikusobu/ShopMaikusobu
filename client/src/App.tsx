@@ -17,7 +17,7 @@ import ShoppingHome from "./component/ShoppingHome/shoppinghome.tsx";
 import ContentShow from "./component/ShoppingHome/ContentShow/ContentShow.tsx";
 import Faq from "./component/Faq/Faq.tsx";
 import Contact from "./component/Contact/Contact.tsx";
-import AppChat from "./socket/App.tsx";
+import AppChat from "./socket/AppChat.tsx";
 const router = createBrowserRouter([
   {
     path: "/",

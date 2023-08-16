@@ -9,8 +9,8 @@ export class Validation extends Error {
   }
 }
 export class NotFound extends Error {
-  constructor(public status: number) {
-    super("Not found");
+  constructor(public status: number, message: string) {
+    super(message);
   }
 }
 export class Unauthorized extends Error {
@@ -21,7 +21,7 @@ export class Unauthorized extends Error {
 export class MongoDBError extends Error {
   public error: string = "";
   constructor(public status: number, public erros: string[]) {
-    super("MongoDB vtlidation error");
+    super("MongoDB vatlidation error");
     this.error = erros.join(", ");
   }
 }

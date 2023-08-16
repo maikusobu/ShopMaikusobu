@@ -3,9 +3,9 @@ import { upperFirst } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
 import { Overlay, Text } from "@mantine/core";
 import { Form } from "react-router-dom";
-import { useObjectError } from "../../hook/useObjectError";
-import { IconX } from "@tabler/icons-react";
-import { Notification, LoadingOverlay } from "@mantine/core";
+import { useObjectActionReturn } from "../../hook/useObjectActionReturn";
+
+import { LoadingOverlay } from "@mantine/core";
 import { useStyles } from "./styleGlobal";
 import { useNavigation } from "react-router-dom";
 import {
@@ -16,6 +16,7 @@ import {
   Title,
   Stack,
 } from "@mantine/core";
+import { toast } from "../../toast/toast";
 
 function RestorePassword() {
   useEffect(() => {
@@ -23,8 +24,8 @@ function RestorePassword() {
   }, []);
   const { classes } = useStyles();
   const navigation = useNavigation();
-  const { errorAppear, handleSetErrorAppear, objectError } = useObjectError();
-  console.log(objectError);
+  const { isActionReturned, handleSetisActionReturned, objectAction } =
+    useObjectActionReturn();
   const form = useForm({
     initialValues: {
       username: "",
@@ -37,24 +38,23 @@ function RestorePassword() {
           : "Invalid email",
     },
   });
+  useEffect(() => {
+    if (isActionReturned) {
+      if (objectAction?.err) {
+        toast(
+          objectAction?.err.message,
+          true,
+          "Request changepassword",
+          "Lỗi",
+          handleSetisActionReturned
+        );
+      }
+    }
+  }, [handleSetisActionReturned, isActionReturned, objectAction]);
   return (
     <div className={classes.mainSection}>
-      {objectError?.status !== 200 && errorAppear && (
-        <Notification
-          icon={<IconX size="1.1rem" />}
-          color="red"
-          onClose={() => {
-            handleSetErrorAppear();
-          }}
-          withCloseButton={true}
-          title="Lỗi"
-          className={classes.errorNotifi}
-        >
-          {objectError?.err.message}
-        </Notification>
-      )}
       <Container size={800} className={classes.Container}>
-        {objectError?.status === 200 && errorAppear && (
+        {objectAction?.json.status === 200 && isActionReturned && (
           <Overlay
             center
             opacity={1}

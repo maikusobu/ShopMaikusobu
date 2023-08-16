@@ -2,12 +2,15 @@ import expressAsyncHandler from "express-async-handler";
 import { Request, NextFunction, Response } from "express";
 import user_manager_paymentModel from "../../models/User_management/user_manager_paymentModel";
 import user_paymentModel from "../../models/User_management/user_paymentModel";
+import { NotFound } from "../../interfaces/ErrorInstances";
 export const getUserPayments = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const { id } = req.params;
+      if (!id) throw new NotFound(404, "Payment_id not found");
       const userPayment = await user_manager_paymentModel
         .findOne({
-          user_id: req.params.id,
+          user_id: id,
         })
         .populate({
           path: "payment_list",
@@ -23,9 +26,12 @@ export const updateDeletePayment = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { payment_id } = req.body;
+      const { id } = req.params;
+      if (!payment_id) throw new NotFound(404, "Payment_id not found");
+      if (!id) throw new NotFound(404, "User_id not found");
       const userPayment = await user_manager_paymentModel
         .findOneAndUpdate(
-          { user_id: req.params.id },
+          { user_id: id },
           {
             $pull: {
               payment_list: payment_id,
@@ -45,7 +51,6 @@ export const updateDeletePayment = expressAsyncHandler(
         data: userPayment,
       });
     } catch (error: any) {
-      console.log(error);
       return next(error);
     }
   }
@@ -55,9 +60,12 @@ export const updateInsertPayment = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { payment_id } = req.body;
+      const { id } = req.params;
+      if (!payment_id) throw new NotFound(404, "Payment_id not found");
+      if (!id) throw new NotFound(404, "User_id not found");
       const userPayment = await user_manager_paymentModel
         .findOneAndUpdate(
-          { user_id: req.params.id },
+          { user_id: id },
           {
             $addToSet: {
               payment_list: payment_id,
@@ -76,7 +84,6 @@ export const updateInsertPayment = expressAsyncHandler(
         data: userPayment,
       });
     } catch (error: any) {
-      console.log(error);
       return next(error);
     }
   }

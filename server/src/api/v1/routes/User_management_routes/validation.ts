@@ -8,8 +8,8 @@ import {
   logout,
   CheckRegisteration,
   resendConFirmNumber,
-} from "../../controllers/services/validationController";
-import { middlwareSocialLogin } from "../../controllers/services/CheckSoscial";
+} from "../../controllers/Auth_validation_controller/validationController";
+import { middlwareSocialLogin } from "../../controllers/Auth_validation_controller/CheckSoscial";
 const router = express.Router();
 router.post("/login", middlwareSocialLogin, signinMiddeware);
 router.post("/refreshToken", refreshToken);

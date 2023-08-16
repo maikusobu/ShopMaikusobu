@@ -20,7 +20,6 @@ const action = async ({ request }: { request: Request }) => {
     );
     const json = await datajson.json();
     if (json.status === 400) {
-      console.log(json);
       throw json;
     } else {
       toast(
@@ -31,8 +30,8 @@ const action = async ({ request }: { request: Request }) => {
       );
       await new Promise((r) => setTimeout(r, 5000));
       return {
-        err: "",
-        status: 200,
+        data,
+        json,
       };
     }
   } catch (err: any) {
