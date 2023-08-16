@@ -16,10 +16,8 @@ export const useHoverRef = () => {
   }, []);
   const handleMouseEnter = () => {
     setIsHovered(true);
-    console.log("mouse enter work");
   };
   const handleMouseLeave = () => {
-    console.log("mouse leave work");
     setIsHovered(false);
   };
   useEffect(() => {

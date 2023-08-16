@@ -12,7 +12,7 @@ const MONGO_URL = process.env.MONGO_URL;
 // import cors from "cors";
 const URL_CLIENT = process.env.URL_CLIENT;
 import { socketMiddleware } from "./api/v1/socketConnection/socketMiddleware";
-import authMiddleware from "./api/v1/controllers/services/AuthMiddleware";
+import authMiddleware from "./api/v1/controllers/Auth_validation_controller/AuthMiddleware";
 import { ErrorFunction } from "./api/v1/middlewares/errorHandling";
 import authenRouter from "./api/v1/routes/User_management_routes/validation";
 import userRouter from "./api/v1/routes/User_management_routes/user";
@@ -105,6 +105,8 @@ app.get("/", (req: Request, res: Response) => {
   res.redirect(`${URL_CLIENT}`);
 });
 app.use(ErrorFunction);
+console.log(process.memoryUsage().heapUsed / 1024 / 1024);
+
 // if (cluster.isPrimary) {
 //   setupMaster(httpServer, {
 //     loadBalancingMethod: "least-connection",

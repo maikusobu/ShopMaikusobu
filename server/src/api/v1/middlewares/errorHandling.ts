@@ -45,6 +45,10 @@ export const ErrorFunction: (
       status: err.status,
     });
   } else {
-    res.status(500).send("Something went wrong");
+    res.status(500).json({
+      type: "InternalServerError",
+      message: err.message,
+      status: 500,
+    });
   }
 };

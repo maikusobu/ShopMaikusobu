@@ -2,15 +2,15 @@ import { Request, Response, NextFunction } from "express";
 import userModel from "../../models/User_management/userModel";
 import asynchandle from "express-async-handler";
 import { saveDataURLToBinaryData } from "../../helpers/savedataurl";
+import { NotFound } from "../../interfaces/ErrorInstances";
 export const userMiddleware = asynchandle(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = await userModel.findById(req.params.id);
       if (!user) {
-        throw new Error("User not found");
+        throw new NotFound(404, "User not found");
       }
       const avatar = "data:image/png;base64," + user.avatar.toString("base64");
-
       const userForfrondent = {
         idDefaultPayment: user.idDefaultPayment,
         idDefaultAddress: user.idDefaultAddress,
@@ -23,10 +23,7 @@ export const userMiddleware = asynchandle(
       };
       res.status(200).json(userForfrondent);
     } catch (error: any) {
-      res.status(404).json({
-        message: error.message,
-        status: 404,
-      });
+      return next(error);
     }
   }
 );
@@ -35,7 +32,7 @@ export const userUpdateMiddleware = asynchandle(
     try {
       const user = await userModel.findById(req.params.id);
       if (!user) {
-        throw new Error("User not found");
+        throw new NotFound(404, "User not found");
       }
       if (req.body.avatar) {
         user.avatar = saveDataURLToBinaryData(req.body.avatar);
@@ -55,10 +52,7 @@ export const userUpdateMiddleware = asynchandle(
         avatar: `${dataURL}`,
       });
     } catch (error: any) {
-      res.status(404).json({
-        message: error.message,
-        status: 404,
-      });
+      return next(error);
     }
   }
 );

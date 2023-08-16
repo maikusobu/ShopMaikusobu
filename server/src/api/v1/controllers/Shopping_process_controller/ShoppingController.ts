@@ -2,6 +2,7 @@ import expressAsyncHandler from "express-async-handler";
 import { Request, Response, NextFunction } from "express";
 import shopping_session from "../../models/Shopping_process/shopping_session";
 import cart_itemModel from "../../models/Shopping_process/cart_itemModel";
+import { NotFound } from "../../interfaces/ErrorInstances";
 export const getShoppingSession = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -26,14 +27,11 @@ export const getShoppingSession = expressAsyncHandler(
         });
 
       if (!shopping_session_data) {
-        throw new Error("Shopping session not found");
+        throw new NotFound(404, "Shopping session not found");
       }
       res.status(200).json(shopping_session_data);
-    } catch (error: any) {
-      res.status(400).json({
-        message: error.message,
-        status: 400,
-      });
+    } catch (error) {
+      return next(error);
     }
   }
 );
@@ -83,7 +81,6 @@ export const updateCartItem = expressAsyncHandler(
         data: shopping_session_data,
       });
     } catch (error: any) {
-      console.log(error);
       return next(error);
     }
   }

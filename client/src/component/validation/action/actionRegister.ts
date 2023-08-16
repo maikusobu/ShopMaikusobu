@@ -24,26 +24,19 @@ const action = async ({ request }: { request: Request }) => {
       body: JSON.stringify(data),
     });
     const json = await res.json();
-    // eslint-disable-next-line no-debugger
-    console.log(json);
-    if (
-      json.response.status === 400 ||
-      json.response.status === 500 ||
-      json.response.status === 404
-    ) {
+    if (json.status === 400 || json.status === 500 || json.status === 404) {
       throw json;
     } else {
-      toast(json.response.message, false, "Register", "Đăng ký");
+      toast(json.message, false, "Register", "Đăng ký");
       await new Promise((r) => setTimeout(r, 3000));
       return {
         data,
-        error: json.response,
+        json,
       };
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
-    console.log(err);
-    return { data, error: err.response };
+    return { data, err: err };
   }
 };
 export default action;

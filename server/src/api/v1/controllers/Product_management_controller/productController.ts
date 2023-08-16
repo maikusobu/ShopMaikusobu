@@ -30,7 +30,6 @@ export const productGetAllMiddleware = expressAsyncHandler(
         products: result.products,
       });
     } catch (err) {
-      console.log(err);
       return next(err);
     }
   }

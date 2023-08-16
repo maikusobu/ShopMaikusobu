@@ -20,7 +20,6 @@ const action = async ({ request }: { request: Request }) => {
     );
     const json = await datajson.json();
     if (json.status === 400) {
-      console.log(json);
       throw json;
     } else {
       toast(
@@ -41,7 +40,7 @@ const action = async ({ request }: { request: Request }) => {
       err: {
         message: "Something went wrong",
       },
-      status: 400,
+      status: 500,
     };
   }
 };

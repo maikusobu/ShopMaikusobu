@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useContext } from "react";
-import { useObjectError } from "../../hook/useObjectError";
+import { useObjectActionReturn } from "../../hook/useObjectActionReturn";
 import { upperFirst } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
 import { Form } from "react-router-dom";
@@ -14,8 +14,7 @@ import { useStyles } from "./styleGlobal";
 import { useNavigation, useNavigate } from "react-router-dom";
 import PasswordRequirement from "./passwordRequirementPop/passwordRequire";
 import { LoadingOverlay } from "@mantine/core";
-import { Notification, PinInput } from "@mantine/core";
-import { IconX } from "@tabler/icons-react";
+import { PinInput } from "@mantine/core";
 import {
   TextInput,
   PasswordInput,
@@ -59,7 +58,8 @@ function Register() {
   const [disable, setDisable] = useState(false);
   const [loading, setLoading] = useState(false);
   const [active, setActive] = useState(0);
-  const { errorAppear, handleSetErrorAppear, objectError } = useObjectError();
+  const { objectAction, handleSetisActionReturned, isActionReturned } =
+    useObjectActionReturn();
 
   const handleVerification = async () => {
     if (numberConfirm.length < 6) return;
@@ -69,7 +69,7 @@ function Register() {
         {
           method: "POST",
           body: JSON.stringify({
-            user_id: objectError.error.id,
+            user_id: objectAction?.json?.id,
             numberConfirm: Number(numberConfirm),
           }),
           headers: {
@@ -99,7 +99,7 @@ function Register() {
         {
           method: "POST",
           body: JSON.stringify({
-            user_id: objectError.error.id,
+            user_id: objectAction?.json?.id,
           }),
           headers: {
             "Content-Type": "application/json",
@@ -126,11 +126,11 @@ function Register() {
   const [numberConfirm, setNumberConfirm] = useState("");
   const form = useForm({
     initialValues: {
-      username: objectError?.data?.username || "",
-      email: data?.user?.email || objectError?.data?.email || "",
-      first_name: data?.user.given_name || objectError?.data?.first_name || "",
-      last_name: data?.user.family_name || objectError?.data?.last_name || "",
-      password: objectError?.data?.password || "",
+      username: objectAction?.data?.username || "",
+      email: data?.user?.email || objectAction?.data?.email || "",
+      first_name: data?.user.given_name || objectAction?.data?.first_name || "",
+      last_name: data?.user.family_name || objectAction?.data?.last_name || "",
+      password: objectAction?.data?.password || "",
       passwordConfirm: "",
     },
     validate: {
@@ -164,31 +164,28 @@ function Register() {
   const strength = getStrength(form.values.password);
   const color = strength === 100 ? "teal" : strength > 50 ? "yellow" : "red";
   useEffect(() => {
-    if (errorAppear) {
-      if (objectError.error.status === 201) {
+    if (isActionReturned) {
+      if (objectAction?.json?.status === 201) {
         setActive((prev) => prev + 1);
       }
+      if (objectAction?.err) {
+        toast(
+          objectAction?.err.message,
+          true,
+          "Register",
+          "Lỗi",
+          handleSetisActionReturned
+        );
+      }
     }
-  }, [errorAppear, objectError]);
+  }, [
+    handleSetisActionReturned,
+    isActionReturned,
+    objectAction?.err,
+    objectAction?.json?.status,
+  ]);
   return (
     <div className={classes.mainSection}>
-      {errorAppear && objectError?.error.status !== 201 && (
-        <Notification
-          icon={<IconX size="1.1rem" />}
-          color="red"
-          onClose={() => {
-            handleSetErrorAppear();
-          }}
-          withCloseButton={true}
-          title="Lỗi 
-          "
-          className={classes.errorNotifi}
-        >
-          {objectError?.error
-            ? `Lỗi xảy ra ở ${objectError?.error.field} : ${objectError?.error.message}`
-            : "Lỗi khi tạo tài khoảng vui lòng nhập lại"}
-        </Notification>
-      )}
       <Container size={800} className={classes.Container}>
         <Stepper
           active={active}

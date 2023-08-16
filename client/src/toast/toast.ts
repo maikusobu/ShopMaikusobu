@@ -3,7 +3,8 @@ export const toast = (
   message: string,
   error = false,
   id: string,
-  title: string
+  title: string,
+  callback?: () => void
 ) => {
   notifications.show({
     id: id,
@@ -13,5 +14,6 @@ export const toast = (
     message: message,
     color: error ? "red" : "green",
     autoClose: 3000,
+    onClose: callback ? callback : undefined,
   });
 };

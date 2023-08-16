@@ -11,7 +11,12 @@ import user_addressManagerModel from "../../models/User_management/user_addressM
 import user_manager_paymentModel from "../../models/User_management/user_manager_paymentModel";
 import user_token from "../../models/User_management/user_token";
 import user_confirm_number from "../../models/User_management/user_confirm_number";
-
+import { Unauthorized, Validation } from "../../interfaces/ErrorInstances";
+import {
+  HttpError,
+  MongoDBError,
+  NotFound,
+} from "../../interfaces/ErrorInstances";
 import crypto from "crypto";
 const worker = new Worker(
   "./dist/js/api/v1/controllers/services/sendEmailWorker.js"
@@ -33,7 +38,7 @@ export const signupMiddeware = asyncHandler(
                 message: "Email already exists",
                 field: "email",
               };
-        res.status(400).json({ response, status: 400 });
+        throw new Validation(400, response.message, response.field);
       } else {
         try {
           const salt = await bcrypt.genSalt(Number(process.env.SALT_ROUND));
@@ -77,20 +82,13 @@ export const signupMiddeware = asyncHandler(
           worker.on("message", (data) => {
             if (data.success) {
               res.status(201).json({
-                response: {
-                  message: "Thư xác nhận đã được chuyển đến mail của bạn",
-                  status: 201,
-                  id: userMade._id,
-                  social: req.body.isSocialConnect ? true : false,
-                },
+                message: "Thư xác nhận đã được chuyển đến mail của bạn",
+                status: 201,
+                id: userMade._id,
+                social: req.body.isSocialConnect ? true : false,
               });
             } else {
-              res.status(500).json({
-                response: {
-                  message: "Cannot send email",
-                  status: 500,
-                },
-              });
+              throw new HttpError(500, "Cannot send email");
             }
           });
         } catch (err: any) {
@@ -98,13 +96,9 @@ export const signupMiddeware = asyncHandler(
             const errors = Object.values(err.errors).map(
               (error: any) => error.message
             );
-            res.status(400).json({
-              response: { message: errors, status: 400 },
-            });
+            throw new MongoDBError(400, errors);
           } else {
-            res.status(500).json({
-              response: { message: "Cannot create user", status: 500 },
-            });
+            throw new HttpError(500, "Cannot create user");
           }
         }
       }
@@ -118,7 +112,7 @@ export const resendConFirmNumber = asyncHandler(
     try {
       const { user_id } = req.body;
       const user = await userModel.findById(user_id);
-      if (!user) throw new Error("User not found");
+      if (!user) throw new NotFound(404, "User not found");
       await user_confirm_number.deleteMany({ user_id: user_id });
       const num = Math.floor(Math.random() * 900000) + 100000;
       await user_confirm_number.create({
@@ -140,20 +134,13 @@ export const resendConFirmNumber = asyncHandler(
       worker.on("message", (data) => {
         if (data.success) {
           res.status(200).json({
-            response: {
-              message: "Thư xác nhận đã được chuyển đến mail của bạn",
-              status: 201,
-              id: user_id,
-              social: req.body.isSocialConnect ? true : false,
-            },
+            message: "Thư xác nhận đã được chuyển đến mail của bạn",
+            status: 201,
+            id: user_id,
+            social: req.body.isSocialConnect ? true : false,
           });
         } else {
-          res.status(500).json({
-            response: {
-              message: "Cannot send email",
-              status: 500,
-            },
-          });
+          throw new HttpError(500, "Cannot send email");
         }
       });
     } catch (err) {
@@ -162,13 +149,14 @@ export const resendConFirmNumber = asyncHandler(
   }
 );
 export const signinMiddeware = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const User = await userModel.findOne({ username: req.body.username });
 
-      if (!User) throw new Error("User not found");
+      if (!User) throw new NotFound(404, "User not found");
       let match = false;
-      if (!User.isVerified) throw new Error("User not verified");
+      if (!User.isVerified)
+        throw new Validation(401, "User not verified", "username");
       if (req.body.isSocialLogin) {
         match = true;
       } else {
@@ -189,11 +177,6 @@ export const signinMiddeware = asyncHandler(
             expiresIn: config.refreshTokenLife,
           }
         );
-        // const sessionID = await sessionModel.create({
-        //   userID: User.id,
-        //   connected: true,
-        //   username: User.username,
-        // });
         res.cookie("token", token, {
           secure: true,
           sameSite: "none",
@@ -212,43 +195,44 @@ export const signinMiddeware = asyncHandler(
           expires: new Date(config.tokenLife).getTime().toString(),
         });
       } else {
-        throw new Error("not matching password");
+        throw new Validation(400, "not matching password", "password");
       }
     } catch (err: any) {
-      res.status(400).json({ message: err.message, status: 400 });
+      return next(err);
     }
   }
 );
 
 export const CheckRegisteration = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { user_id, numberConfirm } = req.body;
       const numberConfirmUser = await user_confirm_number.findOne({
         user_id: user_id,
       });
-      if (!numberConfirmUser) throw new Error("Cannot found number");
+      if (!numberConfirmUser) throw new NotFound(404, "Cannot found number");
       else if (numberConfirmUser.numberConfirm === numberConfirm) {
         const user = await userModel.findById(user_id);
-        if (!user) throw new Error("Cannot found user");
+        if (!user) throw new NotFound(404, "Cannot found user");
         user.isVerified = true;
         await Promise.all([
           user.save(),
           user_confirm_number.findByIdAndDelete(numberConfirmUser._id),
         ]);
-        res.status(200).json({ message: "Confirm success" });
+        res.status(200).json({ message: "Confirm success", status: 200 });
       }
-    } catch (err) {
-      res.status(500).json({ message: err });
+    } catch (err: any) {
+      next(new HttpError(400, err.message));
     }
   }
 );
 export const forgotPasswordMiddeware = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = await userModel.findOne({ username: req.body.username });
-      if (!user) throw new Error("User not found");
-      if (user.email !== req.body.email) throw new Error("Email not matching");
+      if (!user) throw new NotFound(404, "User not found");
+      if (user.email !== req.body.email)
+        throw new Validation(401, "Email not matching", "email");
       await user_token.deleteOne({ user_id: user._id });
       const resetToken = crypto.randomBytes(32).toString("hex");
       const hash = await bcrypt.hash(
@@ -275,29 +259,27 @@ export const forgotPasswordMiddeware = asyncHandler(
       worker.on("message", (data) => {
         if (data.success) {
           res.status(200).json({
+            status: 200,
             message: "Email sent successfully",
             link: link,
           });
         } else {
-          res.status(500).json({
-            message: "Cannot send email",
-            status: 500,
-          });
+          throw new HttpError(500, "Cannot send email");
         }
       });
     } catch (err: any) {
-      res.status(400).json({ message: err.message, status: 400 });
+      return next(err);
     }
   }
 );
 export const changePasswordMiddeware = asyncHandler(
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { user_id, token, password } = req.body;
       const passwordResetToken = await user_token.findOne({ user_id });
-      if (!passwordResetToken) throw new Error("Token not found");
+      if (!passwordResetToken) throw new NotFound(404, "Token not found");
       const isValid = await bcrypt.compare(token, passwordResetToken.token);
-      if (!isValid) throw new Error("Token not valid");
+      if (!isValid) throw new Unauthorized(401, "Token not valid");
       const salt = await bcrypt.genSalt(Number(process.env.SALT_ROUND));
       const hash = await bcrypt.hash(password, salt);
       await userModel.findByIdAndUpdate(user_id, {
@@ -309,59 +291,72 @@ export const changePasswordMiddeware = asyncHandler(
         status: 200,
       });
     } catch (err: any) {
-      res.status(400).json({ message: err.message, status: 400 });
+      return next(err);
     }
   }
 );
-export const refreshToken = (req: Request, res: Response) => {
-  const { refreshToken } = req.body;
-  if (!refreshToken || !refreshTokens.includes(refreshToken)) {
-    res.status(401).json({ message: "refreshtoken failed" });
-  } else
-    verify(
-      refreshToken,
-      process.env.JWT_REFRESHTOKEN_SECRET as string,
-      ((err: any, decode: { id: string }) => {
-        if (err) {
-          res.status(401).json({ message: "refreshtoken failed" });
-        }
-        const access_token = sign(
-          { id: decode.id },
-          process.env.JWT_TOKEN_SECRET as string,
-          {
-            expiresIn: config.tokenLife,
-          }
+export const refreshToken = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { refreshToken } = req.body;
+      if (!refreshToken || !refreshTokens.includes(refreshToken)) {
+        throw new NotFound(404, "Not found refresh token");
+      } else
+        verify(
+          refreshToken,
+          process.env.JWT_REFRESHTOKEN_SECRET as string,
+          ((err: any, decode: { id: string }) => {
+            if (err) {
+              throw new Unauthorized(401, "In valid refresh token");
+            }
+            const access_token = sign(
+              { id: decode.id },
+              process.env.JWT_TOKEN_SECRET as string,
+              {
+                expiresIn: config.tokenLife,
+              }
+            );
+            res.cookie("token", access_token, {
+              secure: true,
+              sameSite: "none",
+              httpOnly: true,
+              maxAge: 480 * 1000,
+              path: "/",
+            });
+            res.status(200).json({
+              refreshToken: refreshToken,
+              status: 200,
+            });
+          }) as VerifyOptions
         );
-        res.cookie("token", access_token, {
-          secure: true,
-          sameSite: "none",
-          httpOnly: true,
-          maxAge: 480 * 1000,
-          path: "/",
-        });
-        res.status(200).json({
-          refreshToken: refreshToken,
-          status: 200,
-        });
-      }) as VerifyOptions
-    );
-};
-export const logout = asyncHandler(async (req: Request, res: Response) => {
-  const { refreshToken } = req.body;
-  if (!refreshToken) res.status(401).json({ message: "Unauthorized" });
-  const index = refreshTokens.indexOf(refreshToken);
-  if (index !== -1) {
-    refreshTokens.splice(index, 1);
+    } catch (err) {
+      return next(err);
+    }
   }
-  // await sessionID.findByIdAndDelete(sessionID);
-  res.cookie("token", "", {
-    secure: true,
-    sameSite: "none",
-    httpOnly: true,
-    maxAge: 480 * 1000,
-    path: "/",
-  });
-  res.status(200).json({
-    message: "Logout successfully",
-  });
-});
+);
+export const logout = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { refreshToken } = req.body;
+      if (!refreshToken) throw new NotFound(404, "Not found refresh token");
+      // const sessionID = await sessionID.findOne({ refreshToken }")
+      const index = refreshTokens.indexOf(refreshToken);
+      if (index !== -1) {
+        refreshTokens.splice(index, 1);
+      }
+      // await sessionID.findByIdAndDelete(sessionID);
+      res.cookie("token", "", {
+        secure: true,
+        sameSite: "none",
+        httpOnly: true,
+        maxAge: 480 * 1000,
+        path: "/",
+      });
+      res.status(200).json({
+        message: "Logout successfully",
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
