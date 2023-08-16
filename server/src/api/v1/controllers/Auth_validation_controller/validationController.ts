@@ -19,7 +19,7 @@ import {
 } from "../../interfaces/ErrorInstances";
 import crypto from "crypto";
 const worker = new Worker(
-  "./dist/js/api/v1/controllers/services/sendEmailWorker.js"
+  "./dist/js/api/v1/controllers/Auth_validation_controller/sendEmailWorker.js"
 );
 const refreshTokens: string[] = [];
 export const signupMiddeware = asyncHandler(
