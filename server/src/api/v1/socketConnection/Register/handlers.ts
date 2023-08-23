@@ -36,6 +36,7 @@ export async function handleConnection(socket: Socket) {
     sessionID: sessionID,
   });
   const users: User[] = [];
+  // eslint-disable-next-line prefer-const
   let [conversations, sessions] = await Promise.all([
     conversationModel
       .find({ "participants.participant_id": socket.handshake.auth.userID })

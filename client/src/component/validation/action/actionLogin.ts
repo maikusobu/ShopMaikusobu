@@ -3,7 +3,7 @@ import { toast } from "../../../toast/toast";
 const action = async ({ request }: { request: Request }) => {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
-  // eslint-disable-next-line no-debugger
+   
   try {
     const datajson = await fetch(
       `${import.meta.env.VITE_SERVER}/authen/login`,

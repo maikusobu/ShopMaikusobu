@@ -3,7 +3,6 @@ import { generatedAvatar } from "../../../Helper/generatedAvatar";
 import { blobToDataURL } from "../../../Helper/BlobToDataUrl";
 
 const action = async ({ request }: { request: Request }) => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const formData = await request.formData();
   let avatarUser = "";
   const blob = await generatedAvatar(formData.get("username") as string);
@@ -13,7 +12,6 @@ const action = async ({ request }: { request: Request }) => {
     isSocialConnect: formData.get("isSocialLogin") === "true" ? true : false,
     avatar: avatarUser,
   };
-  // eslint-disable-next-line no-debugger
   try {
     const res = await fetch(`${import.meta.env.VITE_SERVER}/authen/signup`, {
       method: "POST",

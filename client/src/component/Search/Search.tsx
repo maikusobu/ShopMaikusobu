@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import { IconSearch } from "@tabler/icons-react";
 import { useGetSearchProductQuery } from "../../api/ProductReducer/ProductApi";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface SearchProps extends SelectItemProps {
   name: string;
   id: string;
@@ -36,7 +35,7 @@ function Search(props: Omit<ComponentProps<typeof Autocomplete>, "data">) {
     value: product.label,
   }));
   const itemSearch = forwardRef<HTMLDivElement, SearchProps>(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     ({ value, id, ...others }: SearchProps, ref) => (
       <div ref={ref} {...others}>
         <Link

@@ -98,8 +98,6 @@ function GeneralInfo() {
   const dataUrlRef = useRef<string | null>(null);
   const [updateUser, { isLoading }] = useUpdateUserMutation();
   const [position, setPosition] = useState({ x: 0, y: 0 });
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<{
     x?: number;
     y?: number;

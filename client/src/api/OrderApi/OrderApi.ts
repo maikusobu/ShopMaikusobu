@@ -20,7 +20,6 @@ const OrderAPi = baseApi.injectEndpoints({
       providesTags: (result) =>
         result
           ? [
-              // eslint-disable-next-line no-unsafe-optional-chaining
               ...result.map((item) => ({
                 type: "Order" as const,
                 id: item._id,

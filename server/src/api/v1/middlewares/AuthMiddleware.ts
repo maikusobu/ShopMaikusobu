@@ -1,7 +1,7 @@
 import { Response, Request, NextFunction } from "express";
 import { verify, VerifyOptions } from "jsonwebtoken";
 import { unless } from "express-unless";
-import { Unauthorized } from "../../interfaces/ErrorInstances";
+import { Unauthorized } from "../interfaces/ErrorInstances";
 interface DecodedToken {
   id: string;
 }
@@ -14,6 +14,7 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     verify(
       token,
       process.env.JWT_TOKEN_SECRET as string,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ((err: any, decoded: DecodedToken) => {
         if (err) return next(new Unauthorized(401, "Invalid token"));
         else {

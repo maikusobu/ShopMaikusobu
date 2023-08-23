@@ -2,7 +2,6 @@ import { Group, Box, Avatar, Anchor, Rating, Stack, Text } from "@mantine/core";
 import useAvatar from "../../../hook/useAvatar";
 import type { UserJson } from "../../../api/UserApi/UserApi";
 import { useGetProductByIdQuery } from "../../../api/ProductReducer/ProductApi";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function UserReviewCard({
   user,
   product_id,

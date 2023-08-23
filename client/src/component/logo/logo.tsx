@@ -5,10 +5,11 @@ function Logo(props: ImageProps) {
     <Image
       src={logo}
       alt="Logo"
-      width={props.width}
-      height={props.height}
+      width={props.width ? props.width : 100}
+      height={props.height ? props.height : 50}
       radius="md"
       style={props.style}
+      {...props}
     />
   );
 }
