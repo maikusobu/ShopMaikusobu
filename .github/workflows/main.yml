@@ -1,4 +1,4 @@
-name: Hello World!
+name: Deployment pipeline
 
 on:
   push:
@@ -6,18 +6,32 @@ on:
       - main
 
 jobs:
-  hello_world_job:
+
+  simple_deployment_pipeline:
     runs-on: ubuntu-20.04
     steps:
-      - name: Say hello
+      - uses: actions/checkout@v2
+      
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          
+      - name: Install dependencies for client
         run: |
-          echo "Hello World!"
+          cd client
+          npm install --force
 
-      - name: Show current date
+      - name: Check style for client
         run: |
-          echo "Current date: $(date)"
+          cd client
+          npm run lint
 
-      - name: List files
+      - name: Install dependencies for server
         run: |
-          ls -l
+          cd server
+          npm install
 
+      - name: Check style for server
+        run: |
+          cd server
+          npm run lint
