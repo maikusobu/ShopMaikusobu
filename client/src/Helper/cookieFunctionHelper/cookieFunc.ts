@@ -11,7 +11,7 @@ interface CookieOptions {
   path?: string;
   expires?: Date | string;
   secure?: boolean;
-  [key: string]: any;
+  [key: string]: string | boolean | Date | undefined | number;
 }
 export function setCookie(
   name: string,

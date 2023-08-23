@@ -1,18 +1,18 @@
 import express, { Express, Request, Response } from "express";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
-require("dotenv").config();
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { dirPath } from "./api/v1/helpers/returnUrl";
 import mongoose from "mongoose";
 import morgan from "morgan";
 import bodyParser from "body-parser";
-const MONGO_URL = process.env.MONGO_URL;
+import { configEnv } from "./config/configEnv";
+const MONGO_URL = configEnv.mongoUrl;
 // import cors from "cors";
-const URL_CLIENT = process.env.URL_CLIENT;
+const URL_CLIENT = configEnv.urlClient;
 import { socketMiddleware } from "./api/v1/socketConnection/socketMiddleware";
-import authMiddleware from "./api/v1/controllers/Auth_validation_controller/AuthMiddleware";
+import authMiddleware from "./api/v1/middlewares/AuthMiddleware";
 import { ErrorFunction } from "./api/v1/middlewares/errorHandling";
 import authenRouter from "./api/v1/routes/User_management_routes/validation";
 import userRouter from "./api/v1/routes/User_management_routes/user";
@@ -40,7 +40,7 @@ import {
 // import cluster from "cluster";
 // import { setupMaster, setupWorker } from "@socket.io/sticky";
 // import { createAdapter, setupPrimary } from "@socket.io/cluster-adapter";
-// const numCPUs = 3;
+// const numCPUs = 1;
 const app: Express = express();
 const httpServer = createServer(app);
 const io = new Server<
@@ -49,7 +49,7 @@ const io = new Server<
   InterServerEvents,
   SocketData
 >(httpServer, {
-  cors: { origin: `${process.env.URL_CLIENT}`, credentials: true },
+  cors: { origin: `${URL_CLIENT}`, credentials: true },
 });
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -101,7 +101,6 @@ app.use("/shopping", ShoppingRouter);
 app.use("/cart-item", CartItemRouter);
 app.use("/order", OrderRouter);
 app.get("/", (req: Request, res: Response) => {
-  console.log(URL_CLIENT);
   res.redirect(`${URL_CLIENT}`);
 });
 app.use(ErrorFunction);
@@ -112,10 +111,6 @@ console.log(process.memoryUsage().heapUsed / 1024 / 1024);
 //     loadBalancingMethod: "least-connection",
 //   });
 //   setupPrimary();
-//   cluster.setupPrimary({
-//     serialization: "advanced",
-//   });
-
 //   console.log(`Master ${process.pid} is running`);
 //   const PORT = process.env.PORT || 3001;
 //   httpServer.listen(PORT, () =>
@@ -130,14 +125,6 @@ console.log(process.memoryUsage().heapUsed / 1024 / 1024);
 //   });
 // } else {
 //   console.log(`Worker ${process.pid} started`);
-//   const io = new Server<
-//     ClientToServerEvents,
-//     ServerToClientEvents,
-//     InterServerEvents,
-//     SocketData
-//   >(httpServer, {
-//     cors: { origin: `${process.env.URL_CLIENT}`, credentials: true },
-//   });
 //   io.adapter(createAdapter());
 //   io.use(socketMiddleware);
 //   io.on("connection", async (socket) => {
@@ -148,8 +135,7 @@ console.log(process.memoryUsage().heapUsed / 1024 / 1024);
 //     handleDisconnection(socket, io);
 //   });
 //   setupWorker(io);
-// } // absorb too much ram on server:and crash
-
+// }
 io.use(socketMiddleware);
 io.on("connection", async (socket) => {
   handleConnection(socket);
@@ -158,7 +144,8 @@ io.on("connection", async (socket) => {
   handleNewMessageCheck(socket);
   handleDisconnection(socket, io);
 });
-const PORT = process.env.PORT || 3001;
+const PORT = configEnv.port || 3001;
 httpServer.listen(PORT, () =>
   console.log(`server listening at http://localhost:${PORT}`)
 );
+export default app;

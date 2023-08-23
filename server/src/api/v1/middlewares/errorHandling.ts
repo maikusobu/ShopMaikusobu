@@ -11,7 +11,7 @@ export const ErrorFunction: (
   req: Request,
   res: Response,
   next: NextFunction
-) => void = (err: Error, req: Request, res: Response, next: NextFunction) => {
+) => void = (err: Error, req: Request, res: Response) => {
   if (err instanceof HttpError) {
     res.status(err.status).json({
       type: "HttpError",

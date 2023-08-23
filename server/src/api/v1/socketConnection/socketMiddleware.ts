@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Socket } from "socket.io";
 import userModel from "../models/User_management/userModel";
 import sessionModel from "../models/User_Chat_management/sessionModel";

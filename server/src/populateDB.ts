@@ -1,6 +1,6 @@
 import expressAsyncHandler from "express-async-handler";
 import express, { Request, Response } from "express";
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 import { fakerVI as vietnameseFaker, faker } from "@faker-js/faker";
 import product_categoryModel from "./api/v1/models/Product_management/product_categoryModel";
 import product_discountModel from "./api/v1/models/Product_management/product_discountModel";
@@ -15,19 +15,18 @@ import user_rating from "./api/v1/models/User_management/user_rating";
 import user_reaction from "./api/v1/models/User_management/user_reaction";
 require("dotenv").config();
 const app = express();
-mongoose.connect(`${process.env.MONGO_URL}`, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(`${process.env.MONGO_URL}`);
 const db = mongoose.connection;
-db.on("error", (err: any) => {
+db.on("error", (err: unknown) => {
   console.error("MongoDB connection error:", err);
 });
 app.get(
   "/",
   expressAsyncHandler(async (req: Request, res: Response) => {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const products: any[] = [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const users: any[] = [];
       const promises = [];
       for (let i = 0; i < 100; i++) {

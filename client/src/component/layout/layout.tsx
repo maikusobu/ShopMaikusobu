@@ -9,7 +9,7 @@ type layoutProp = {
 function Layout({ children }: layoutProp) {
   const dispatch = useAppDispatch();
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     dispatch(checkLogin() as unknown as AnyAction);
   }, [dispatch]);
 

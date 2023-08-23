@@ -122,7 +122,7 @@ function Register() {
   const navigation = useNavigation();
   const navigate = useNavigate();
   const [popoverOpened, setPopoverOpened] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-debugger
+   
   const [numberConfirm, setNumberConfirm] = useState("");
   const form = useForm({
     initialValues: {

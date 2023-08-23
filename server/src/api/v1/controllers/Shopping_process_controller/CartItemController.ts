@@ -1,15 +1,15 @@
-import { Request, Response, NextFunction } from "express";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import * as cartService from "../../services/cartService";
 import expressAsyncHandler from "express-async-handler";
-import cart_itemModel from "../../models/Shopping_process/cart_itemModel";
-import { NotFound, MongoDBError } from "../../interfaces/ErrorInstances";
+import { Request, Response, NextFunction } from "express";
+import { MongoDBError } from "../../interfaces/ErrorInstances";
+
 export const getCartItemByProductId = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { product_id } = req.params;
-      const cartItem = await cart_itemModel.findOne({ product_id }).lean();
-      if (!cartItem) {
-        throw new NotFound(404, "Cart item not found");
-      }
+      const cartItem = await cartService.getCartItemByProductId(
+        req.params.product_id ? req.params.product_id : ""
+      );
       res.status(200).json({
         message: "Cart item fetched successfully",
         data: cartItem,
@@ -19,21 +19,11 @@ export const getCartItemByProductId = expressAsyncHandler(
     }
   }
 );
+
 export const createCartItem = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { product_id, quantity } = req.body;
-      let cartItem;
-      const cartItemFound = await cart_itemModel.findOne({ product_id }).lean();
-      if (cartItemFound) {
-        cartItem = await cart_itemModel.findOneAndUpdate(
-          { product_id: product_id },
-          { quantity: quantity + cartItemFound.quantity },
-          {
-            new: true,
-          }
-        );
-      } else cartItem = await cart_itemModel.create({ product_id, quantity });
+      const cartItem = await cartService.createCartItem(req.body);
       res.status(201).json({
         message: "Cart item created successfully",
         data: cartItem,
@@ -49,18 +39,11 @@ export const createCartItem = expressAsyncHandler(
     }
   }
 );
+
 export const updateCartItem = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { product_id, quantity } = req.body;
-      const cartItem = await cart_itemModel.findOneAndUpdate(
-        { product_id },
-        { quantity },
-        { new: true, runValidators: true }
-      );
-      if (!cartItem) {
-        throw new NotFound(404, "Cart item not found");
-      }
+      const cartItem = await cartService.updateCartItem(req.body);
       res.status(200).json({
         message: "Cart item updated successfully",
         data: cartItem,
@@ -70,14 +53,11 @@ export const updateCartItem = expressAsyncHandler(
     }
   }
 );
+
 export const deleteCartItem = expressAsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { product_id } = req.body;
-      const cartItem = await cart_itemModel.findOneAndDelete({ product_id });
-      if (!cartItem) {
-        throw new NotFound(404, "Cart item not found");
-      }
+      const cartItem = await cartService.deleteCartItem(req.body.product_id);
       res.status(200).json({
         message: "Cart item deleted successfully",
         data: cartItem,

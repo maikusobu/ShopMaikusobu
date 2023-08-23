@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { parentPort } from "worker_threads";
 import { sendEmail } from "../../utils/email/sendMail";
 parentPort?.on("message", async (data) => {

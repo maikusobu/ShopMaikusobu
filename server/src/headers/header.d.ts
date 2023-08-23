@@ -1,4 +1,4 @@
-import session from "express-session";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 declare module "express-session" {
   export interface SessionData {

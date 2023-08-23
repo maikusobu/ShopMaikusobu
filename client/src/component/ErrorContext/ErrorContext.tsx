@@ -21,7 +21,6 @@ export const ErrorContext = createContext<ErrorContextValue>({
 });
 
 const ErrorProvider = ({ children }: { children: React.ReactNode }) => {
-  // eslint-disable-next-line prefer-const
   const [data, setData] = useState<string | null>(null);
   const [error, setError] = useState<ErrorContextType | null>(null);
 

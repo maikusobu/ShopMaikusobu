@@ -1,5 +1,5 @@
 import { Login } from "../../api/AuthReducer/AuthReduce";
-import type { AppThunk } from "../thunk";
+import type { AppThunk } from "../store";
 export function checkLogin(): AppThunk {
   return function checkLoginThunk(dispatch, getState) {
     const auth = getState().auth;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response, NextFunction } from "express";
 import { OAuth2Client } from "google-auth-library";
 const fetch = require("node-fetch");

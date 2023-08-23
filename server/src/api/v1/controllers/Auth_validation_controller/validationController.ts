@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { Worker } from "worker_threads";
 import { saveDataURLToBinaryData } from "../../helpers/savedataurl";
 import { sign, verify, VerifyOptions } from "jsonwebtoken";
-import { config } from "../../../../config/configJWT";
 import asyncHandler from "express-async-handler";
 import userModel from "../../models/User_management/userModel";
 import shopping_session from "../../models/Shopping_process/shopping_session";
@@ -18,6 +18,7 @@ import {
   NotFound,
 } from "../../interfaces/ErrorInstances";
 import crypto from "crypto";
+import { config } from "../../../../config/configJwt";
 const worker = new Worker(
   "./dist/js/api/v1/controllers/Auth_validation_controller/sendEmailWorker.js"
 );
@@ -107,47 +108,6 @@ export const signupMiddeware = asyncHandler(
     }
   }
 );
-export const resendConFirmNumber = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { user_id } = req.body;
-      const user = await userModel.findById(user_id);
-      if (!user) throw new NotFound(404, "User not found");
-      await user_confirm_number.deleteMany({ user_id: user_id });
-      const num = Math.floor(Math.random() * 900000) + 100000;
-      await user_confirm_number.create({
-        user_id: user_id,
-        numberConfirm: num,
-        createdAt: new Date(),
-      });
-      worker.postMessage({
-        email: user.email,
-        subject: "Verify Account",
-        templateData: {
-          "user-name": user.username,
-          "site-name": "ShopMaikusobu",
-          "support-email": "shopmaikusobu@gmail.com",
-          "confirm-number": num,
-        },
-        templateName: "requestRegister",
-      });
-      worker.on("message", (data) => {
-        if (data.success) {
-          res.status(200).json({
-            message: "Thư xác nhận đã được chuyển đến mail của bạn",
-            status: 201,
-            id: user_id,
-            social: req.body.isSocialConnect ? true : false,
-          });
-        } else {
-          throw new HttpError(500, "Cannot send email");
-        }
-      });
-    } catch (err) {
-      return next(err);
-    }
-  }
-);
 export const signinMiddeware = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -197,12 +157,52 @@ export const signinMiddeware = asyncHandler(
       } else {
         throw new Validation(400, "not matching password", "password");
       }
-    } catch (err: any) {
+    } catch (err) {
       return next(err);
     }
   }
 );
-
+export const resendConFirmNumber = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { user_id } = req.body;
+      const user = await userModel.findById(user_id);
+      if (!user) throw new NotFound(404, "User not found");
+      await user_confirm_number.deleteMany({ user_id: user_id });
+      const num = Math.floor(Math.random() * 900000) + 100000;
+      await user_confirm_number.create({
+        user_id: user_id,
+        numberConfirm: num,
+        createdAt: new Date(),
+      });
+      worker.postMessage({
+        email: user.email,
+        subject: "Verify Account",
+        templateData: {
+          "user-name": user.username,
+          "site-name": "ShopMaikusobu",
+          "support-email": "shopmaikusobu@gmail.com",
+          "confirm-number": num,
+        },
+        templateName: "requestRegister",
+      });
+      worker.on("message", (data) => {
+        if (data.success) {
+          res.status(200).json({
+            message: "Thư xác nhận đã được chuyển đến mail của bạn",
+            status: 201,
+            id: user_id,
+            social: req.body.isSocialConnect ? true : false,
+          });
+        } else {
+          throw new HttpError(500, "Cannot send email");
+        }
+      });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
 export const CheckRegisteration = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {

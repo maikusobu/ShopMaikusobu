@@ -42,8 +42,6 @@ function CheckOutContent() {
       OrderItems: orderItems as OrderItem[],
       payment_id: user?.idDefaultPayment as string,
     };
-    // eslint-disable-next-line no-debugger
-
     createOrder(OrderDetails)
       .unwrap()
       .then(() => {

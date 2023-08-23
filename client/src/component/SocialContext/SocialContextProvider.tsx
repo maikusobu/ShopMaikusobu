@@ -15,7 +15,7 @@ type SocialContextType = {
   data: dataResponse | null;
   setData: (data: dataResponse | null) => void;
 };
-// eslint-disable-next-line @typescript-eslint/no-empty-function
+
 export const SocialContext = createContext<SocialContextType>({
   data: null,
   // eslint-disable-next-line @typescript-eslint/no-empty-function

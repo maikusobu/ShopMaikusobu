@@ -23,9 +23,9 @@ const UserPayment = new Schema({
       validator: function (v: number) {
         let nCheck = 0;
         let bEven = false;
-        let sNum = v.toString();
+        const sNum = v.toString();
         for (let n = sNum.length - 1; n >= 0; n--) {
-          let cDigit = sNum.charAt(n);
+          const cDigit = sNum.charAt(n);
           let nDigit = parseInt(cDigit, 10);
           if (bEven && (nDigit *= 2) > 9) nDigit -= 9;
           nCheck += nDigit;
