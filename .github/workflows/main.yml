@@ -7,19 +7,17 @@ on:
   pull_request:
     branches: [main]
     types: [opened, synchronize]
-    
-permissions: read-all|write-all
 
 jobs:
 
   simple_deployment_pipeline:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
           
       - name: Install dependencies for client
         run: |
@@ -41,16 +39,48 @@ jobs:
           cd server
           npm run lint
 
-      - name: Trigger deployment
-        if:  ${{ success() }} && ${{ github.event_name == 'push' }}
+  run_tests:
+    needs: [simple_deployment_pipeline] 
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies for client
         run: |
-          curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API }}
+          cd client
+          npm install --force
+
+      - name: Run tests for client
+        run: |
+          cd client
+          npm run test
+
+      - name: Install dependencies for server
+        run: |
+          cd server
+          npm install
+
+      - name: Run tests for server
+        run: |
+          cd server
+          npm run test
+
+      - name: Trigger deployment
+        if: ${{ success() }} && ${{ github.event_name == 'push' }}
+        run: |
+          curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API }} 
+
   tag_release:
-      needs: [simple_deployment_pipeline]
-      runs-on: ubuntu-20.04
-      steps:
-      
-       - name: Bump version and push tag
-         uses: anothrNick/github-tag-action@1.55.0
-         env:
+    needs: [run_tests]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.55.0
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
