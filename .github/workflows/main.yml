@@ -9,75 +9,96 @@ on:
     types: [opened, synchronize]
 
 jobs:
-
-  simple_deployment_pipeline:
+  setup:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
-      
+
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-          
+
+      - name: Cache node modules for client
+        uses: actions/cache@v2
+        with:
+          path: client/node_modules
+          key: ${{ runner.os }}-client-${{ hashFiles('client/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-client-
+
       - name: Install dependencies for client
         run: |
           cd client
-          npm install --force
+          npm ci --prefer-offline
+
+      - name: Cache node modules for server
+        uses: actions/cache@v2
+        with:
+          path: server/node_modules
+          key: ${{ runner.os }}-server-${{ hashFiles('server/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-server-
+
+      - name: Install dependencies for server
+        run: |
+          cd server
+          npm ci --prefer-offline
+
+  check_style_client:
+    needs: [setup]
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
 
       - name: Check style for client
         run: |
           cd client
           npm run lint
 
-      - name: Install dependencies for server
-        run: |
-          cd server
-          npm install
+  check_style_server:
+    needs: [setup]
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
 
       - name: Check style for server
         run: |
           cd server
           npm run lint
 
-  run_tests:
-    needs: [simple_deployment_pipeline] 
+  run_tests_client:
+    needs: [check_style_client, check_style_server]
     runs-on: ubuntu-20.04
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-
-      - name: Install dependencies for client
-        run: |
-          cd client
-          npm install --force
+      - uses: actions/checkout@v3
 
       - name: Run tests for client
         run: |
           cd client
           npm run test
 
-      - name: Install dependencies for server
-        run: |
-          cd server
-          npm install
+  run_tests_server:
+    needs: [check_style_client, check_style_server]
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
 
       - name: Run tests for server
         run: |
           cd server
           npm run test
 
+  deploy:
+    needs: [run_tests_client, run_tests_server]
+    runs-on: ubuntu-20.04
+    steps:
       - name: Trigger deployment
         if: ${{ success() }} && ${{ github.event_name == 'push' }}
         run: |
-          curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API }} 
+          curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API }}
 
   tag_release:
-    needs: [run_tests]
+    needs: [deploy]
     runs-on: ubuntu-20.04
     steps:
       - name: Bump version and push tag
