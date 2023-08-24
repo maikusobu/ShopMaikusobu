@@ -17,32 +17,17 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
-
-      - name: Cache node modules for client
-        uses: actions/cache@v3
-        with:
-          path: client/node_modules
-          key: ${{ runner.os }}-client-${{ hashFiles('client/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-client-
-
+          cache: 'npm'
+          
       - name: Install dependencies for client
         run: |
           cd client
-          npm install --force
-
-      - name: Cache node modules for server
-        uses: actions/cache@v2
-        with:
-          path: server/node_modules
-          key: ${{ runner.os }}-server-${{ hashFiles('server/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-server-
+          npm ci --force
 
       - name: Install dependencies for server
         run: |
           cd server
-          npm install
+          npm ci
 
   check_style_client:
     needs: [setup]
