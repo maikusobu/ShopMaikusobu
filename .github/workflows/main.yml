@@ -9,75 +9,50 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  setup:
+  Test_and_lint_on_client:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
-
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: |
-            server/package-lock.json
-            client/package-lock.json
-       
+          cache-dependency-path: 'client/package-lock.json'
       - name: Install dependencies for client
         run: |
           cd client
           npm ci --force
-
-      - name: Install dependencies for server
-        run: |
-          cd server
-          npm ci
-
-  check_style_client:
-    needs: [setup]
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Check style for client
+      - name: Run lint for client
         run: |
           cd client
           npm run lint
-
-  check_style_server:
-    needs: [setup]
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Check style for server
-        run: |
-          cd server
-          npm run lint
-
-  run_tests_client:
-    needs: [check_style_client, check_style_server]
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3
-
       - name: Run tests for client
         run: |
           cd client
           npm run test
-
-  run_tests_server:
-    needs: [check_style_client, check_style_server]
+  Test_and_lint_on_server:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
-
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'server/package-lock.json'
+      - name: Install dependencies for server
+        run: |
+          cd server
+          npm ci   
+      - name: Run lint for server
+        run: |
+          cd server
+          npm run lint
       - name: Run tests for server
         run: |
           cd server
           npm run test
-
   deploy:
-    needs: [run_tests_client, run_tests_server]
+    needs: [Test_and_lint_on_client, Test_and_lint_on_server]
     runs-on: ubuntu-20.04
     steps:
       - name: Trigger deployment
