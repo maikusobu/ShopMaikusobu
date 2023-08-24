@@ -86,6 +86,7 @@ mongoose.connection.on("error", (err) => {
 mongoose.connection.on("disconnected", () => {
   console.log("mongoDB disconnected");
 });
+console.log(MONGO_URL);
 const excludePaths = [/^\/products\/(.*)/, /^\/authen\/(.*)/, "/products"];
 app.use(authMiddleware.unless({ path: excludePaths }));
 app.use(express.static(dirPath));

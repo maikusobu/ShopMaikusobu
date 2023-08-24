@@ -1,22 +1,22 @@
 import express from "express";
 import {
-  signupMiddeware,
-  signinMiddeware,
-  forgotPasswordMiddeware,
-  changePasswordMiddeware,
-  refreshToken,
-  logout,
-  CheckRegisteration,
-  resendConFirmNumber,
+  signupMiddleware,
+  signinMiddleware,
+  forgotPasswordMiddleware,
+  changePasswordMiddleware,
+  refreshTokenMiddleware,
+  logoutMiddleware,
+  checkRegistrationMiddleware,
+  resendConfirmNumberMiddleware,
 } from "../../controllers/Auth_validation_controller/validationController";
-import { middlwareSocialLogin } from "../../controllers/Auth_validation_controller/CheckSoscial";
+import { middlwareSocialLogin } from "../../middlewares/CheckSoscial";
 const router = express.Router();
-router.post("/login", middlwareSocialLogin, signinMiddeware);
-router.post("/refreshToken", refreshToken);
-router.post("/resend", resendConFirmNumber);
-router.post("/verify", CheckRegisteration);
-router.post("/logout", logout);
-router.post("/signup", signupMiddeware);
-router.post("/forgotpassword", forgotPasswordMiddeware);
-router.patch("/changepassword", changePasswordMiddeware);
+router.post("/login", middlwareSocialLogin, signinMiddleware);
+router.post("/refreshToken", refreshTokenMiddleware);
+router.post("/resend", resendConfirmNumberMiddleware);
+router.post("/verify", checkRegistrationMiddleware);
+router.post("/logout", logoutMiddleware);
+router.post("/signup", signupMiddleware);
+router.post("/forgotpassword", forgotPasswordMiddleware);
+router.patch("/changepassword", changePasswordMiddleware);
 export default router;
