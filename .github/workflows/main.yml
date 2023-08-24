@@ -19,7 +19,7 @@ jobs:
           node-version: '18'
 
       - name: Cache node modules for client
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: client/node_modules
           key: ${{ runner.os }}-client-${{ hashFiles('client/package-lock.json') }}
@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies for client
         run: |
           cd client
-          npm ci --prefer-offline --force
+          npm install --force
 
       - name: Cache node modules for server
         uses: actions/cache@v2
@@ -42,7 +42,7 @@ jobs:
       - name: Install dependencies for server
         run: |
           cd server
-          npm ci --prefer-offline
+          npm install
 
   check_style_client:
     needs: [setup]
