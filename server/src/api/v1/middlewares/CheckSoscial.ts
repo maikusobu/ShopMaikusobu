@@ -2,8 +2,8 @@
 import { Request, Response, NextFunction } from "express";
 import { OAuth2Client } from "google-auth-library";
 const fetch = require("node-fetch");
-import userModel from "../../models/User_management/userModel";
-import { HttpError } from "../../interfaces/ErrorInstances";
+import userModel from "../models/User_management/userModel";
+import { HttpError } from "../interfaces/ErrorInstances";
 require("dotenv").config();
 const oAuth2Client = new OAuth2Client(
   process.env.CLIENT_ID,

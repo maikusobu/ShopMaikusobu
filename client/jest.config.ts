@@ -9,6 +9,9 @@ const config: Config.InitialOptions = {
         diagnostics: {
           ignoreCodes: [1343],
         },
+        tsconfig: "tsconfig.jest.json",
+        useESM: true,
+        typescript: require.resolve("typescript"),
         astTransformers: {
           before: [
             {
@@ -28,13 +31,6 @@ const config: Config.InitialOptions = {
   },
   moduleNameMapper: {
     "\\.(gif|ttf|eot|svg|png)$": "<rootDir>/src/test/__mocks__/fileMock.js",
-  },
-  globals: {
-    "ts-jest": {
-      tsconfig: "tsconfig.jest.json",
-      useESM: true,
-      typescript: require.resolve("typescript"),
-    },
   },
 };
 export default config;
