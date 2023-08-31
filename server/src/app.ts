@@ -86,7 +86,6 @@ mongoose.connection.on("error", (err) => {
 mongoose.connection.on("disconnected", () => {
   console.log("mongoDB disconnected");
 });
-console.log(MONGO_URL);
 const excludePaths = [/^\/products\/(.*)/, /^\/authen\/(.*)/, "/products"];
 app.use(authMiddleware.unless({ path: excludePaths }));
 app.use(express.static(dirPath));
@@ -105,7 +104,7 @@ app.get("/", (req: Request, res: Response) => {
   res.redirect(`${URL_CLIENT}`);
 });
 app.use(ErrorFunction);
-console.log(process.memoryUsage().heapUsed / 1024 / 1024);
+
 
 // if (cluster.isPrimary) {
 //   setupMaster(httpServer, {

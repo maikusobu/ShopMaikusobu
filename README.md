@@ -13,9 +13,7 @@ ShopMaikusobu is a full-stack e-commerce and social web application that enables
   - 🖨️ [Technologies](#technologies)
   - ⬇️ [Installation](#installation)
   - 🌐 [Demo](#demo)
-  - 📜 [License](#license)
   - 🚍 [Resources](#resources)
-  - 🤲 [Contributors](#contributors)
 
 ## ✨ Features <a name="features"></a>
 
@@ -63,19 +61,12 @@ ShopMaikusobu is a full-stack e-commerce and social web application that enables
 To run the application locally, you need to have Node.js and MongoDB installed on your machine. Then follow these steps:
 
 1. Clone the repository from GitHub: `git clone https://github.com/maikusobu/ShopMaikusobu.git`
-2. Navigate to the project folder: `cd shopmaikusobu`
-3. Navigate to the server folder: `cd server`
-4. Install the dependencies of server: `npm install`
-5. Populate the database: `npm run populate`
-6. Complete build before run the server: `npm run build-template`
-7. Run the server: `npm run dev`
-8. The server will be listened on `http://localhost:3000`
-9. Navigate back to the root folder: `cd ..`
-10. Navigate to the client folder: `cd client`
-11. Install the dependencies of the client: `npm install --force`
-12. Run build the client: `npm run build`
-13. Start the client: `npm run dev`
-14. Open your browser and go to `http://localhost:5173`
+2. Navigate to the project folder: `cd ShopMaikusobu`
+3. Install the dependencies of both server and client: `npm run install-all`
+4. Populate the database: `npm run populate`
+5. Build the server and client: `npm run build-all`
+6. Start the server and client concurrently: `npm run start-all`
+7. Open your browser and go to http://localhost:5173
 
 ## 🌐 Demo <a name="demo"></a>
 
@@ -84,12 +75,6 @@ You can also view a live demo of the application here: https://shopmaikusobu.ver
 <div>
 <img src="https://ik.imagekit.io/tjiw3sd2q/image.png?updatedAt=1691386726212"/>
 </div>
-
-## 📜 License <a name="license"></a>
-
-- This project is licensed under the MIT License
-- Owner: [<img src="https://github.com/maikusobu.png" width="60px;"/>](https://github.com/maikusobu/ShopMaikusobu) <br/>
-  <Strong><a href="https://github.com/maikusobu">Maikusobu</a></Strong>
 
 ## 🚍 Resources <a name="resources"></a>
 
@@ -101,12 +86,3 @@ Here are some external resources or references that are related to this project:
 - [RTK Query Documentation](https://redux-toolkit.js.org/rtk-query/overview)
 - [Mantine UI Documentation](https://mantine.dev/pages/basics/)
 - [Socket.io Documentation](https://socket.io/docs/v4/)
-
-## 🤲 Contributors <a name="contributors"></a>
-
-Here are the contributors of this project:
-
-<div>
-	<a href="https://github.com/maikusobu"><img src="https://github.com/maikusobu.png" width="60px;"/> </a>
-    <a href="https://github.com/Nhat-Original"><img src="https://github.com/Nhat-Original.png" width="60px;"/> </a>
-</div>
