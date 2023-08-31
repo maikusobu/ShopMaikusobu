@@ -1,0 +1,29 @@
+{
+  "name": "e-commerce",
+  "version": "1.0.0",
+  "description": "<div align=\"center\">\r   <img src=\"https://ik.imagekit.io/tjiw3sd2q/logo.jpg?tr=w-200,h-200,q-50\"/>\r </div>",
+"scripts": {
+    "install-all": "cd server && npm install && cd ../client && npm install --force",
+    "build-all": "cd server && npm run build-template && cd ../client && npm run build",
+    "start-all": "cd server && npm run dev & cd client && npm run dev",
+    "populate": "cd server && npm run populate"
+  },
+  "repository": {
+  "type": "git",
+  "url": "https://github.com/maikusobu/ShopMaikusobu.git"
+  },
+  "homepage": "https://shopmaikusobu.vercel.app",
+  "keywords": [
+  "e-commerce",
+  "shopping",
+  "online",
+  "react",
+  "node",
+  "express",
+  "mongodb",
+  "socket",
+  "mantineUI"
+  ],
+  "author": "maikusobu",
+  "license": "ISC"
+}
