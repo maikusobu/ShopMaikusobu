@@ -58,11 +58,7 @@ export const productSearch = expressAsyncHandler(
       if (name !== null && name !== undefined && name !== "") {
         products = await productService.searchProducts(name as string);
       } else products = [];
-      const transformedProducts = (products as any[]).map((product) => ({
-        label: product.name,
-        id: product._id,
-      }));
-      res.status(200).json(transformedProducts);
+      res.status(200).json(products);
     } catch (err) {
       return next(err);
     }
