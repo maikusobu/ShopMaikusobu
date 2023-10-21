@@ -17,6 +17,7 @@ export const signupMiddleware = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await signupService(req.body);
+      console.log(result);
       res.status((result as any).status).json(result);
     } catch (err) {
       return next(err);

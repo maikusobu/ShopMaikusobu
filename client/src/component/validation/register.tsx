@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useContext } from "react";
 import { useObjectActionReturn } from "../../hook/useObjectActionReturn";
@@ -50,9 +51,6 @@ function getStrength(password: string) {
 }
 
 function Register() {
-  useEffect(() => {
-    document.title = "Sign up";
-  }, []);
   const { data } = useContext(SocialContext);
   const { classes } = useStyles();
   const [disable, setDisable] = useState(false);
@@ -122,7 +120,7 @@ function Register() {
   const navigation = useNavigation();
   const navigate = useNavigate();
   const [popoverOpened, setPopoverOpened] = useState(false);
-   
+
   const [numberConfirm, setNumberConfirm] = useState("");
   const form = useForm({
     initialValues: {
@@ -164,6 +162,10 @@ function Register() {
   const strength = getStrength(form.values.password);
   const color = strength === 100 ? "teal" : strength > 50 ? "yellow" : "red";
   useEffect(() => {
+    document.title = "Sign up";
+  }, []);
+  console.log(objectAction);
+  useEffect(() => {
     if (isActionReturned) {
       if (objectAction?.json?.status === 201) {
         setActive((prev) => prev + 1);
@@ -178,12 +180,7 @@ function Register() {
         );
       }
     }
-  }, [
-    handleSetisActionReturned,
-    isActionReturned,
-    objectAction?.err,
-    objectAction?.json?.status,
-  ]);
+  }, [isActionReturned, objectAction]);
   return (
     <div className={classes.mainSection}>
       <Container size={800} className={classes.Container}>
