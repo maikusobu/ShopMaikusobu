@@ -6,7 +6,7 @@ interface DecodedToken {
   id: string;
 }
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  if (req.method === "OPTIONS") return next(); // by pass rule preflight for cross site request
+  if (req.method === "OPTIONS") return next(); // bypass rule preflight for cross site request
   const token = req.cookies["token"];
   if (!token) {
     next(new Unauthorized(401, "Not found token"));

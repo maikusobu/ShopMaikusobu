@@ -89,6 +89,7 @@ mongoose.connection.on("disconnected", () => {
 const excludePaths = [/^\/products\/(.*)/, /^\/authen\/(.*)/, "/products"];
 app.use(authMiddleware.unless({ path: excludePaths }));
 app.use(express.static(dirPath));
+
 // route handling
 app.use("/authen", authenRouter);
 app.use("/user", userRouter);
@@ -103,9 +104,8 @@ app.use("/order", OrderRouter);
 app.get("/", (req: Request, res: Response) => {
   res.redirect(`${URL_CLIENT}`);
 });
+//error handling
 app.use(ErrorFunction);
-
-
 // if (cluster.isPrimary) {
 //   setupMaster(httpServer, {
 //     loadBalancingMethod: "least-connection",

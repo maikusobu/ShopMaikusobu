@@ -21,7 +21,9 @@ const action = async ({ request }: { request: Request }) => {
       credentials: "include",
       body: JSON.stringify(data),
     });
+
     const json = await res.json();
+
     if (json.status === 400 || json.status === 500 || json.status === 404) {
       throw json;
     } else {
@@ -34,6 +36,7 @@ const action = async ({ request }: { request: Request }) => {
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (err: any) {
+    console.log(err);
     return { data, err: err };
   }
 };

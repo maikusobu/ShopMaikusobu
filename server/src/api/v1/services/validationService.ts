@@ -22,7 +22,9 @@ import { configEnv } from "../../../config/configEnv";
 const worker = new Worker(
   "./dist/js/api/v1/controllers/Auth_validation_controller/sendEmailWorker.js"
 );
-
+interface dataType {
+  success: boolean;
+}
 const refreshTokens: string[] = [];
 export const signupService = async (reqBody: any) => {
   const { username, email } = reqBody;
@@ -79,18 +81,22 @@ export const signupService = async (reqBody: any) => {
         },
         templateName: "requestRegister",
       });
-      worker.on("message", (data) => {
-        if (data.success) {
-          return {
-            message: "Thư xác nhận đã được chuyển đến mail của bạn",
-            status: 201,
-            id: userMade._id,
-            social: reqBody.isSocialConnect ? true : false,
-          };
-        } else {
-          throw new HttpError(500, "Cannot send email");
-        }
+
+      const data: dataType = await new Promise((resolve, reject) => {
+        worker.on("message", resolve);
+        worker.on("error", reject);
       });
+
+      if (data.success) {
+        return {
+          message: "Thư xác nhận đã được chuyển đến mail của bạn",
+          status: 201,
+          id: userMade._id,
+          social: reqBody.isSocialConnect ? true : false,
+        };
+      } else {
+        throw new HttpError(500, "Cannot send email");
+      }
     } catch (err: any) {
       if (err.name === "ValidationError") {
         const errors = Object.values(err.errors).map(
@@ -106,7 +112,6 @@ export const signupService = async (reqBody: any) => {
 
 export const signinService = async (reqBody: any) => {
   const User = await userModel.findOne({ username: reqBody.username });
-
   if (!User) throw new NotFound(404, "User not found");
   let match = false;
   if (!User.isVerified)
@@ -163,18 +168,21 @@ export const resendConfirmNumberService = async (reqBody: any) => {
     },
     templateName: "requestRegister",
   });
-  worker.on("message", (data) => {
-    if (data.success) {
-      return {
-        message: "Thư xác nhận đã được chuyển đến mail của bạn",
-        status: 201,
-        id: user_id,
-        social: reqBody.isSocialConnect ? true : false,
-      };
-    } else {
-      throw new HttpError(500, "Cannot send email");
-    }
+  const data: dataType = await new Promise((resolve, reject) => {
+    worker.on("message", resolve);
+    worker.on("error", reject);
   });
+
+  if (data.success) {
+    return {
+      message: "Thư xác nhận đã được chuyển đến mail của bạn",
+      status: 201,
+      id: user_id,
+      social: reqBody.isSocialConnect ? true : false,
+    };
+  } else {
+    throw new HttpError(500, "Cannot send email");
+  }
 };
 
 export const checkRegistrationService = async (reqBody: any) => {
@@ -219,17 +227,20 @@ export const forgotPasswordService = async (reqBody: any) => {
     },
     templateName: "requestResetPassword",
   });
-  worker.on("message", (data) => {
-    if (data.success) {
-      return {
-        status: 200,
-        message: "Email sent successfully",
-        link,
-      };
-    } else {
-      throw new HttpError(500, "Cannot send email");
-    }
+  const data: dataType = await new Promise((resolve, reject) => {
+    worker.on("message", resolve);
+    worker.on("error", reject);
   });
+
+  if (data.success) {
+    return {
+      status: 200,
+      message: "Email sent successfully",
+      link,
+    };
+  } else {
+    throw new HttpError(500, "Cannot send email");
+  }
 };
 export const changePasswordService = async (reqBody: any) => {
   const { user_id, token, password } = reqBody;

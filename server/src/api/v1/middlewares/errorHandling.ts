@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Request, Response, NextFunction } from "express";
 import {
   HttpError,
@@ -6,12 +7,14 @@ import {
   Unauthorized,
   MongoDBError,
 } from "../interfaces/ErrorInstances";
-export const ErrorFunction: (
+
+export const ErrorFunction = (
   err: Error,
   req: Request,
   res: Response,
   next: NextFunction
-) => void = (err: Error, req: Request, res: Response) => {
+) => {
+  console.log(typeof err);
   if (err instanceof HttpError) {
     res.status(err.status).json({
       type: "HttpError",
