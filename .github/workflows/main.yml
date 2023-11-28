@@ -15,9 +15,9 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: 'client/package-lock.json'
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: "client/package-lock.json"
       - name: Install dependencies for client
         run: |
           cd client
@@ -30,32 +30,35 @@ jobs:
         run: |
           cd client
           npm run test
+
   Test_and_lint_on_server:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: 'server/package-lock.json'
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: "server/package-lock.json"
       - name: Install dependencies for server
         run: |
           cd server
-          npm ci   
+          npm ci
       - name: Run lint for server
         run: |
           cd server
           npm run lint
-          
+
   deploy:
     needs: [Test_and_lint_on_client, Test_and_lint_on_server]
     runs-on: ubuntu-20.04
+
     steps:
-      - name: Trigger deployment
-        if: ${{ success() }} && ${{ github.event_name == 'push' }}
-        run: |
-          curl https://api.render.com/deploy/${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API }}
+      - name: Deploy to production
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: ${{ secrets.RENDER_SERVICE_ID }}
+          api-key: ${{ secrets.RENDER_API }}
 
   tag_release:
     needs: [deploy]

@@ -31,8 +31,6 @@ export const sendEmail = async (
         html: compiledTemplate(payload),
       };
     };
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     await transporter.sendMail(options());
   } catch (err) {
     console.log(err);

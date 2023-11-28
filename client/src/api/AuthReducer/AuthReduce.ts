@@ -12,6 +12,13 @@ const initialState: AuthState = {
   expiresAt: 0,
   refreshToken: "",
 };
+/**
+ * Creates a slice of the authentication reducer.
+ * @param name - The name of the slice.
+ * @param initialState - The initial state of the slice.
+ * @param reducers - The reducers of the slice.
+ * @returns The authentication slice.
+ */
 const AuthSlice = createSlice({
   name: "auth",
   initialState,

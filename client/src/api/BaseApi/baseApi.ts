@@ -20,6 +20,13 @@ const baseQuery = fetchBaseQuery({
   credentials: "include",
 });
 
+/**
+ * A function that performs a base query with the ability to refresh the access token if it has expired.
+ * @param args - The arguments for the query, either a string or a FetchArgs object.
+ * @param api - The BaseQueryApi object to use for the query.
+ * @param extraOptions - Any additional options to pass to the query.
+ * @returns A Promise that resolves to the result of the query.
+ */
 const baseQueryWithRefreshT = async (
   args: string | FetchArgs,
   api: BaseQueryApi,

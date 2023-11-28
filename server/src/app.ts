@@ -136,6 +136,12 @@ app.use(ErrorFunction);
 //   });
 //   setupWorker(io);
 // }
+//
+// create a new socket.io instance attached to the http server
+// const io = new Server(httpServer, {
+//   cors: { origin: `${URL_CLIENT}`, credentials: true },
+// });
+// io.adapter(createAdapter());
 io.use(socketMiddleware);
 io.on("connection", async (socket) => {
   handleConnection(socket);

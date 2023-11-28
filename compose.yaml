@@ -1,0 +1,45 @@
+services:
+  client:
+    build:
+      context: client
+    ports:
+      - 5173:5173 
+    volumes:
+      - ./client:/usr/src/app
+      - /usr/src/app/node_modules
+    env_file:
+      - ./client/.env
+    restart: always
+    networks:
+      - react-express
+    depends_on:
+      - server
+  server:
+    restart: always
+    build: 
+      context: server
+    env_file:
+      - ./server/.env
+    volumes:
+      - ./server:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - react-express
+      - express-mongo
+    depends_on:
+      - mongo
+    ports:
+      - 3000:3000
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data:/data/db
+    networks:
+      - express-mongo
+
+networks:
+  react-express:
+  express-mongo:
